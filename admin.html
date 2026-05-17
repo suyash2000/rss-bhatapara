@@ -86,7 +86,7 @@
     <input class="login-input" type="password" id="l-pass" placeholder="Password" autocomplete="current-password"/>
     <button class="login-btn" onclick="doLogin()">🔓 लॉगिन करें</button>
     <p class="login-err" id="login-err">❌ गलत username या password</p>
-    <p style="margin-top:1.25rem;font-size:0.72rem;color:#bbb;">Default: admin / rss@bhatapara2026</p>
+    <p style="margin-top:1.25rem;font-size:0.72rem;color:#bbb;">RSS भाटापारा Admin Portal</p>
   </div>
 </div>
 
@@ -152,16 +152,33 @@
 <script src="js/shared.js"></script>
 <script>
 // ── Auth ──────────────────────────────────────────────────────────────────────
-const CREDS = { user:'admin', pass:'rss@bhatapara2026' };
-
-function doLogin(){
+async function doLogin(){
   const u = document.getElementById('l-user').value.trim();
   const p = document.getElementById('l-pass').value;
-  if(u===CREDS.user && p===CREDS.pass){
-    sessionStorage.setItem('rss_admin','1');
-    showDash();
-  } else {
-    document.getElementById('login-err').style.display='block';
+  const btn = document.querySelector('.login-btn');
+  const errEl = document.getElementById('login-err');
+  errEl.style.display = 'none';
+  btn.textContent = '⏳ जाँच रहे हैं…';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/.netlify/functions/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+    const data = await res.json();
+    if (data.success) {
+      sessionStorage.setItem('rss_admin','1');
+      showDash();
+    } else {
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = '❌ सर्वर से कनेक्ट नहीं हो सका';
+    errEl.style.display = 'block';
+  } finally {
+    btn.textContent = '🔓 लॉगिन करें';
+    btn.disabled = false;
   }
 }
 document.getElementById('l-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
