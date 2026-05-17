@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>कार्यक्रम – RSS भाटापारा</title>
+  <meta name="description" content="RSS भाटापारा के आगामी और पिछले सभी कार्यक्रमों का विवरण।"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-emblem">🔱</div>
+      <div class="nav-brand-text"><h1>RSS भाटापारा</h1><p>राष्ट्रीय स्वयंसेवक संघ</p></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html"      class="nav-link">होम</a></li>
+      <li><a href="volunteers.html" class="nav-link">स्वयंसेवक</a></li>
+      <li><a href="shakha.html"     class="nav-link">शाखा</a></li>
+      <li><a href="events.html"     class="nav-link">कार्यक्रम</a></li>
+      <li><a href="prerna.html"     class="nav-link">प्रेरणा</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="मेनू" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="ticker" style="margin-top:70px;">
+  <div class="ticker-track">
+    <span>📅 आगामी कार्यक्रम</span><span>गुरु पूर्णिमा – 10 जुलाई 2026</span>
+    <span>रक्तदान शिविर – 5 जून 2026</span><span>पथ संचलन – 15 अगस्त 2026</span>
+    <span>📅 आगामी कार्यक्रम</span><span>गुरु पूर्णिमा – 10 जुलाई 2026</span>
+    <span>रक्तदान शिविर – 5 जून 2026</span><span>पथ संचलन – 15 अगस्त 2026</span>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="page-tag">📅 कार्यक्रम</div>
+    <h1 class="page-title">आगामी <span>कार्यक्रम</span></h1>
+    <p class="page-subtitle">RSS भाटापारा के सभी उत्सव, सेवा कार्य, प्रशिक्षण और पथ संचलन का विवरण।</p>
+  </div>
+</div>
+
+<section class="page-section" style="background:var(--cream);">
+  <div class="container">
+
+    <!-- Filter tabs -->
+    <div class="filter-tabs" id="filter-tabs">
+      <button class="ftab active" data-filter="all">सभी</button>
+      <button class="ftab" data-filter="upcoming">आगामी</button>
+      <button class="ftab" data-filter="completed">संपन्न</button>
+      <button class="ftab" data-filter="उत्सव">उत्सव</button>
+      <button class="ftab" data-filter="सेवा">सेवा</button>
+      <button class="ftab" data-filter="पथ संचलन">पथ संचलन</button>
+      <button class="ftab" data-filter="प्रशिक्षण">प्रशिक्षण</button>
+    </div>
+
+    <div id="result-count" style="margin-bottom:1.25rem;font-size:0.82rem;color:var(--brown-muted);"></div>
+
+    <div style="display:flex;flex-direction:column;gap:1.25rem;" id="events-list"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><h3>🔱 RSS भाटापारा</h3><p>राष्ट्रीय स्वयंसेवक संघ, भाटापारा इकाई।<br/>संगठित समाज ही राष्ट्र की शक्ति है।</p></div>
+    <div class="footer-col"><h4>पृष्ठ</h4><ul>
+      <li><a href="index.html">होम</a></li><li><a href="volunteers.html">स्वयंसेवक</a></li>
+      <li><a href="shakha.html">शाखा</a></li><li><a href="events.html">कार्यक्रम</a></li><li><a href="prerna.html">प्रेरणा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>शाखाएं</h4><ul>
+      <li><a href="shakha.html">प्रभात शाखा</a></li><li><a href="shakha.html">उषा शाखा</a></li>
+      <li><a href="shakha.html">संध्या शाखा</a></li><li><a href="shakha.html">बाल शाखा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>संपर्क</h4><ul>
+      <li><a href="#">RSS कार्यालय, भाटापारा</a></li><li><a href="#">छत्तीसगढ़, भारत</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 <span>RSS भाटापारा</span>. सर्वाधिकार सुरक्षित।</p>
+    <p>भारत माता की <span>जय 🇮🇳</span></p>
+  </div>
+</footer>
+<button id="btt" aria-label="ऊपर जाएं">
+  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+<script src="js/shared.js"></script>
+<script>
+  const MO = ['जन','फर','मार','अप्र','मई','जून','जुल','अग','सितं','अक्ट','नव','दिस'];
+
+  function render(list) {
+    document.getElementById('result-count').textContent = `${list.length} कार्यक्रम मिले`;
+    const c = document.getElementById('events-list');
+    if (!list.length) { c.innerHTML='<p style="color:#aaa;text-align:center;padding:2rem;">कोई कार्यक्रम नहीं मिला।</p>'; return; }
+    c.innerHTML = list.map(e => {
+      const d = new Date(e.date);
+      return `<div class="event-card reveal">
+        <div class="date-box"><div class="date-day">${d.getDate()}</div><div class="date-month">${MO[d.getMonth()]} ${d.getFullYear()}</div></div>
+        <div class="event-info">
+          <h3>${e.title}</h3>
+          <p>${e.description}</p>
+          <div class="event-loc">📍 ${e.location}</div>
+        </div>
+        <div class="event-meta">
+          <span class="type-badge">${e.type}</span>
+          <span class="time-text">⏰ ${e.time}</span>
+          <span class="status-badge ${e.status==='upcoming'?'badge-upcoming':'badge-completed'}">${e.status==='upcoming'?'✓ आगामी':'✓ संपन्न'}</span>
+        </div>
+      </div>`;
+    }).join('');
+    observeReveal();
+  }
+
+  render(EVENTS_DATA);
+
+  document.getElementById('filter-tabs').addEventListener('click', e => {
+    const btn = e.target.closest('.ftab'); if (!btn) return;
+    document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    if (f==='all') render(EVENTS_DATA);
+    else if (f==='upcoming'||f==='completed') render(EVENTS_DATA.filter(ev=>ev.status===f));
+    else render(EVENTS_DATA.filter(ev=>ev.type===f));
+  });
+</script>
+</body>
+</html>

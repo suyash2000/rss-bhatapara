@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>शाखा जानकारी – RSS भाटापारा</title>
+  <meta name="description" content="RSS भाटापारा की सभी 4 शाखाओं की जानकारी – समय, स्थान, संपर्क और कार्यक्रम।"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-emblem">🔱</div>
+      <div class="nav-brand-text"><h1>RSS भाटापारा</h1><p>राष्ट्रीय स्वयंसेवक संघ</p></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html"      class="nav-link">होम</a></li>
+      <li><a href="volunteers.html" class="nav-link">स्वयंसेवक</a></li>
+      <li><a href="shakha.html"     class="nav-link">शाखा</a></li>
+      <li><a href="events.html"     class="nav-link">कार्यक्रम</a></li>
+      <li><a href="prerna.html"     class="nav-link">प्रेरणा</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="मेनू" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="ticker" style="margin-top:70px;">
+  <div class="ticker-track">
+    <span>🚩 शाखा जानकारी</span><span>प्रभात शाखा – प्रात: 6:00</span>
+    <span>उषा शाखा – प्रात: 5:30</span><span>संध्या शाखा – सायं 5:30</span>
+    <span>बाल शाखा – सायं 4:00</span><span>🔱 भारत माता की जय</span>
+    <span>🚩 शाखा जानकारी</span><span>प्रभात शाखा – प्रात: 6:00</span>
+    <span>उषा शाखा – प्रात: 5:30</span><span>संध्या शाखा – सायं 5:30</span>
+    <span>बाल शाखा – सायं 4:00</span><span>🔱 भारत माता की जय</span>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="page-tag">🚩 शाखा</div>
+    <h1 class="page-title">शाखा <span>जानकारी</span></h1>
+    <p class="page-subtitle">भाटापारा की 4 शाखाओं के समय, स्थान, संपर्क और साप्ताहिक कार्यक्रम।</p>
+  </div>
+</div>
+
+<!-- SHAKHA OVERVIEW STRIP -->
+<div style="background:#fff;padding:2rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
+  <div class="container" style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;text-align:center;">
+    <div><div style="font-size:2rem;font-weight:900;color:var(--bhagwa);">4</div><div style="font-size:0.72rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">कुल शाखाएं</div></div>
+    <div><div style="font-size:2rem;font-weight:900;color:var(--bhagwa);">161+</div><div style="font-size:0.72rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">कुल स्वयंसेवक</div></div>
+    <div><div style="font-size:2rem;font-weight:900;color:var(--bhagwa);">6</div><div style="font-size:0.72rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">दिन प्रति सप्ताह</div></div>
+  </div>
+</div>
+
+<!-- SHAKHA CARDS -->
+<section class="page-section" style="background:var(--cream);">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">🚩 हमारी शाखाएं</div>
+      <h2 class="section-title">चारों <span>शाखाएं</span></h2>
+      <div class="section-div"></div>
+    </div>
+    <div class="grid-3" id="shakha-grid"></div>
+  </div>
+</section>
+
+<!-- SHAKHA SCHEDULE TABLE -->
+<section class="page-section" style="background:#fff;">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">📅 साप्ताहिक समय-सारिणी</div>
+      <h2 class="section-title">शाखा <span>समय-सारिणी</span></h2>
+      <div class="section-div"></div>
+    </div>
+    <div class="reveal" style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+        <thead>
+          <tr style="background:var(--bhagwa);color:#fff;">
+            <th style="padding:0.85rem 1rem;text-align:left;border-radius:10px 0 0 0;">शाखा</th>
+            <th style="padding:0.85rem 1rem;">सोम</th><th style="padding:0.85rem 1rem;">मंगल</th>
+            <th style="padding:0.85rem 1rem;">बुध</th><th style="padding:0.85rem 1rem;">गुरु</th>
+            <th style="padding:0.85rem 1rem;">शुक्र</th><th style="padding:0.85rem 1rem;border-radius:0 10px 0 0;">शनि</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-table"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><h3>🔱 RSS भाटापारा</h3><p>राष्ट्रीय स्वयंसेवक संघ, भाटापारा इकाई।<br/>संगठित समाज ही राष्ट्र की शक्ति है।</p></div>
+    <div class="footer-col"><h4>पृष्ठ</h4><ul>
+      <li><a href="index.html">होम</a></li><li><a href="volunteers.html">स्वयंसेवक</a></li>
+      <li><a href="shakha.html">शाखा</a></li><li><a href="events.html">कार्यक्रम</a></li><li><a href="prerna.html">प्रेरणा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>शाखाएं</h4><ul>
+      <li><a href="shakha.html">प्रभात शाखा</a></li><li><a href="shakha.html">उषा शाखा</a></li>
+      <li><a href="shakha.html">संध्या शाखा</a></li><li><a href="shakha.html">बाल शाखा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>संपर्क</h4><ul>
+      <li><a href="#">RSS कार्यालय, भाटापारा</a></li><li><a href="#">छत्तीसगढ़, भारत</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 <span>RSS भाटापारा</span>. सर्वाधिकार सुरक्षित।</p>
+    <p>भारत माता की <span>जय 🇮🇳</span></p>
+  </div>
+</footer>
+<button id="btt" aria-label="ऊपर जाएं">
+  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+<script src="js/shared.js"></script>
+<script>
+  const icons = ['🌅','🌄','🌇','🌱'];
+  const allDays = ['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
+
+  document.getElementById('shakha-grid').innerHTML = SHAKHA_DATA.map((s,i) => `
+    <div class="shakha-card reveal">
+      <div class="shakha-icon">${icons[i]}</div>
+      <div class="shakha-name">${s.name}</div>
+      <div class="shakha-timing">⏰ ${s.timing}</div>
+      <div class="shakha-info">
+        <div class="s-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>${s.address}</div>
+        <div class="s-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>${s.contact_person} · ${s.contact}</div>
+      </div>
+      <div class="day-pills">${s.schedule.map(d=>`<span class="day-pill">${d}</span>`).join('')}</div>
+      <div class="act-pills">${s.activities.map(a=>`<span class="act-pill">${a}</span>`).join('')}</div>
+      <div class="strength-row" style="margin-top:1rem;">
+        <span>स्वयंसेवक: <strong>${s.strength}</strong></span>
+        <div class="bar"><div class="bar-fill" style="width:${Math.min(s.strength/60*100,100)}%"></div></div>
+      </div>
+    </div>`).join('');
+
+  // Schedule table
+  const days = ['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
+  document.getElementById('schedule-table').innerHTML = SHAKHA_DATA.map((s,i) => `
+    <tr style="background:${i%2===0?'var(--cream)':'#fff'};">
+      <td style="padding:0.8rem 1rem;font-weight:700;color:var(--brown);">${s.name}</td>
+      ${days.map(d => `<td style="padding:0.8rem 1rem;text-align:center;">${s.schedule.includes(d)?'<span style="color:var(--bhagwa);font-weight:700;">✓</span>':'<span style="color:#ddd;">–</span>'}</td>`).join('')}
+    </tr>`).join('');
+
+  observeReveal();
+</script>
+</body>
+</html>

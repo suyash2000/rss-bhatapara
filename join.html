@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>नया सदस्य जोड़ें – RSS भाटापारा</title>
+  <meta name="description" content="RSS भाटापारा में नया स्वयंसेवक पंजीकरण फ़ॉर्म।"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .form-card { background:#fff; border-radius:24px; padding:2.5rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.12); max-width:700px; margin:0 auto; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+    .form-group { display:flex; flex-direction:column; gap:0.4rem; }
+    .form-group.full { grid-column:1/-1; }
+    .form-label { font-size:0.8rem; font-weight:700; color:var(--brown); letter-spacing:0.5px; }
+    .form-label span { color:var(--bhagwa); }
+    .form-control { padding:0.7rem 1rem; border:1.5px solid rgba(255,107,0,0.22); border-radius:var(--radius-sm); font-family:inherit; font-size:0.9rem; color:var(--brown); background:var(--cream); outline:none; transition:border 0.25s, box-shadow 0.25s; width:100%; }
+    .form-control:focus { border-color:var(--bhagwa); box-shadow:0 0 0 3px rgba(255,107,0,0.1); }
+    .form-control::placeholder { color:#bbb; }
+    select.form-control { cursor:pointer; }
+    .submit-btn { width:100%; padding:1rem; background:var(--bhagwa); color:#fff; border:none; border-radius:30px; font-family:inherit; font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:0.5rem; box-shadow:0 4px 20px rgba(255,107,0,0.35); }
+    .submit-btn:hover { background:var(--bhagwa-dark); transform:translateY(-2px); }
+    .submit-btn:disabled { background:#ccc; transform:none; cursor:not-allowed; }
+    .success-box { display:none; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:16px; padding:2rem; text-align:center; }
+    .success-box.show { display:block; }
+    .success-box h3 { color:#2e7d32; font-size:1.2rem; margin-bottom:0.5rem; }
+    .info-box { background:rgba(255,107,0,0.06); border:1px solid rgba(255,107,0,0.2); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; font-size:0.82rem; color:var(--brown-muted); line-height:1.7; }
+    .info-box strong { color:var(--bhagwa); }
+    @media(max-width:600px){ .form-grid{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-emblem">🔱</div>
+      <div class="nav-brand-text"><h1>RSS भाटापारा</h1><p>राष्ट्रीय स्वयंसेवक संघ</p></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html"      class="nav-link">होम</a></li>
+      <li><a href="volunteers.html" class="nav-link">स्वयंसेवक</a></li>
+      <li><a href="shakha.html"     class="nav-link">शाखा</a></li>
+      <li><a href="events.html"     class="nav-link">कार्यक्रम</a></li>
+      <li><a href="prerna.html"     class="nav-link">प्रेरणा</a></li>
+      <li><a href="join.html"       class="nav-link" style="color:var(--bhagwa-light);">+ सदस्य</a></li>
+      <li><a href="admin.html"      class="nav-link">⚙ Admin</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="मेनू" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="ticker" style="margin-top:70px;">
+  <div class="ticker-track">
+    <span>+ नया सदस्य पंजीकरण</span><span>🔱 भारत माता की जय</span>
+    <span>संगठित समाज ही राष्ट्र की शक्ति है</span><span>वंदे मातरम्</span>
+    <span>+ नया सदस्य पंजीकरण</span><span>🔱 भारत माता की जय</span>
+    <span>संगठित समाज ही राष्ट्र की शक्ति है</span><span>वंदे मातरम्</span>
+  </div>
+</div>
+
+<div class="page-hero" style="min-height:40vh;">
+  <div class="page-hero-content">
+    <div class="page-tag">🙏 पंजीकरण</div>
+    <h1 class="page-title">नया <span>स्वयंसेवक</span> जोड़ें</h1>
+    <p class="page-subtitle">राष्ट्र सेवा में जुड़ें। नीचे दिया गया फ़ॉर्म भरें और हमारी टीम से जुड़ें।</p>
+  </div>
+</div>
+
+<section class="page-section">
+  <div class="container">
+    <div class="form-card reveal">
+
+      <div class="info-box">
+        📌 <strong>महत्वपूर्ण:</strong> यह फ़ॉर्म <strong>Formspree</strong> सेवा के माध्यम से सबमिट होता है।
+        फ़ॉर्म सबमिट होने के बाद जानकारी सीधे admin के ईमेल पर पहुंचेगी।
+        अपना Formspree Form ID नीचे के <code>action</code> में डालें।
+      </div>
+
+      <!-- SUCCESS MESSAGE -->
+      <div class="success-box" id="success-box">
+        <div style="font-size:3rem;margin-bottom:0.75rem;">🎉</div>
+        <h3>पंजीकरण सफल!</h3>
+        <p style="color:#555;font-size:0.9rem;">आपकी जानकारी प्राप्त हो गई है। हमारी टीम जल्द संपर्क करेगी।<br/>भारत माता की जय! 🇮🇳</p>
+        <a href="volunteers.html" class="btn btn-primary btn-sm" style="display:inline-flex;margin-top:1rem;">स्वयंसेवक सूची देखें</a>
+      </div>
+
+      <!-- FORM — Replace YOUR_FORMSPREE_ID with your actual Formspree form ID -->
+      <form id="join-form"
+            action="https://formspree.io/f/YOUR_FORMSPREE_ID"
+            method="POST"
+            onsubmit="handleSubmit(event)">
+
+        <!-- Hidden fields for identification -->
+        <input type="hidden" name="_subject" value="नया स्वयंसेवक पंजीकरण – RSS भाटापारा"/>
+        <input type="hidden" name="_language" value="hi"/>
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label class="form-label" for="f-name">पूरा नाम <span>*</span></label>
+            <input class="form-control" type="text" id="f-name" name="नाम" required placeholder="जैसे: राहुल शर्मा"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-contact">मोबाइल नंबर <span>*</span></label>
+            <input class="form-control" type="tel" id="f-contact" name="मोबाइल" required placeholder="10 अंकों का नंबर" pattern="[0-9]{10}" maxlength="10"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-area">वार्ड / क्षेत्र <span>*</span></label>
+            <select class="form-control" id="f-area" name="वार्ड" required>
+              <option value="">वार्ड चुनें</option>
+              <option>वार्ड 1</option><option>वार्ड 2</option><option>वार्ड 3</option>
+              <option>वार्ड 4</option><option>वार्ड 5</option><option>वार्ड 6</option>
+              <option>वार्ड 7</option><option>वार्ड 8</option><option>वार्ड 9</option><option>वार्ड 10</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-shakha">शाखा <span>*</span></label>
+            <select class="form-control" id="f-shakha" name="शाखा" required>
+              <option value="">शाखा चुनें</option>
+              <option>प्रभात शाखा</option><option>उषा शाखा</option>
+              <option>संध्या शाखा</option><option>बाल शाखा</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-role">भूमिका</label>
+            <select class="form-control" id="f-role" name="भूमिका">
+              <option value="">भूमिका चुनें</option>
+              <option>कार्यकर्ता</option><option>शाखा प्रमुख</option>
+              <option>मुख्य शिक्षक</option><option>बाल शिक्षक</option>
+              <option>गणवेश प्रमुख</option><option>सेवा प्रमुख</option>
+              <option>नगर प्रमुख</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-blood">रक्त समूह</label>
+            <select class="form-control" id="f-blood" name="रक्त समूह">
+              <option value="">रक्त समूह चुनें</option>
+              <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-vyavsay">व्यवसाय</label>
+            <select class="form-control" id="f-vyavsay" name="व्यवसाय">
+              <option value="">व्यवसाय चुनें</option>
+              <option>छात्र</option><option>शिक्षक</option><option>व्यापारी</option>
+              <option>कृषि</option><option>सरकारी नौकरी</option><option>इंजीनियर</option>
+              <option>डॉक्टर</option><option>अधिवक्ता</option><option>अन्य</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-year">सम्मिलन वर्ष</label>
+            <input class="form-control" type="number" id="f-year" name="सम्मिलन वर्ष" min="1990" max="2030" placeholder="2024"/>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="f-address">पूरा पता</label>
+            <input class="form-control" type="text" id="f-address" name="पता" placeholder="मकान नंबर, गली, मोहल्ला, भाटापारा"/>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="f-msg">अतिरिक्त जानकारी</label>
+            <textarea class="form-control" id="f-msg" name="अतिरिक्त जानकारी" rows="3" placeholder="कोई भी अन्य जानकारी…" style="resize:vertical;"></textarea>
+          </div>
+
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">🙏 पंजीकरण करें – भारत माता की जय!</button>
+      </form>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><h3>🔱 RSS भाटापारा</h3><p>राष्ट्रीय स्वयंसेवक संघ, भाटापारा इकाई।<br/>संगठित समाज ही राष्ट्र की शक्ति है।</p></div>
+    <div class="footer-col"><h4>पृष्ठ</h4><ul>
+      <li><a href="index.html">होम</a></li><li><a href="volunteers.html">स्वयंसेवक</a></li>
+      <li><a href="shakha.html">शाखा</a></li><li><a href="events.html">कार्यक्रम</a></li>
+      <li><a href="prerna.html">प्रेरणा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>संपर्क</h4><ul>
+      <li><a href="#">RSS कार्यालय, भाटापारा</a></li><li><a href="#">छत्तीसगढ़, भारत</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 <span>RSS भाटापारा</span>. सर्वाधिकार सुरक्षित।</p>
+    <p>भारत माता की <span>जय 🇮🇳</span></p>
+  </div>
+</footer>
+<button id="btt" aria-label="ऊपर जाएं">
+  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+<script src="js/shared.js"></script>
+<script>
+async function handleSubmit(e){
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const form = document.getElementById('join-form');
+  btn.disabled = true;
+  btn.textContent = 'सबमिट हो रहा है…';
+  try {
+    const res = await fetch(form.action, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} });
+    if(res.ok){
+      form.style.display='none';
+      document.getElementById('success-box').classList.add('show');
+    } else {
+      btn.disabled=false; btn.textContent='🙏 पुनः प्रयास करें';
+      alert('त्रुटि हुई। कृपया पुनः प्रयास करें।');
+    }
+  } catch(err){
+    btn.disabled=false; btn.textContent='🙏 पुनः प्रयास करें';
+    alert('नेटवर्क त्रुटि। कृपया जांचें।');
+  }
+}
+observeReveal();
+</script>
+</body>
+</html>

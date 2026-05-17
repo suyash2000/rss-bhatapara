@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Dashboard – RSS भाटापारा</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    body { background:#f0f0f0; }
+    /* LOGIN */
+    .login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1a0800,#3D1C00,#6B3A1F); padding:1rem; }
+    .login-box { background:#fff; border-radius:24px; padding:2.5rem; width:100%; max-width:400px; box-shadow:0 24px 60px rgba(0,0,0,0.3); text-align:center; }
+    .login-icon { font-size:3rem; margin-bottom:0.75rem; }
+    .login-box h2 { color:var(--brown); font-size:1.3rem; margin-bottom:0.25rem; }
+    .login-box p { color:var(--brown-muted); font-size:0.82rem; margin-bottom:1.75rem; }
+    .login-input { width:100%; padding:0.75rem 1rem; border:1.5px solid rgba(255,107,0,0.25); border-radius:12px; font-family:inherit; font-size:0.9rem; color:var(--brown); background:var(--cream); outline:none; margin-bottom:1rem; transition:border 0.25s; }
+    .login-input:focus { border-color:var(--bhagwa); }
+    .login-btn { width:100%; padding:0.85rem; background:var(--bhagwa); color:#fff; border:none; border-radius:30px; font-family:inherit; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.3s; }
+    .login-btn:hover { background:var(--bhagwa-dark); }
+    .login-err { color:#c62828; font-size:0.82rem; margin-top:0.5rem; display:none; }
+
+    /* DASHBOARD */
+    .dash { display:none; }
+    .dash.active { display:block; }
+    .dash-nav { background:var(--brown); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:60px; position:sticky; top:0; z-index:100; }
+    .dash-nav h1 { color:var(--bhagwa); font-size:1rem; font-weight:800; }
+    .dash-nav-right { display:flex; gap:0.75rem; align-items:center; }
+    .dash-nav-right a, .dash-nav-right button { color:rgba(255,220,170,0.75); font-size:0.8rem; font-weight:600; background:none; border:1px solid rgba(255,107,0,0.3); border-radius:20px; padding:0.3rem 0.85rem; cursor:pointer; font-family:inherit; text-decoration:none; transition:all 0.2s; }
+    .dash-nav-right a:hover, .dash-nav-right button:hover { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); }
+    .dash-body { max-width:1200px; margin:2rem auto; padding:0 1.5rem; }
+
+    /* STAT CARDS */
+    .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.25rem; margin-bottom:2rem; }
+    .stat-card { background:#fff; border-radius:16px; padding:1.5rem; border-left:4px solid var(--bhagwa); box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+    .stat-card .sc-num { font-size:2rem; font-weight:900; color:var(--bhagwa); }
+    .stat-card .sc-label { font-size:0.75rem; color:var(--brown-muted); text-transform:uppercase; letter-spacing:1px; margin-top:0.2rem; }
+
+    /* TABLE */
+    .table-card { background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.07); overflow:hidden; margin-bottom:2rem; }
+    .table-toolbar { display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,107,0,0.1); flex-wrap:wrap; gap:0.75rem; }
+    .table-toolbar h3 { font-size:1rem; font-weight:800; color:var(--brown); }
+    .table-toolbar-right { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .tb-btn { padding:0.45rem 1rem; border-radius:20px; border:1.5px solid rgba(255,107,0,0.25); background:transparent; color:var(--brown-light); font-family:inherit; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .tb-btn:hover, .tb-btn.active { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); }
+    .tb-search { padding:0.45rem 0.85rem; border:1.5px solid rgba(255,107,0,0.22); border-radius:20px; font-family:inherit; font-size:0.82rem; color:var(--brown); background:var(--cream); outline:none; min-width:180px; }
+    .tb-search:focus { border-color:var(--bhagwa); }
+    table { width:100%; border-collapse:collapse; }
+    thead tr { background:var(--cream); }
+    th { padding:0.75rem 1rem; text-align:left; font-size:0.75rem; font-weight:700; color:var(--brown-muted); text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+    td { padding:0.8rem 1rem; font-size:0.85rem; color:var(--brown); border-bottom:1px solid rgba(255,107,0,0.07); }
+    tr:hover td { background:rgba(255,107,0,0.03); }
+    .blood-badge { display:inline-block; padding:0.15rem 0.6rem; border-radius:20px; font-size:0.72rem; font-weight:800; }
+    .blood-A { background:#fce4ec; color:#c62828; }
+    .blood-B { background:#e3f2fd; color:#1565c0; }
+    .blood-AB { background:#f3e5f5; color:#6a1b9a; }
+    .blood-O { background:#e8f5e9; color:#2e7d32; }
+    .row-actions { display:flex; gap:0.4rem; }
+    .ra-btn { padding:0.25rem 0.65rem; border-radius:8px; border:none; font-size:0.72rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
+    .ra-call { background:#e8f5e9; color:#2e7d32; }
+    .ra-wa { background:#e3f2fd; color:#1565c0; }
+    .ra-pdf { background:rgba(255,107,0,0.1); color:var(--bhagwa); }
+    .ra-btn:hover { opacity:0.8; transform:scale(1.05); }
+
+    /* CHARTS BAR */
+    .chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:2rem; }
+    .chart-card { background:#fff; border-radius:16px; padding:1.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+    .chart-card h3 { font-size:0.9rem; font-weight:800; color:var(--brown); margin-bottom:1.25rem; }
+    .bar-chart-row { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem; font-size:0.8rem; }
+    .bcr-label { width:90px; text-align:right; color:var(--brown-muted); flex-shrink:0; }
+    .bcr-bar-wrap { flex:1; background:rgba(255,107,0,0.1); border-radius:4px; height:18px; }
+    .bcr-bar { background:var(--bhagwa); border-radius:4px; height:100%; transition:width 1s ease; display:flex; align-items:center; justify-content:flex-end; padding-right:0.4rem; }
+    .bcr-bar span { font-size:0.68rem; font-weight:700; color:#fff; }
+
+    @media(max-width:768px){ .chart-grid{grid-template-columns:1fr;} table thead{display:none;} td{display:block;padding:0.4rem 1rem;} td::before{content:attr(data-label);font-weight:700;color:var(--bhagwa);margin-right:0.5rem;font-size:0.72rem;} }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <h2>Admin Login</h2>
+    <p>RSS भाटापारा – Admin Dashboard</p>
+    <input class="login-input" type="text"     id="l-user" placeholder="Username" autocomplete="username"/>
+    <input class="login-input" type="password" id="l-pass" placeholder="Password" autocomplete="current-password"/>
+    <button class="login-btn" onclick="doLogin()">🔓 लॉगिन करें</button>
+    <p class="login-err" id="login-err">❌ गलत username या password</p>
+    <p style="margin-top:1.25rem;font-size:0.72rem;color:#bbb;">Default: admin / rss@bhatapara2026</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dash" id="dashboard">
+
+  <div class="dash-nav">
+    <h1><svg viewBox="0 0 44 44" width="22" height="22" style="vertical-align:middle;margin-right:6px"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF9A4D"/><polygon points="8,4 38,13 8,22" fill="#FF9A4D"/></svg>RSS भाटापारा – Admin Dashboard</h1>
+    <div class="dash-nav-right">
+      <a href="volunteers.html">👥 डायरेक्टरी</a>
+      <a href="join.html">+ सदस्य जोड़ें</a>
+      <button onclick="doLogout()">🚪 लॉगआउट</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid" id="stat-grid"></div>
+
+    <!-- CHARTS -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>📊 शाखा-वार स्वयंसेवक</h3>
+        <div id="shakha-chart"></div>
+      </div>
+      <div class="chart-card">
+        <h3>🩸 रक्त समूह वितरण</h3>
+        <div id="blood-chart"></div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <h3>👥 सभी स्वयंसेवक</h3>
+        <div class="table-toolbar-right">
+          <input class="tb-search" type="search" id="admin-search" placeholder="खोजें…" oninput="adminFilter()"/>
+          <select class="tb-search" id="admin-shakha" onchange="adminFilter()">
+            <option value="">सभी शाखाएं</option>
+          </select>
+          <button class="tb-btn" onclick="exportCSV()">⬇ CSV Export</button>
+          <button class="tb-btn" onclick="printAllSheet()">🖨 सूची PDF</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th>
+              <th>वार्ड</th><th>रक्त समूह</th><th>व्यवसाय</th>
+              <th>वर्ष</th><th>संपर्क</th><th>कार्रवाई</th>
+            </tr>
+          </thead>
+          <tbody id="admin-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /dash-body -->
+</div><!-- /dash -->
+
+<script src="js/shared.js"></script>
+<script>
+// ── Auth ──────────────────────────────────────────────────────────────────────
+const CREDS = { user:'admin', pass:'rss@bhatapara2026' };
+
+function doLogin(){
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  if(u===CREDS.user && p===CREDS.pass){
+    sessionStorage.setItem('rss_admin','1');
+    showDash();
+  } else {
+    document.getElementById('login-err').style.display='block';
+  }
+}
+document.getElementById('l-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+function doLogout(){ sessionStorage.removeItem('rss_admin'); location.reload(); }
+
+function showDash(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('dashboard').classList.add('active');
+  buildDash();
+}
+
+if(sessionStorage.getItem('rss_admin')==='1') showDash();
+
+// ── Dashboard Build ───────────────────────────────────────────────────────────
+let filtered = VOLUNTEERS_DATA;
+
+function buildDash(){
+  // Stats
+  const total = VOLUNTEERS_DATA.length;
+  const shakhas = [...new Set(VOLUNTEERS_DATA.map(v=>v.shakha))].length;
+  const donors  = VOLUNTEERS_DATA.filter(v=>v.blood_group).length;
+  const newest  = Math.max(...VOLUNTEERS_DATA.map(v=>+v.joining_year));
+  document.getElementById('stat-grid').innerHTML = [
+    { num:total,   label:'कुल स्वयंसेवक',  color:'#FF6B00' },
+    { num:shakhas, label:'सक्रिय शाखाएं',   color:'#2e7d32' },
+    { num:donors,  label:'रक्तदान योग्य',   color:'#c62828' },
+    { num:newest,  label:'अंतिम सम्मिलन वर्ष', color:'#1565c0' },
+  ].map(s=>`<div class="stat-card" style="border-color:${s.color}">
+    <div class="sc-num" style="color:${s.color}">${s.num}</div>
+    <div class="sc-label">${s.label}</div>
+  </div>`).join('');
+
+  // Shakha chart
+  const shMap = {};
+  VOLUNTEERS_DATA.forEach(v=>{ shMap[v.shakha]=(shMap[v.shakha]||0)+1; });
+  const shMax = Math.max(...Object.values(shMap));
+  document.getElementById('shakha-chart').innerHTML = Object.entries(shMap).map(([k,v])=>`
+    <div class="bar-chart-row">
+      <div class="bcr-label">${k}</div>
+      <div class="bcr-bar-wrap"><div class="bcr-bar" style="width:${(v/shMax*100).toFixed(0)}%"><span>${v}</span></div></div>
+    </div>`).join('');
+
+  // Blood chart
+  const blMap = {};
+  VOLUNTEERS_DATA.forEach(v=>{ blMap[v.blood_group]=(blMap[v.blood_group]||0)+1; });
+  const blMax = Math.max(...Object.values(blMap));
+  document.getElementById('blood-chart').innerHTML = Object.entries(blMap).sort().map(([k,v])=>`
+    <div class="bar-chart-row">
+      <div class="bcr-label">${k}</div>
+      <div class="bcr-bar-wrap"><div class="bcr-bar" style="width:${(v/blMax*100).toFixed(0)}%"><span>${v}</span></div></div>
+    </div>`).join('');
+
+  // Shakha filter options
+  const sel = document.getElementById('admin-shakha');
+  [...new Set(VOLUNTEERS_DATA.map(v=>v.shakha))].sort().forEach(s=>sel.innerHTML+=`<option>${s}</option>`);
+
+  renderTable(VOLUNTEERS_DATA);
+}
+
+function bloodClass(bg){ return 'blood-'+(bg.replace(/[+-]/,'')); }
+function initials(n){ return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
+
+function renderTable(list){
+  filtered = list;
+  document.getElementById('admin-tbody').innerHTML = list.map((v,i)=>`
+    <tr>
+      <td data-label="#">${i+1}</td>
+      <td data-label="नाम"><strong>${v.name}</strong></td>
+      <td data-label="शाखा">${v.shakha}</td>
+      <td data-label="भूमिका">${v.role}</td>
+      <td data-label="वार्ड">${v.area}</td>
+      <td data-label="रक्त"><span class="blood-badge ${bloodClass(v.blood_group)}">${v.blood_group}</span></td>
+      <td data-label="व्यवसाय">${v.vyavsay}</td>
+      <td data-label="वर्ष">${v.joining_year}</td>
+      <td data-label="संपर्क">${v.contact}</td>
+      <td data-label="कार्रवाई">
+        <div class="row-actions">
+          <a class="ra-btn ra-call" href="tel:${v.contact}">📞</a>
+          <a class="ra-btn ra-wa" href="https://wa.me/91${v.contact}" target="_blank">💬</a>
+          <button class="ra-btn ra-pdf" onclick="printRow(${v.id})">PDF</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function adminFilter(){
+  const q  = document.getElementById('admin-search').value.toLowerCase();
+  const sh = document.getElementById('admin-shakha').value;
+  renderTable(VOLUNTEERS_DATA.filter(v=>
+    v.name.toLowerCase().includes(q) && (!sh||v.shakha===sh)
+  ));
+}
+
+function printRow(id){
+  const v = VOLUNTEERS_DATA.find(x=>x.id===id); if(!v) return;
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>${v.name}</title>
+  <style>@page{size:A5 portrait;margin:12mm}body{font-family:Arial,sans-serif;color:#3D1C00;font-size:11pt}
+  .hdr{display:flex;align-items:center;gap:10px;border-bottom:3px solid #FF6B00;padding-bottom:8px;margin-bottom:10px}
+  h2{color:#FF6B00;font-size:13pt;margin:0}.sub{font-size:8pt;color:#888}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:10pt}
+  td{padding:5px 8px;border:1px solid #e0c8a0}td:first-child{font-weight:700;color:#FF6B00;background:#fff8f0;width:40%}
+  .ft{margin-top:10px;font-size:7.5pt;color:#bbb;text-align:right}</style>
+  </head><body>
+  <div class="hdr">
+    <svg viewBox="0 0 44 44" width="34" height="34"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
+    <div><h2>${v.name}</h2><div class="sub">${v.role} · ${v.shakha} · RSS भाटापारा</div></div>
+  </div>
+  <table>
+    <tr><td>नाम</td><td>${v.name}</td></tr><tr><td>शाखा</td><td>${v.shakha}</td></tr>
+    <tr><td>भूमिका</td><td>${v.role}</td></tr><tr><td>वार्ड</td><td>${v.area}</td></tr>
+    <tr><td>मोबाइल</td><td>${v.contact}</td></tr><tr><td>रक्त समूह</td><td><strong>${v.blood_group}</strong></td></tr>
+    <tr><td>व्यवसाय</td><td>${v.vyavsay}</td></tr><tr><td>सम्मिलन वर्ष</td><td>${v.joining_year}</td></tr>
+  </table>
+  <div class="ft">मुद्रित: ${new Date().toLocaleDateString('hi-IN')} | RSS भाटापारा Admin | भारत माता की जय 🇮🇳</div>
+  <script>window.onload=()=>window.print();<\/script></body></html>`);
+  w.document.close();
+}
+
+function printAllSheet(){
+  const list = filtered.length ? filtered : VOLUNTEERS_DATA;
+  const w = window.open('','_blank');
+  const rows = list.map((v,i)=>`<tr style="background:${i%2===0?'#fff8f0':'#fff'}">
+    <td>${i+1}</td><td><strong>${v.name}</strong></td><td>${v.shakha}</td><td>${v.role}</td>
+    <td>${v.area}</td><td>${v.contact}</td><td>${v.blood_group}</td><td>${v.vyavsay}</td><td>${v.joining_year}</td>
+  </tr>`).join('');
+  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक सूची</title>
+  <style>@page{size:A4 landscape;margin:10mm}body{font-family:Arial,sans-serif;color:#3D1C00;font-size:8pt}
+  h2{color:#FF6B00;font-size:12pt;margin:0}.sub{font-size:7.5pt;color:#888;margin-bottom:6px}
+  table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:5px 5px;text-align:left;font-size:7.5pt}
+  td{padding:4px 5px;border-bottom:1px solid #f0e0c8;font-size:7.5pt}
+  .hdr{display:flex;align-items:center;gap:8px;border-bottom:3px solid #FF6B00;padding-bottom:5px;margin-bottom:6px}
+  .ft{margin-top:6px;font-size:7pt;color:#bbb;text-align:right}</style>
+  </head><body>
+  <div class="hdr"><svg viewBox="0 0 44 44" width="28" height="28"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
+  <div><h2>RSS भाटापारा – स्वयंसेवक सूची</h2><div class="sub">कुल: ${list.length} | मुद्रित: ${new Date().toLocaleDateString('hi-IN')}</div></div></div>
+  <table><thead><tr><th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th><th>वार्ड</th><th>मोबाइल</th><th>रक्त समूह</th><th>व्यवसाय</th><th>वर्ष</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <div class="ft">RSS भाटापारा | भारत माता की जय 🇮🇳</div>
+  <script>window.onload=()=>window.print();<\/script></body></html>`);
+  w.document.close();
+}
+
+function exportCSV(){
+  const headers = ['नाम','शाखा','भूमिका','वार्ड','संपर्क','रक्त समूह','व्यवसाय','सम्मिलन वर्ष'];
+  const rows = filtered.map(v=>[v.name,v.shakha,v.role,v.area,v.contact,v.blood_group,v.vyavsay,v.joining_year].join(','));
+  const csv = '\uFEFF' + [headers.join(','),...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download = 'rss-bhatapara-swayamsevak.csv';
+  a.click();
+}
+</script>
+</body>
+</html>

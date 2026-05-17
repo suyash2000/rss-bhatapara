@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>प्रेरणा – RSS भाटापारा</title>
+  <meta name="description" content="RSS भाटापारा – राष्ट्रीय प्रेरणा, देशभक्ति विचार और RSS के मूल सिद्धांत।"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    body { background:#1a0800; }
+    .prerna-hero {
+      min-height:60vh; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,#0d0400 0%,#1a0800 30%,#3D1C00 65%,#6B3A1F 100%);
+      position:relative; overflow:hidden; padding:100px 1.5rem 3rem; text-align:center;
+    }
+    .prerna-hero::before { content:'भारत माता की जय'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:clamp(4vw,7vw,8vw); font-weight:900; color:rgba(255,107,0,0.04); white-space:nowrap; pointer-events:none; letter-spacing:4px; }
+    .tricolor { display:flex; height:5px; width:100%; }
+    .tricolor .t1{background:#FF9933;flex:1} .tricolor .t2{background:#fff;flex:1} .tricolor .t3{background:#138808;flex:1}
+    .prerna-section { padding:4rem 1.5rem; }
+    .prerna-section .section-title { color:#fff; }
+    .prerna-section .section-tag { border-color:rgba(255,107,0,0.4); color:var(--bhagwa-light); }
+    .pillar-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,107,0,0.2); border-radius:var(--radius); padding:2rem; text-align:center; transition:all 0.3s; }
+    .pillar-card:hover { background:rgba(255,255,255,0.09); transform:translateY(-5px); border-color:rgba(255,107,0,0.5); }
+    .pillar-icon { font-size:2.8rem; margin-bottom:0.75rem; }
+    .pillar-title { font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:0.5rem; }
+    .pillar-desc { font-size:0.85rem; color:rgba(255,255,255,0.55); line-height:1.7; }
+    footer { background:#0d0400; }
+    footer .footer-col a { color:rgba(255,255,255,0.35); }
+    footer .footer-brand p { color:rgba(255,255,255,0.35); }
+    footer .footer-bottom p { color:rgba(255,255,255,0.2); }
+    #navbar { background:rgba(13,4,0,0.97); }
+    .ticker { background:var(--bhagwa); }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-emblem">🔱</div>
+      <div class="nav-brand-text"><h1>RSS भाटापारा</h1><p>राष्ट्रीय स्वयंसेवक संघ</p></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html"      class="nav-link">होम</a></li>
+      <li><a href="volunteers.html" class="nav-link">स्वयंसेवक</a></li>
+      <li><a href="shakha.html"     class="nav-link">शाखा</a></li>
+      <li><a href="events.html"     class="nav-link">कार्यक्रम</a></li>
+      <li><a href="prerna.html"     class="nav-link">प्रेरणा</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="मेनू" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="tricolor" style="margin-top:70px;"></div>
+<div class="ticker">
+  <div class="ticker-track">
+    <span>🇮🇳 भारत माता की जय</span><span>वंदे मातरम्</span>
+    <span>जय हिंद · जय भारत</span><span>सत्यमेव जयते</span>
+    <span>🔱 नमस्ते सदा वत्सले मातृभूमे</span><span>संगठित समाज ही राष्ट्र की शक्ति है</span>
+    <span>🇮🇳 भारत माता की जय</span><span>वंदे मातरम्</span>
+    <span>जय हिंद · जय भारत</span><span>सत्यमेव जयते</span>
+    <span>🔱 नमस्ते सदा वत्सले मातृभूमे</span><span>संगठित समाज ही राष्ट्र की शक्ति है</span>
+  </div>
+</div>
+
+<!-- PRERNA HERO -->
+<div class="prerna-hero">
+  <div style="position:relative;z-index:2;max-width:700px;">
+    <div class="page-tag" style="border-color:rgba(255,107,0,0.4);color:var(--bhagwa-light);">🇮🇳 प्रेरणा</div>
+    <h1 class="page-title" style="margin-top:0.75rem;">राष्ट्रीय <span>प्रेरणा</span></h1>
+    <p class="page-subtitle">भारत माता के वीर सपूतों के विचार, RSS के मूल सिद्धांत और देशभक्ति की ज्योति।</p>
+  </div>
+</div>
+
+<!-- THREE PILLARS -->
+<section class="prerna-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">🔱 RSS के मूल सूत्र</div>
+      <h2 class="section-title">तीन <span>स्तंभ</span></h2>
+      <div class="section-div"></div>
+    </div>
+    <div class="grid-3">
+      <div class="pillar-card reveal"><div class="pillar-icon">📿</div><div class="pillar-title">संस्कार</div><div class="pillar-desc">भारतीय संस्कृति, परंपरा और मूल्यों को जीवन में उतारना ही सच्चे स्वयंसेवक का लक्षण है।</div></div>
+      <div class="pillar-card reveal"><div class="pillar-icon">🤝</div><div class="pillar-title">सेवा</div><div class="pillar-desc">निस्वार्थ भाव से समाज और राष्ट्र की सेवा – यही RSS का जीवन दर्शन है।</div></div>
+      <div class="pillar-card reveal"><div class="pillar-icon">🌸</div><div class="pillar-title">समर्पण</div><div class="pillar-desc">राष्ट्र के प्रति पूर्ण समर्पण ही एक स्वयंसेवक को महान बनाता है।</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="prerna-section" style="padding-top:0;">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">💬 विचार</div>
+      <h2 class="section-title">प्रेरणादायक <span>उद्धरण</span></h2>
+      <div class="section-div"></div>
+    </div>
+    <div class="grid-3" id="quotes-grid"></div>
+  </div>
+</section>
+
+<!-- DAILY SUVICHAR -->
+<div class="suvichar-bar" style="background:linear-gradient(135deg,#0d0400,#3D1C00);">
+  <div class="suvichar-icon">🌸</div>
+  <p class="suvichar-text" id="suvichar-text">लोड हो रहा है…</p>
+  <div class="suvichar-author" id="suvichar-author"></div>
+</div>
+
+<!-- NATIONAL ANTHEM STRIP -->
+<section class="prerna-section" style="padding:3rem 1.5rem;text-align:center;">
+  <div class="container">
+    <div class="section-tag" style="border-color:rgba(255,107,0,0.4);color:var(--bhagwa-light);">🇮🇳 राष्ट्रगान</div>
+    <h2 class="section-title reveal" style="color:#fff;margin:0.5rem 0 1.5rem;">जन गण मन</h2>
+    <div class="reveal" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,107,0,0.2);border-radius:var(--radius);padding:2rem;max-width:600px;margin:0 auto;">
+      <p style="color:rgba(255,255,255,0.8);line-height:2.4;font-size:1rem;">
+        जन गण मन अधिनायक जय हे, भारत भाग्य विधाता।<br/>
+        पंजाब सिंध गुजरात मराठा, द्राविड़ उत्कल बंग।<br/>
+        विंध्य हिमाचल यमुना गंगा, उच्छल जलधि तरंग।<br/>
+        तव शुभ नामे जागे, तव शुभ आशिष मागे।<br/>
+        गाहे तव जय गाथा।<br/>
+        जन गण मंगलदायक जय हे, भारत भाग्य विधाता।<br/>
+        <strong style="color:var(--bhagwa);">जय हे! जय हे! जय हे! जय जय जय जय हे॥</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><h3>🔱 RSS भाटापारा</h3><p>राष्ट्रीय स्वयंसेवक संघ, भाटापारा इकाई।<br/>संगठित समाज ही राष्ट्र की शक्ति है।</p></div>
+    <div class="footer-col"><h4>पृष्ठ</h4><ul>
+      <li><a href="index.html">होम</a></li><li><a href="volunteers.html">स्वयंसेवक</a></li>
+      <li><a href="shakha.html">शाखा</a></li><li><a href="events.html">कार्यक्रम</a></li><li><a href="prerna.html">प्रेरणा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>शाखाएं</h4><ul>
+      <li><a href="shakha.html">प्रभात शाखा</a></li><li><a href="shakha.html">उषा शाखा</a></li>
+      <li><a href="shakha.html">संध्या शाखा</a></li><li><a href="shakha.html">बाल शाखा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>संपर्क</h4><ul>
+      <li><a href="#">RSS कार्यालय, भाटापारा</a></li><li><a href="#">छत्तीसगढ़, भारत</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 <span>RSS भाटापारा</span>. सर्वाधिकार सुरक्षित।</p>
+    <p>भारत माता की <span>जय 🇮🇳</span></p>
+  </div>
+</footer>
+<button id="btt" aria-label="ऊपर जाएं">
+  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+<script src="js/shared.js"></script>
+<script>
+  const quotes = [
+    { text:'भारत माता की जय! यही हमारा मंत्र है, यही हमारा संकल्प है, यही हमारी पहचान है।', author:'RSS प्रेरणा' },
+    { text:'एक स्वयंसेवक का जीवन स्वयं के लिए नहीं, समाज के लिए समर्पित होता है।', author:'संघ परंपरा' },
+    { text:'हम भारतीय हैं – यह हमारी सबसे बड़ी पहचान है। राष्ट्र ही हमारा परिवार है।', author:'डॉ. हेडगेवार जी' },
+    { text:'संस्कार, सेवा और समर्पण – यही RSS के तीन मूल सूत्र हैं जो हमें महान बनाते हैं।', author:'गुरुजी गोलवलकर' },
+    { text:'वंदे मातरम! भारत भूमि पर जन्म लेना सौभाग्य की बात है। इसे सार्थक करें।', author:'RSS प्रेरणा' },
+    { text:'जो राष्ट्र की सेवा करता है, वही सच्चा वीर है। आओ मिलकर भारत को महान बनाएं।', author:'संघ विचार' },
+  ];
+  document.getElementById('quotes-grid').innerHTML = quotes.map(q=>`
+    <div class="quote-card reveal">
+      <div class="q-mark">"</div>
+      <p class="q-text">${q.text}</p>
+      <div class="q-author">— ${q.author}</div>
+    </div>`).join('');
+
+  const suvichars = [
+    { text:'संगठित समाज ही राष्ट्र की शक्ति है। जब हम एकजुट होते हैं तो हम अजेय होते हैं।', author:'— डॉ. केशवराव बलिराम हेडगेवार' },
+    { text:'राष्ट्र को जीवंत रखने के लिए, उसके हर नागरिक को समर्पित और कर्तव्यनिष्ठ होना चाहिए।', author:'— माधव सदाशिव गोलवलकर (गुरुजी)' },
+    { text:'स्वयंसेवक वह है जो बिना किसी स्वार्थ के, निस्वार्थ भाव से मातृभूमि की सेवा में समर्पित है।', author:'— RSS परंपरा' },
+    { text:'जब तक भारत माता की जय का नारा हमारे मन में है, तब तक हम अपराजेय हैं।', author:'— RSS प्रेरणा' },
+    { text:'सेवा ही परम धर्म है। समाज की सेवा ईश्वर की सेवा है।', author:'— भारतीय संस्कृति' },
+  ];
+  const sv = suvichars[new Date().getDate() % suvichars.length];
+  document.getElementById('suvichar-text').textContent = sv.text;
+  document.getElementById('suvichar-author').textContent = sv.author;
+  observeReveal();
+</script>
+</body>
+</html>

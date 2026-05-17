@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>स्वयंसेवक निर्देशिका – RSS भाटापारा</title>
+  <meta name="description" content="RSS भाटापारा के सभी स्वयंसेवकों की निर्देशिका।"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* ── MODAL ── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:2000; display:none; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px); }
+    .modal-overlay.open { display:flex; }
+    .modal { background:#fff; border-radius:24px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,0.3); animation:modal-in 0.3s ease; }
+    @keyframes modal-in { from{opacity:0;transform:translateY(30px) scale(0.97)} to{opacity:1;transform:none} }
+    .modal-header { background:linear-gradient(135deg,var(--brown),var(--brown-light)); padding:1.75rem 2rem 1.5rem; border-radius:24px 24px 0 0; position:relative; }
+    .modal-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--bhagwa),var(--bhagwa-dark)); display:flex; align-items:center; justify-content:center; font-size:1.6rem; font-weight:900; color:#fff; margin-bottom:1rem; border:3px solid rgba(255,107,0,0.4); }
+    .modal-name { font-size:1.3rem; font-weight:800; color:#fff; }
+    .modal-role { color:var(--bhagwa-light); font-size:0.85rem; font-weight:600; margin-top:0.2rem; }
+    .modal-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,0.15); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+    .modal-close:hover { background:rgba(255,255,255,0.3); }
+    .modal-body { padding:1.75rem 2rem; }
+    .modal-actions { display:flex; gap:0.75rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .action-btn { flex:1; min-width:120px; padding:0.7rem 1rem; border-radius:12px; border:none; font-family:inherit; font-size:0.85rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.4rem; transition:all 0.25s; text-decoration:none; }
+    .btn-call { background:#e8f5e9; color:#2e7d32; }
+    .btn-call:hover { background:#2e7d32; color:#fff; }
+    .btn-wa { background:#e3f2fd; color:#1565c0; }
+    .btn-wa:hover { background:#25d366; color:#fff; }
+    .btn-pdf { background:rgba(255,107,0,0.1); color:var(--bhagwa); }
+    .btn-pdf:hover { background:var(--bhagwa); color:#fff; }
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .detail-item { background:var(--cream); border-radius:12px; padding:0.85rem 1rem; }
+    .detail-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--bhagwa); margin-bottom:0.3rem; }
+    .detail-value { font-size:0.92rem; font-weight:600; color:var(--brown); }
+    .blood-badge { display:inline-block; padding:0.2rem 0.7rem; border-radius:20px; font-size:0.8rem; font-weight:800; }
+    .blood-A   { background:#fce4ec; color:#c62828; }
+    .blood-B   { background:#e3f2fd; color:#1565c0; }
+    .blood-AB  { background:#f3e5f5; color:#6a1b9a; }
+    .blood-O   { background:#e8f5e9; color:#2e7d32; }
+
+    /* ── CARD clickable ── */
+    .vol-card { cursor:pointer; }
+    .card-actions { display:flex; gap:0.5rem; margin-top:1rem; }
+    .card-action { flex:1; padding:0.45rem 0.5rem; border-radius:10px; border:none; font-family:inherit; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.3rem; transition:all 0.2s; text-decoration:none; }
+    .ca-call { background:#e8f5e9; color:#2e7d32; }
+    .ca-call:hover { background:#2e7d32; color:#fff; }
+    .ca-wa { background:#e3f2fd; color:#1565c0; }
+    .ca-wa:hover { background:#25d366; color:#fff; }
+    .ca-view { background:rgba(255,107,0,0.1); color:var(--bhagwa); }
+    .ca-view:hover { background:var(--bhagwa); color:#fff; }
+
+    /* ── FILTER BAR extra ── */
+    .filter-row-2 { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.25rem; }
+    .filter-row-2 select { padding:0.5rem 0.75rem; border:1.5px solid rgba(255,107,0,0.2); border-radius:var(--radius-sm); font-family:inherit; font-size:0.82rem; color:var(--brown); background:var(--cream); outline:none; cursor:pointer; }
+    .filter-row-2 select:focus { border-color:var(--bhagwa); }
+
+    /* ── PRINT / PDF styles ── */
+    @media print {
+      #navbar,#btt,.ticker,.modal-overlay,.card-actions,.search-bar,.filter-row-2,footer,.page-hero,.page-section>.container>.section-header { display:none!important; }
+      body { background:#fff!important; }
+      .page-section { padding:0!important; }
+      .grid-4 { display:table!important; width:100%!important; border-collapse:collapse!important; }
+      .vol-card { display:table-row!important; border:none!important; padding:0!important; box-shadow:none!important; transform:none!important; }
+      .vol-card::before { display:none!important; }
+      .vol-avatar,.vol-year { display:none!important; }
+      .vol-name,.vol-role,.vol-meta { display:table-cell!important; padding:0.4rem 0.6rem!important; border:1px solid #ddd!important; vertical-align:middle!important; font-size:0.78rem!important; }
+      /* inject print table header via JS */
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-emblem" style="background:transparent;padding:0;">
+        <svg viewBox="0 0 44 44" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="6" width="4" height="34" rx="2" fill="#FF6B00"/>
+          <polygon points="8,6 36,14 8,22" fill="#FF6B00"/>
+        </svg>
+      </div>
+      <div class="nav-brand-text"><h1>RSS भाटापारा</h1><p>राष्ट्रीय स्वयंसेवक संघ</p></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html"      class="nav-link">होम</a></li>
+      <li><a href="volunteers.html" class="nav-link">स्वयंसेवक</a></li>
+      <li><a href="shakha.html"     class="nav-link">शाखा</a></li>
+      <li><a href="events.html"     class="nav-link">कार्यक्रम</a></li>
+      <li><a href="prerna.html"     class="nav-link">प्रेरणा</a></li>
+      <li><a href="join.html"       class="nav-link" style="color:var(--bhagwa-light);">+ सदस्य जोड़ें</a></li>
+      <li><a href="admin.html"      class="nav-link">⚙ Admin</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="मेनू" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="ticker" style="margin-top:70px;">
+  <div class="ticker-track">
+    <span>👥 स्वयंसेवक निर्देशिका</span><span>🔱 भारत माता की जय</span>
+    <span>नए सदस्य जोड़ें – join.html</span><span>वंदे मातरम्</span>
+    <span>👥 स्वयंसेवक निर्देशिका</span><span>🔱 भारत माता की जय</span>
+    <span>नए सदस्य जोड़ें – join.html</span><span>वंदे मातरम्</span>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="page-hero-content">
+    <div class="page-tag">👥 स्वयंसेवक</div>
+    <h1 class="page-title">स्वयंसेवक <span>निर्देशिका</span></h1>
+    <p class="page-subtitle">कार्ड पर क्लिक करें – पूरी जानकारी, फ़ोन और WhatsApp की सुविधा।</p>
+    <div style="margin-top:1.25rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+      <a href="join.html" class="btn btn-primary btn-sm">+ नया सदस्य जोड़ें</a>
+      <button onclick="printAllSheet()" class="btn btn-outline btn-sm">🖨 सूची PDF (A4)</button>
+      <a href="admin.html" class="btn btn-outline btn-sm">⚙ Admin Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div style="background:#fff;padding:1.75rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
+  <div class="container" style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;text-align:center;">
+    <div><div style="font-size:1.8rem;font-weight:900;color:var(--bhagwa);" id="s-total">15</div><div style="font-size:0.7rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">कुल स्वयंसेवक</div></div>
+    <div><div style="font-size:1.8rem;font-weight:900;color:var(--bhagwa);" id="s-shown">15</div><div style="font-size:0.7rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">परिणाम</div></div>
+    <div><div style="font-size:1.8rem;font-weight:900;color:var(--bhagwa);">4</div><div style="font-size:0.7rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">शाखाएं</div></div>
+  </div>
+</div>
+
+<!-- DIRECTORY -->
+<section class="page-section" style="background:var(--cream);">
+  <div class="container">
+
+    <!-- Search + Filters Row 1 -->
+    <div class="search-bar">
+      <div class="search-wrap">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="search" id="vol-search" placeholder="नाम से खोजें…"/>
+      </div>
+      <div class="filter-wrap">
+        <select id="f-shakha"><option value="">सभी शाखाएं</option></select>
+      </div>
+      <div class="filter-wrap">
+        <select id="f-role"><option value="">सभी भूमिकाएं</option></select>
+      </div>
+    </div>
+
+    <!-- Extra Filters Row 2 -->
+    <div class="filter-row-2">
+      <select id="f-blood"><option value="">सभी रक्त समूह</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
+      <select id="f-vyavsay"><option value="">सभी व्यवसाय</option></select>
+      <select id="f-year"><option value="">सभी वर्ष</option></select>
+      <select id="f-area"><option value="">सभी वार्ड</option></select>
+      <button onclick="resetFilters()" style="padding:0.5rem 1rem;border-radius:20px;border:1.5px solid rgba(255,107,0,0.3);background:transparent;color:var(--bhagwa);font-family:inherit;font-size:0.82rem;font-weight:700;cursor:pointer;">✕ रीसेट</button>
+    </div>
+
+    <div class="grid-4" id="vol-grid">
+      <p style="color:#aaa;padding:2rem;grid-column:1/-1;text-align:center;">लोड हो रहा है…</p>
+    </div>
+  </div>
+</section>
+
+<!-- VOLUNTEER DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-avatar" id="m-avatar"></div>
+      <div class="modal-name" id="m-name"></div>
+      <div class="modal-role" id="m-role"></div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-actions">
+        <a id="m-call" href="#" class="action-btn btn-call">📞 कॉल करें</a>
+        <a id="m-wa"   href="#" class="action-btn btn-wa" target="_blank">💬 WhatsApp</a>
+        <button onclick="printMember()" class="action-btn btn-pdf">📄 PDF</button>
+      </div>
+      <div class="detail-grid" id="m-details"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><h3>🚩 RSS भाटापारा</h3><p>राष्ट्रीय स्वयंसेवक संघ, भाटापारा इकाई।<br/>संगठित समाज ही राष्ट्र की शक्ति है।</p></div>
+    <div class="footer-col"><h4>पृष्ठ</h4><ul>
+      <li><a href="index.html">होम</a></li><li><a href="volunteers.html">स्वयंसेवक</a></li>
+      <li><a href="shakha.html">शाखा</a></li><li><a href="events.html">कार्यक्रम</a></li>
+      <li><a href="prerna.html">प्रेरणा</a></li><li><a href="join.html">सदस्य जोड़ें</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>शाखाएं</h4><ul>
+      <li><a href="shakha.html">प्रभात शाखा</a></li><li><a href="shakha.html">उषा शाखा</a></li>
+      <li><a href="shakha.html">संध्या शाखा</a></li><li><a href="shakha.html">बाल शाखा</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>संपर्क</h4><ul>
+      <li><a href="#">RSS कार्यालय, भाटापारा</a></li><li><a href="#">छत्तीसगढ़, भारत</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 <span>RSS भाटापारा</span>. सर्वाधिकार सुरक्षित।</p>
+    <p>भारत माता की <span>जय 🇮🇳</span></p>
+  </div>
+</footer>
+<button id="btt" aria-label="ऊपर जाएं">
+  <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+</button>
+
+<script src="js/shared.js"></script>
+<script>
+let all = VOLUNTEERS_DATA, currentMember = null;
+
+function initials(n){ return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
+
+function bloodClass(bg){ const t=bg.replace(/[+-]/,''); return 'blood-'+t; }
+
+function render(list){
+  document.getElementById('s-shown').textContent = list.length;
+  const g = document.getElementById('vol-grid');
+  if(!list.length){ g.innerHTML='<p style="color:#aaa;padding:2rem;grid-column:1/-1;text-align:center;">कोई स्वयंसेवक नहीं मिला।</p>'; return; }
+  g.innerHTML = list.map(v=>`
+    <div class="vol-card reveal" onclick="openModal(${v.id})">
+      <div class="vol-year">${v.joining_year}</div>
+      <div class="vol-avatar">${initials(v.name)}</div>
+      <div class="vol-name">${v.name}</div>
+      <div class="vol-role">${v.role}</div>
+      <div class="vol-meta">
+        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3"/></svg>${v.area}</div>
+        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>${v.shakha}</div>
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <a class="card-action ca-call" href="tel:${v.contact}">📞 कॉल</a>
+        <a class="card-action ca-wa" href="https://wa.me/91${v.contact}" target="_blank">💬 WA</a>
+        <button class="card-action ca-view" onclick="openModal(${v.id})">👁 देखें</button>
+      </div>
+    </div>`).join('');
+  observeReveal();
+}
+
+function populate(){
+  const fS = document.getElementById('f-shakha');
+  const fR = document.getElementById('f-role');
+  const fV = document.getElementById('f-vyavsay');
+  const fY = document.getElementById('f-year');
+  const fA = document.getElementById('f-area');
+  [...new Set(all.map(v=>v.shakha))].sort().forEach(s=>fS.innerHTML+=`<option>${s}</option>`);
+  [...new Set(all.map(v=>v.role))].sort().forEach(r=>fR.innerHTML+=`<option>${r}</option>`);
+  [...new Set(all.map(v=>v.vyavsay))].sort().forEach(v=>fV.innerHTML+=`<option>${v}</option>`);
+  [...new Set(all.map(v=>v.joining_year))].sort().forEach(y=>fY.innerHTML+=`<option>${y}</option>`);
+  [...new Set(all.map(v=>v.area))].sort().forEach(a=>fA.innerHTML+=`<option>${a}</option>`);
+}
+
+function getFilters(){
+  return {
+    q:   document.getElementById('vol-search').value.toLowerCase(),
+    sh:  document.getElementById('f-shakha').value,
+    ro:  document.getElementById('f-role').value,
+    bl:  document.getElementById('f-blood').value,
+    vy:  document.getElementById('f-vyavsay').value,
+    yr:  document.getElementById('f-year').value,
+    ar:  document.getElementById('f-area').value,
+  };
+}
+
+function filter(){
+  const {q,sh,ro,bl,vy,yr,ar} = getFilters();
+  render(all.filter(v=>
+    v.name.toLowerCase().includes(q) &&
+    (!sh||v.shakha===sh) && (!ro||v.role===ro) &&
+    (!bl||v.blood_group===bl) && (!vy||v.vyavsay===vy) &&
+    (!yr||v.joining_year===yr) && (!ar||v.area===ar)
+  ));
+}
+
+function resetFilters(){
+  ['vol-search','f-shakha','f-role','f-blood','f-vyavsay','f-year','f-area'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el.tagName==='INPUT') el.value=''; else el.value='';
+  });
+  render(all);
+}
+
+// MODAL
+function openModal(id){
+  const v = all.find(x=>x.id===id); if(!v) return;
+  currentMember = v;
+  document.getElementById('m-avatar').textContent = initials(v.name);
+  document.getElementById('m-name').textContent   = v.name;
+  document.getElementById('m-role').textContent   = v.role + ' · ' + v.shakha;
+  document.getElementById('m-call').href = 'tel:' + v.contact;
+  document.getElementById('m-wa').href   = 'https://wa.me/91' + v.contact + '?text=' + encodeURIComponent('नमस्ते ' + v.name + ' जी! RSS भाटापारा की ओर से आपसे संपर्क किया जा रहा है।');
+  document.getElementById('m-details').innerHTML = `
+    <div class="detail-item"><div class="detail-label">पूरा नाम</div><div class="detail-value">${v.name}</div></div>
+    <div class="detail-item"><div class="detail-label">भूमिका</div><div class="detail-value">${v.role}</div></div>
+    <div class="detail-item"><div class="detail-label">शाखा</div><div class="detail-value">${v.shakha}</div></div>
+    <div class="detail-item"><div class="detail-label">वार्ड / क्षेत्र</div><div class="detail-value">${v.area}</div></div>
+    <div class="detail-item"><div class="detail-label">संपर्क</div><div class="detail-value">${v.contact}</div></div>
+    <div class="detail-item"><div class="detail-label">सम्मिलन वर्ष</div><div class="detail-value">${v.joining_year}</div></div>
+    <div class="detail-item"><div class="detail-label">रक्त समूह</div><div class="detail-value"><span class="blood-badge ${bloodClass(v.blood_group)}">${v.blood_group}</span></div></div>
+    <div class="detail-item"><div class="detail-label">व्यवसाय</div><div class="detail-value">${v.vyavsay}</div></div>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){ if(e.target===document.getElementById('modal-overlay')) closeModalDirect(); }
+function closeModalDirect(){ document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModalDirect(); });
+
+function printMember(){
+  if(!currentMember) return;
+  const v = currentMember;
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक – ${v.name}</title>
+  <style>
+    @page{size:A5 portrait;margin:12mm}
+    body{font-family:Arial,sans-serif;color:#3D1C00;font-size:11pt}
+    .header{display:flex;align-items:center;gap:12px;border-bottom:3px solid #FF6B00;padding-bottom:8px;margin-bottom:10px}
+    .flag svg{width:36px;height:36px}
+    .org{font-size:9pt;color:#888}
+    h2{color:#FF6B00;font-size:14pt;margin:0}
+    table{width:100%;border-collapse:collapse;margin-top:8px;font-size:10pt}
+    td{padding:5px 8px;border:1px solid #e0c8a0}
+    td:first-child{font-weight:700;color:#FF6B00;background:#fff8f0;width:38%}
+    .footer{margin-top:10px;font-size:8pt;color:#bbb;text-align:right}
+    .badge{background:#FF6B00;color:#fff;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;flex-shrink:0}
+  </style></head><body>
+  <div class="header">
+    <svg viewBox="0 0 44 44" width="36" height="36"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
+    <div style="flex:1"><h2>${v.name}</h2><div class="org">${v.role} &nbsp;·&nbsp; ${v.shakha} &nbsp;·&nbsp; RSS भाटापारा</div></div>
+    <div class="badge">${initials(v.name)}</div>
+  </div>
+  <table>
+    <tr><td>पूरा नाम</td><td>${v.name}</td></tr>
+    <tr><td>शाखा</td><td>${v.shakha}</td></tr>
+    <tr><td>भूमिका</td><td>${v.role}</td></tr>
+    <tr><td>वार्ड / क्षेत्र</td><td>${v.area}</td></tr>
+    <tr><td>मोबाइल</td><td>${v.contact}</td></tr>
+    <tr><td>रक्त समूह</td><td><strong>${v.blood_group}</strong></td></tr>
+    <tr><td>व्यवसाय</td><td>${v.vyavsay}</td></tr>
+    <tr><td>सम्मिलन वर्ष</td><td>${v.joining_year}</td></tr>
+  </table>
+  <div class="footer">मुद्रित: ${new Date().toLocaleDateString('hi-IN')} &nbsp;|&nbsp; RSS भाटापारा &nbsp;|&nbsp; भारत माता की जय 🇮🇳</div>
+  <script>window.onload=()=>window.print();<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+function printAllSheet(){
+  const list = all;
+  const w = window.open('','_blank');
+  const rows = list.map((v,i)=>`<tr style="background:${i%2===0?'#fff8f0':'#fff'}">
+    <td>${i+1}</td><td><strong>${v.name}</strong></td><td>${v.shakha}</td><td>${v.role}</td>
+    <td>${v.area}</td><td>${v.contact}</td><td>${v.blood_group}</td><td>${v.vyavsay}</td><td>${v.joining_year}</td>
+  </tr>`).join('');
+  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक सूची – RSS भाटापारा</title>
+  <style>
+    @page{size:A4 landscape;margin:10mm}
+    body{font-family:Arial,sans-serif;color:#3D1C00;font-size:8.5pt}
+    h2{color:#FF6B00;font-size:13pt;margin:0 0 4px}
+    .sub{font-size:8pt;color:#888;margin-bottom:8px}
+    table{width:100%;border-collapse:collapse;font-size:7.5pt}
+    th{background:#FF6B00;color:#fff;padding:5px 6px;text-align:left;white-space:nowrap}
+    td{padding:4px 6px;border-bottom:1px solid #eee;white-space:nowrap}
+    tr:last-child td{border-bottom:none}
+    .footer{margin-top:8px;font-size:7pt;color:#bbb;text-align:right}
+  </style></head><body>
+  <div style="display:flex;align-items:center;gap:10px;border-bottom:3px solid #FF6B00;padding-bottom:6px;margin-bottom:8px">
+    <svg viewBox="0 0 44 44" width="30" height="30"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
+    <div><h2>RSS भाटापारा – स्वयंसेवक सूची</h2><div class="sub">कुल: ${list.length} स्वयंसेवक &nbsp;|&nbsp; मुद्रित: ${new Date().toLocaleDateString('hi-IN')}</div></div>
+  </div>
+  <table><thead><tr>
+    <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th><th>वार्ड</th><th>मोबाइल</th><th>रक्त समूह</th><th>व्यवसाय</th><th>वर्ष</th>
+  </tr></thead><tbody>${rows}</tbody></table>
+  <div class="footer">RSS भाटापारा &nbsp;|&nbsp; भारत माता की जय 🇮🇳</div>
+  <script>window.onload=()=>window.print();<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+['vol-search','f-shakha','f-role','f-blood','f-vyavsay','f-year','f-area'].forEach(id=>
+  document.getElementById(id).addEventListener(id==='vol-search'?'input':'change', filter)
+);
+
+populate();
+render(all);
+</script>
+</body>
+</html>
