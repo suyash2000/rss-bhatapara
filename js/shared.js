@@ -84,28 +84,30 @@ function parseCSV(text) {
 
 // ── Inline Data ───────────────────────────────────────────────────────────────
 const VOLUNTEERS_DATA = [
-  { id:1,  name:'राहुल शर्मा',    area:'वार्ड 5',  shakha:'प्रभात शाखा',  role:'कार्यकर्ता',    joining_year:'2021', contact:'9876543210', blood_group:'B+',  vyavsay:'शिक्षक' },
-  { id:2,  name:'अमित पटेल',     area:'वार्ड 3',  shakha:'उषा शाखा',    role:'शाखा प्रमुख',  joining_year:'2018', contact:'9845123456', blood_group:'O+',  vyavsay:'व्यापारी' },
-  { id:3,  name:'विकास सिंह',    area:'वार्ड 7',  shakha:'संध्या शाखा', role:'मुख्य शिक्षक', joining_year:'2019', contact:'9712345678', blood_group:'A+',  vyavsay:'कृषि' },
-  { id:4,  name:'सुरेश यादव',    area:'वार्ड 1',  shakha:'प्रभात शाखा', role:'कार्यकर्ता',    joining_year:'2020', contact:'9632147852', blood_group:'AB+', vyavsay:'सरकारी नौकरी' },
-  { id:5,  name:'मनोज वर्मा',    area:'वार्ड 9',  shakha:'उषा शाखा',    role:'गणवेश प्रमुख', joining_year:'2017', contact:'9587412369', blood_group:'B-',  vyavsay:'इंजीनियर' },
-  { id:6,  name:'अजय कुमार',     area:'वार्ड 2',  shakha:'संध्या शाखा', role:'कार्यकर्ता',    joining_year:'2022', contact:'9456321478', blood_group:'O-',  vyavsay:'छात्र' },
-  { id:7,  name:'देवेन्द्र तिवारी',area:'वार्ड 6', shakha:'प्रभात शाखा', role:'शाखा प्रमुख',  joining_year:'2016', contact:'9321456987', blood_group:'A-',  vyavsay:'डॉक्टर' },
-  { id:8,  name:'रमेश चंद्रा',   area:'वार्ड 4',  shakha:'बाल शाखा',    role:'बाल शिक्षक',   joining_year:'2023', contact:'9214587632', blood_group:'B+',  vyavsay:'शिक्षक' },
-  { id:9,  name:'प्रकाश गुप्ता', area:'वार्ड 8',  shakha:'उषा शाखा',    role:'कार्यकर्ता',    joining_year:'2020', contact:'9147852369', blood_group:'AB-', vyavsay:'व्यापारी' },
-  { id:10, name:'नितिन मिश्रा',  area:'वार्ड 10', shakha:'संध्या शाखा', role:'नगर प्रमुख',   joining_year:'2015', contact:'9036985214', blood_group:'O+',  vyavsay:'अधिवक्ता' },
-  { id:11, name:'संजय सोनी',     area:'वार्ड 5',  shakha:'बाल शाखा',    role:'बाल शिक्षक',   joining_year:'2021', contact:'9925874136', blood_group:'A+',  vyavsay:'छात्र' },
-  { id:12, name:'कमलेश राव',     area:'वार्ड 3',  shakha:'प्रभात शाखा', role:'कार्यकर्ता',    joining_year:'2022', contact:'9814523697', blood_group:'B+',  vyavsay:'कृषि' },
-  { id:13, name:'हरीश पांडेय',   area:'वार्ड 7',  shakha:'उषा शाखा',    role:'सेवा प्रमुख',  joining_year:'2019', contact:'9703214785', blood_group:'O-',  vyavsay:'सरकारी नौकरी' },
-  { id:14, name:'विनोद साहू',    area:'वार्ड 1',  shakha:'संध्या शाखा', role:'कार्यकर्ता',    joining_year:'2023', contact:'9592145873', blood_group:'A-',  vyavsay:'व्यापारी' },
-  { id:15, name:'अरुण तिवारी',   area:'वार्ड 9',  shakha:'प्रभात शाखा', role:'मुख्य शिक्षक', joining_year:'2018', contact:'9481236974', blood_group:'AB+', vyavsay:'इंजीनियर' },
+  { id:1,  name:'राहुल शर्मा',      area:'वार्ड 5',  shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2021', contact:'9876543210', blood_group:'B+',  vyavsay:'शिक्षक' },
+  { id:2,  name:'अमित पटेल',        area:'वार्ड 3',  shakha:'यज्ञ शाला शाखा',     role:'शाखा प्रमुख',  joining_year:'2018', contact:'9845123456', blood_group:'O+',  vyavsay:'व्यापारी' },
+  { id:3,  name:'विकास सिंह',       area:'वार्ड 7',  shakha:'लवकुश शाखा',         role:'मुख्य शिक्षक', joining_year:'2019', contact:'9712345678', blood_group:'A+',  vyavsay:'कृषि' },
+  { id:4,  name:'सुरेश यादव',       area:'वार्ड 1',  shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2020', contact:'9632147852', blood_group:'AB+', vyavsay:'सरकारी नौकरी' },
+  { id:5,  name:'मनोज वर्मा',       area:'वार्ड 9',  shakha:'माता देवाला शाखा',   role:'गणवेश प्रमुख', joining_year:'2017', contact:'9587412369', blood_group:'B-',  vyavsay:'इंजीनियर' },
+  { id:6,  name:'अजय कुमार',        area:'वार्ड 2',  shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2022', contact:'9456321478', blood_group:'O-',  vyavsay:'छात्र' },
+  { id:7,  name:'देवेन्द्र तिवारी', area:'वार्ड 6',  shakha:'केशव प्रभात शाखा',   role:'शाखा प्रमुख',  joining_year:'2016', contact:'9321456987', blood_group:'A-',  vyavsay:'डॉक्टर' },
+  { id:8,  name:'रमेश चंद्रा',      area:'वार्ड 4',  shakha:'पटपर शाखा',          role:'बाल शिक्षक',   joining_year:'2023', contact:'9214587632', blood_group:'B+',  vyavsay:'शिक्षक' },
+  { id:9,  name:'प्रकाश गुप्ता',    area:'वार्ड 8',  shakha:'यज्ञ शाला शाखा',     role:'कार्यकर्ता',    joining_year:'2020', contact:'9147852369', blood_group:'AB-', vyavsay:'व्यापारी' },
+  { id:10, name:'नितिन मिश्रा',     area:'वार्ड 10', shakha:'लवकुश शाखा',         role:'नगर प्रमुख',   joining_year:'2015', contact:'9036985214', blood_group:'O+',  vyavsay:'अधिवक्ता' },
+  { id:11, name:'संजय सोनी',        area:'वार्ड 5',  shakha:'पटपर शाखा',          role:'बाल शिक्षक',   joining_year:'2021', contact:'9925874136', blood_group:'A+',  vyavsay:'छात्र' },
+  { id:12, name:'कमलेश राव',        area:'वार्ड 3',  shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2022', contact:'9814523697', blood_group:'B+',  vyavsay:'कृषि' },
+  { id:13, name:'हरीश पांडेय',      area:'वार्ड 7',  shakha:'माता देवाला शाखा',   role:'सेवा प्रमुख',  joining_year:'2019', contact:'9703214785', blood_group:'O-',  vyavsay:'सरकारी नौकरी' },
+  { id:14, name:'विनोद साहू',       area:'वार्ड 1',  shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2023', contact:'9592145873', blood_group:'A-',  vyavsay:'व्यापारी' },
+  { id:15, name:'अरुण तिवारी',      area:'वार्ड 9',  shakha:'यज्ञ शाला शाखा',     role:'मुख्य शिक्षक', joining_year:'2018', contact:'9481236974', blood_group:'AB+', vyavsay:'इंजीनियर' },
 ];
 
 const SHAKHA_DATA = [
-  { id:1, name:'प्रभात शाखा', timing:'प्रात: 6:00 – 7:00', address:'रामलीला मैदान, वार्ड 5, भाटापारा', contact_person:'देवेन्द्र तिवारी', contact:'9321456987', schedule:['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'], activities:['शारीरिक अभ्यास','गीत-गान','बौद्धिक'], strength:42 },
-  { id:2, name:'उषा शाखा', timing:'प्रात: 5:30 – 6:30', address:'नेहरू चौक, वार्ड 3, भाटापारा', contact_person:'अमित पटेल', contact:'9845123456', schedule:['सोमवार','बुधवार','शुक्रवार','शनिवार'], activities:['योग','सूर्य नमस्कार','प्राणायाम'], strength:35 },
-  { id:3, name:'संध्या शाखा', timing:'सायं 5:30 – 6:30', address:'शिव मंदिर प्रांगण, वार्ड 7, भाटापारा', contact_person:'विकास सिंह', contact:'9712345678', schedule:['मंगलवार','गुरुवार','शनिवार'], activities:['खेल','व्यायाम','सांस्कृतिक गतिविधियाँ'], strength:28 },
-  { id:4, name:'बाल शाखा', timing:'सायं 4:00 – 5:00', address:'राम मंदिर परिसर, वार्ड 1, भाटापारा', contact_person:'रमेश चंद्रा', contact:'9214587632', schedule:['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार'], activities:['बाल खेल','देशभक्ति गीत','कहानी'], strength:56 }
+  { id:1, name:'केशव प्रभात शाखा',   timing:'प्रात: 6:00 – 7:00', address:'केशव भवन, भाटापारा',            contact_person:'देवेन्द्र तिवारी', contact:'9321456987', schedule:['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'], activities:['शारीरिक अभ्यास','गीत-गान','बौद्धिक'], strength:42, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
+  { id:2, name:'यज्ञ शाला शाखा',     timing:'प्रात: 5:30 – 6:30', address:'यज्ञ शाला परिसर, भाटापारा',     contact_person:'अमित पटेल',        contact:'9845123456', schedule:['सोमवार','बुधवार','शुक्रवार','शनिवार'], activities:['योग','सूर्य नमस्कार','प्राणायाम'], strength:35, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
+  { id:3, name:'लवकुश शाखा',         timing:'प्रात: 6:30 – 7:30', address:'लवकुश मैदान, भाटापारा',         contact_person:'विकास सिंह',       contact:'9712345678', schedule:['मंगलवार','गुरुवार','शनिवार'], activities:['खेल','व्यायाम','सांस्कृतिक गतिविधियाँ'], strength:28, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
+  { id:4, name:'माता देवाला शाखा',   timing:'सायं 5:00 – 6:00',   address:'माता देवाला मंदिर, भाटापारा',   contact_person:'मनोज वर्मा',       contact:'9587412369', schedule:['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार'], activities:['बाल खेल','देशभक्ति गीत','कहानी'], strength:38, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
+  { id:5, name:'गायत्री मंदिर शाखा', timing:'प्रात: 6:00 – 7:00', address:'गायत्री मंदिर परिसर, भाटापारा', contact_person:'अजय कुमार',        contact:'9456321478', schedule:['सोमवार','बुधवार','शुक्रवार'], activities:['शारीरिक अभ्यास','संस्कार','भजन'], strength:32, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
+  { id:6, name:'पटपर शाखा',          timing:'सायं 4:30 – 5:30',   address:'पटपर मोहल्ला, भाटापारा',        contact_person:'रमेश चंद्रा',      contact:'9214587632', schedule:['मंगलवार','गुरुवार','शनिवार'], activities:['बाल शिक्षा','खेल','देशभक्ति'], strength:25, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
 ];
 
 const EVENTS_DATA = [
