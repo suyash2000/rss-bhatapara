@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>स्वयंसेवक निर्देशिका – RSS भाटापारा</title>
-  <meta name="description" content="RSS भाटापारा के सभी स्वयंसेवकों की निर्देशिका।"/>
+  <title>स्वयंसेवक – RSS भाटापारा</title>
+  <meta name="description" content="RSS भाटापारा के सभी स्वयंसेवकों की सूची और विवरण।"/>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
     /* ── MODAL ── */
@@ -97,9 +97,9 @@
 
 <div class="ticker" style="margin-top:70px;">
   <div class="ticker-track">
-    <span>👥 स्वयंसेवक निर्देशिका</span><span>🔱 भारत माता की जय</span>
+    <span>👥 स्वयंसेवक</span><span>🔱 भारत माता की जय</span>
     <span>नए सदस्य जोड़ें – join.html</span><span>वंदे मातरम्</span>
-    <span>👥 स्वयंसेवक निर्देशिका</span><span>🔱 भारत माता की जय</span>
+    <span>👥 स्वयंसेवक</span><span>🔱 भारत माता की जय</span>
     <span>नए सदस्य जोड़ें – join.html</span><span>वंदे मातरम्</span>
   </div>
 </div>
@@ -344,27 +344,47 @@ function printMember(){
 }
 
 function printAllSheet(){
-  const list = all;
+  const list = (typeof filtered !== 'undefined' && filtered.length) ? filtered : all;
+  // Build active filter description for PDF header
+  const fDesc = [];
+  const fShakha = document.getElementById('f-shakha').value;
+  const fRole   = document.getElementById('f-role') ? document.getElementById('f-role').value : '';
+  const fBlood  = document.getElementById('f-blood').value;
+  const fVyav   = document.getElementById('f-vyavsay').value;
+  const fYear   = document.getElementById('f-year').value;
+  const fArea   = document.getElementById('f-area').value;
+  const fSearch = document.getElementById('vol-search').value.trim();
+  if(fSearch)  fDesc.push('खोज: ' + fSearch);
+  if(fShakha)  fDesc.push('शाखा: ' + fShakha);
+  if(fRole)    fDesc.push('भूमिका: ' + fRole);
+  if(fBlood)   fDesc.push('रक्त समूह: ' + fBlood);
+  if(fVyav)    fDesc.push('व्यवसाय: ' + fVyav);
+  if(fYear)    fDesc.push('वर्ष: ' + fYear);
+  if(fArea)    fDesc.push('वार्ड: ' + fArea);
+  const filterLine = fDesc.length ? 'फ़िल्टर: ' + fDesc.join(' | ') : 'संपूर्ण सूची';
   const w = window.open('','_blank');
   const rows = list.map((v,i)=>`<tr style="background:${i%2===0?'#fff8f0':'#fff'}">
     <td>${i+1}</td><td><strong>${v.name}</strong></td><td>${v.shakha}</td><td>${v.role}</td>
     <td>${v.area}</td><td>${v.contact}</td><td>${v.blood_group}</td><td>${v.vyavsay}</td><td>${v.joining_year}</td>
   </tr>`).join('');
-  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक सूची – RSS भाटापारा</title>
+  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक – RSS भाटापारा</title>
   <style>
     @page{size:A4 landscape;margin:10mm}
     body{font-family:Arial,sans-serif;color:#3D1C00;font-size:8.5pt}
-    h2{color:#FF6B00;font-size:13pt;margin:0 0 4px}
-    .sub{font-size:8pt;color:#888;margin-bottom:8px}
+    h2{color:#FF6B00;font-size:13pt;margin:0 0 2px}
+    .sub{font-size:8pt;color:#888;margin-bottom:2px}
+    .filter-tag{font-size:7.5pt;color:#FF6B00;background:#fff8f0;border:1px solid #FF9A4D;border-radius:4px;padding:1px 6px;display:inline-block;margin-bottom:6px;}
     table{width:100%;border-collapse:collapse;font-size:7.5pt}
     th{background:#FF6B00;color:#fff;padding:5px 6px;text-align:left;white-space:nowrap}
     td{padding:4px 6px;border-bottom:1px solid #eee;white-space:nowrap}
     tr:last-child td{border-bottom:none}
     .footer{margin-top:8px;font-size:7pt;color:#bbb;text-align:right}
   </style></head><body>
-  <div style="display:flex;align-items:center;gap:10px;border-bottom:3px solid #FF6B00;padding-bottom:6px;margin-bottom:8px">
+  <div style="display:flex;align-items:center;gap:10px;border-bottom:3px solid #FF6B00;padding-bottom:6px;margin-bottom:6px">
     <svg viewBox="0 0 44 44" width="30" height="30"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
-    <div><h2>RSS भाटापारा – स्वयंसेवक सूची</h2><div class="sub">कुल: ${list.length} स्वयंसेवक &nbsp;|&nbsp; मुद्रित: ${new Date().toLocaleDateString('hi-IN')}</div></div>
+    <div><h2>RSS भाटापारा – स्वयंसेवक सूची</h2>
+    <div class="sub">कुल: ${list.length} स्वयंसेवक &nbsp;|&nbsp; मुद्रित: ${new Date().toLocaleDateString('hi-IN')}</div>
+    <span class="filter-tag">${filterLine}</span></div>
   </div>
   <table><thead><tr>
     <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th><th>वार्ड</th><th>मोबाइल</th><th>रक्त समूह</th><th>व्यवसाय</th><th>वर्ष</th>
