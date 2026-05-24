@@ -312,6 +312,7 @@ function renderTable(list){
           <a class="ra-btn ra-wa" href="https://wa.me/91${v.contact}" target="_blank">💬</a>
           <button class="ra-btn ra-pdf" onclick="printRow(${v.id})">PDF</button>
           <button class="ra-btn ra-edit" onclick="openEditModal(${v.id})">✏️</button>
+          <button class="ra-btn ra-edit" onclick="deleteVolunteer(${v.id})" style="background:#ffebee; color:#c62828;">🗑️</button>
         </div>
       </td>
     </tr>`).join('');
@@ -502,6 +503,30 @@ async function rejectVolunteer(id) {
     const resData = await res.json();
     if (resData.success) {
       alert('पंजीकरण अस्वीकृत कर दिया गया है।');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + resData.message);
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट करने में विफल।');
+  }
+}
+
+async function deleteVolunteer(id) {
+  if (!confirm('क्या आप इस स्वयंसेवक को हमेशा के लिए हटाना चाहते हैं?')) return;
+  
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const actionUrl = isLocal ? '/api/delete-volunteer' : '/.netlify/functions/delete-volunteer';
+  
+  try {
+    const res = await fetch(actionUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id })
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert('स्वयंसेवक हटा दिया गया है!');
       location.reload();
     } else {
       alert('त्रुटि: ' + resData.message);

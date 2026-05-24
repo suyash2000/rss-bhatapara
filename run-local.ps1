@@ -554,6 +554,77 @@ try {
             $response.ContentLength64 = $bytes.Length
             $response.ContentType = "application/json; charset=utf-8"
             $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/delete-volunteer") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+            
+            try {
+                $data = ConvertFrom-Json $body
+                $id = [int]$data.id
+                
+                $sharedJsPath = Join-Path (Get-Location) "js\shared.js"
+                $csvPath = Join-Path (Get-Location) "data\volunteers.csv"
+                
+                if (Test-Path $sharedJsPath) {
+                    $lines = [System.IO.File]::ReadAllLines($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $idRegex = "\bid:\s*$id\b"
+                    
+                    # Locate and remove from VOLUNTEERS_DATA
+                    $foundLineIndex = -1
+                    $insideVolunteers = $false
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Contains("const VOLUNTEERS_DATA = [")) {
+                            $insideVolunteers = $true
+                        }
+                        if ($insideVolunteers -and $lines[$i] -match $idRegex) {
+                            $foundLineIndex = $i
+                            break
+                        }
+                        if ($insideVolunteers -and $lines[$i].Trim() -eq "];") {
+                            $insideVolunteers = $false
+                        }
+                    }
+                    
+                    if ($foundLineIndex -ne -1) {
+                        $newLines = @()
+                        for ($i = 0; $i -lt $lines.Length; $i++) {
+                            if ($i -eq $foundLineIndex) {
+                                continue
+                            }
+                            $newLines += $lines[$i]
+                        }
+                        [System.IO.File]::WriteAllLines($sharedJsPath, $newLines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Deleted active volunteer ID $id" -ForegroundColor Yellow
+                        
+                        # Re-sync volunteers.csv
+                        $finalContent = [System.IO.File]::ReadAllText($sharedJsPath, [System.Text.Encoding]::UTF8)
+                        if ($finalContent -match 'const VOLUNTEERS_DATA = \[(?s)(.*?)\];') {
+                            $block = $Matches[1]
+                            $itemMatches = [regex]::Matches($block, '(?s)\{\s*id:\s*(?<id>\d+),\s*name:\s*''(?<name>.*?)'',\s*basti:\s*''(?<basti>.*?)'',\s*area:\s*''(?<area>.*?)'',\s*shakha:\s*''(?<shakha>.*?)'',\s*role:\s*''(?<role>.*?)'',\s*joining_year:\s*''(?<year>.*?)'',\s*contact:\s*''(?<contact>.*?)'',\s*blood_group:\s*''(?<blood>.*?)'',\s*vyavsay:\s*''(?<vyavsay>.*?)'',\s*gannayak:\s*''(?<gannayak>.*?)'',\s*ganvesh:\s*''(?<ganvesh>.*?)''\s*\}')
+                            $csvLines = @("name,basti,area,shakha,role,joining_year,contact,blood_group,vyavsay,gannayak,ganvesh")
+                            foreach ($m in $itemMatches) {
+                                $csvLines += "$($m.Groups['name'].Value),$($m.Groups['basti'].Value),$($m.Groups['area'].Value),$($m.Groups['shakha'].Value),$($m.Groups['role'].Value),$($m.Groups['year'].Value),$($m.Groups['contact'].Value),$($m.Groups['blood'].Value),$($m.Groups['vyavsay'].Value),$($m.Groups['gannayak'].Value),$($m.Groups['ganvesh'].Value)"
+                            }
+                            [System.IO.File]::WriteAllLines($csvPath, $csvLines, [System.Text.Encoding]::UTF8)
+                            Write-Host " -> Synced and updated volunteers.csv after deletion" -ForegroundColor Yellow
+                        }
+                    }
+                }
+                
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Volunteer Deleted)" -ForegroundColor Green
+            } catch {
+                $responseBody = '{"success": false, "message": "Bad request"}'
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+            
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
         } else {
             # Static files
             $relPath = $localPath.TrimStart('/')
