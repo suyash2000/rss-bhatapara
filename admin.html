@@ -120,6 +120,25 @@
       </div>
     </div>
 
+    <!-- PENDING APPROVALS TABLE -->
+    <div class="table-card" id="pending-card" style="display:none; border-left:4px solid #ff9800; margin-bottom:2rem;">
+      <div class="table-toolbar" style="background:#fff3e0;">
+        <h3 style="color:#e65100;">⏳ लंबित पंजीकरण (Pending Approvals)</h3>
+        <span id="pending-count-badge" style="background:#ff9800; color:#fff; font-size:0.75rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:20px;">0</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr style="background:#fff8f0;">
+              <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th>
+              <th>वार्ड</th><th>संपर्क</th><th>व्यवसाय</th><th>गणवेश</th><th>कार्रवाई</th>
+            </tr>
+          </thead>
+          <tbody id="pending-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- TABLE -->
     <div class="table-card">
       <div class="table-toolbar">
@@ -236,6 +255,38 @@ function buildDash(){
   const sel = document.getElementById('admin-shakha');
   [...new Set(VOLUNTEERS_DATA.map(v=>v.shakha))].sort().forEach(s=>sel.innerHTML+=`<option>${s}</option>`);
 
+  // Pending table population
+  const pendingTbody = document.getElementById('pending-tbody');
+  const pendingCard = document.getElementById('pending-card');
+  const pendingBadge = document.getElementById('pending-count-badge');
+  
+  const hasPending = typeof PENDING_VOLUNTEERS_DATA !== 'undefined' && PENDING_VOLUNTEERS_DATA.length > 0;
+  if (hasPending) {
+    pendingCard.style.display = 'block';
+    pendingBadge.textContent = PENDING_VOLUNTEERS_DATA.length;
+    pendingTbody.innerHTML = PENDING_VOLUNTEERS_DATA.map((v, i) => `
+      <tr>
+        <td data-label="#">${i+1}</td>
+        <td data-label="नाम"><strong>${v.name}</strong></td>
+        <td data-label="शाखा">${v.shakha}</td>
+        <td data-label="भूमिका">${v.role || '—'}</td>
+        <td data-label="वार्ड">${v.area}</td>
+        <td data-label="संपर्क">${v.contact}</td>
+        <td data-label="व्यवसाय">${v.vyavsay || '—'}</td>
+        <td data-label="गणवेश">${v.ganvesh}</td>
+        <td data-label="कार्रवाई">
+          <div class="row-actions">
+            <button class="ra-btn ra-call" onclick="approveVolunteer(${v.id})" style="background:#e8f5e9; color:#2e7d32; padding:0.35rem 0.6rem; font-weight:700;">✔️ स्वीकृत</button>
+            <button class="ra-btn ra-edit" onclick="openEditModal(${v.id}, true)" style="background:rgba(77,20,0,0.08); color:var(--brown); padding:0.35rem 0.6rem; font-weight:700;">✏️ बदलें</button>
+            <button class="ra-btn ra-edit" onclick="rejectVolunteer(${v.id})" style="background:#ffebee; color:#c62828; padding:0.35rem 0.6rem; font-weight:700;">❌ अस्वीकृत</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  } else {
+    pendingCard.style.display = 'none';
+  }
+
   renderTable(VOLUNTEERS_DATA);
 }
 
@@ -261,6 +312,7 @@ function renderTable(list){
           <a class="ra-btn ra-wa" href="https://wa.me/91${v.contact}" target="_blank">💬</a>
           <button class="ra-btn ra-pdf" onclick="printRow(${v.id})">PDF</button>
           <button class="ra-btn ra-edit" onclick="openEditModal(${v.id})">✏️</button>
+          <button class="ra-btn ra-edit" onclick="deleteVolunteer(${v.id})" style="background:#ffebee; color:#c62828;">🗑️</button>
         </div>
       </td>
     </tr>`).join('');
@@ -334,10 +386,12 @@ function exportCSV(){
   a.click();
 }
 
-function openEditModal(id) {
-  const v = VOLUNTEERS_DATA.find(x => x.id === id);
+function openEditModal(id, isPending = false) {
+  const dataset = isPending ? PENDING_VOLUNTEERS_DATA : VOLUNTEERS_DATA;
+  const v = dataset.find(x => x.id === id);
   if (!v) return;
   document.getElementById('edit-id').value = v.id;
+  document.getElementById('edit-is-pending').value = isPending ? "true" : "false";
   document.getElementById('edit-name').value = v.name || '';
   document.getElementById('edit-contact').value = v.contact || '';
   document.getElementById('edit-shakha').value = v.shakha || '';
@@ -360,6 +414,7 @@ function closeEditModal() {
 async function handleEditSubmit(e) {
   e.preventDefault();
   const id = parseInt(document.getElementById('edit-id').value);
+  const isPending = document.getElementById('edit-is-pending').value === "true";
   const data = {
     id: id,
     name: document.getElementById('edit-name').value,
@@ -381,7 +436,12 @@ async function handleEditSubmit(e) {
   
   try {
     const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    const actionUrl = isLocal ? '/api/edit-volunteer' : '/.netlify/functions/edit-volunteer';
+    let actionUrl;
+    if (isPending) {
+      actionUrl = isLocal ? '/api/edit-pending-volunteer' : '/.netlify/functions/edit-pending-volunteer';
+    } else {
+      actionUrl = isLocal ? '/api/edit-volunteer' : '/.netlify/functions/edit-volunteer';
+    }
 
     const res = await fetch(actionUrl, {
       method: 'POST',
@@ -403,6 +463,78 @@ async function handleEditSubmit(e) {
     closeEditModal();
   }
 }
+
+async function approveVolunteer(id) {
+  if (!confirm('क्या आप इस स्वयंसेवक पंजीकरण को स्वीकृत करना चाहते हैं?')) return;
+  
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const actionUrl = isLocal ? '/api/approve-volunteer' : '/.netlify/functions/approve-volunteer';
+  
+  try {
+    const res = await fetch(actionUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id })
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert('स्वयंसेवक स्वीकृत कर दिया गया है!');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + resData.message);
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट करने में विफल।');
+  }
+}
+
+async function rejectVolunteer(id) {
+  if (!confirm('क्या आप इस स्वयंसेवक पंजीकरण को अस्वीकृत/हटाना चाहते हैं?')) return;
+  
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const actionUrl = isLocal ? '/api/reject-volunteer' : '/.netlify/functions/reject-volunteer';
+  
+  try {
+    const res = await fetch(actionUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id })
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert('पंजीकरण अस्वीकृत कर दिया गया है।');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + resData.message);
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट करने में विफल।');
+  }
+}
+
+async function deleteVolunteer(id) {
+  if (!confirm('क्या आप इस स्वयंसेवक को हमेशा के लिए हटाना चाहते हैं?')) return;
+  
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const actionUrl = isLocal ? '/api/delete-volunteer' : '/.netlify/functions/delete-volunteer';
+  
+  try {
+    const res = await fetch(actionUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id })
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert('स्वयंसेवक हटा दिया गया है!');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + resData.message);
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट करने में विफल।');
+  }
+}
 </script>
 
 <!-- EDIT VOLUNTEER MODAL -->
@@ -414,6 +546,7 @@ async function handleEditSubmit(e) {
     </h3>
     <form id="edit-form" onsubmit="handleEditSubmit(event)">
       <input type="hidden" id="edit-id"/>
+      <input type="hidden" id="edit-is-pending" value="false"/>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
         <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
           <label style="font-size:0.8rem; font-weight:700;">नाम</label>

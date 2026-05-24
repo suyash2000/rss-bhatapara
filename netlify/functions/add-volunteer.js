@@ -65,67 +65,121 @@ exports.handler = async (event) => {
     }
     
     const data = JSON.parse(event.body);
+    const isAdmin = data.isAdmin === true;
     
-    // ── 1. Update shared.js ─────────────────────────────────────────────────
-    await updateGitHubFile({
-      token: token,
-      path: 'js/shared.js',
-      commitMessage: `Add volunteer ${data.name} (via production form)`,
-      updateFn: (content) => {
-        // Extract VOLUNTEERS_DATA array
-        const match = content.match(/const VOLUNTEERS_DATA = \[(.*?)\];/s);
-        let volunteersBlock = match ? match[1] : content;
-        
-        // Find maximum ID to auto-increment
-        const idRegex = /id:\s*(\d+)/g;
-        let maxId = 15;
-        let m;
-        while ((m = idRegex.exec(volunteersBlock)) !== null) {
-          const idVal = parseInt(m[1]);
-          if (idVal > maxId) maxId = idVal;
-        }
-        const nextId = maxId + 1;
-        
-        // Format occupation details if present
-        let vyavsayField = data.vyavsay;
-        if (data.spec_vyavsay) {
-          vyavsayField = `${data.vyavsay} (${data.spec_vyavsay})`;
-        }
-        
-        const jsLine = `  { id:${nextId},  name:'${data.name}',      basti:'${data.basti}',          area:'${data.area}',             shakha:'${data.shakha}',   role:'${data.role}',    joining_year:'${data.joining_year}', contact:'${data.contact}', blood_group:'${data.blood_group}',  vyavsay:'${vyavsayField}', gannayak:'${data.gannayak}', ganvesh:'${data.ganvesh}' },`;
-        
-        const lines = content.split('\n');
-        let insertIndex = -1;
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].trim() === '];' && lines[i-1].includes('id:')) {
-            insertIndex = i;
-            break;
+    // Format occupation details if present
+    let vyavsayField = data.vyavsay;
+    if (data.spec_vyavsay) {
+      vyavsayField = `${data.vyavsay} (${data.spec_vyavsay})`;
+    }
+    
+    if (isAdmin) {
+      // ── 1. Update shared.js (VOLUNTEERS_DATA) ──────────────────────────────────
+      await updateGitHubFile({
+        token: token,
+        path: 'js/shared.js',
+        commitMessage: `Add volunteer ${data.name} (via production admin form)`,
+        updateFn: (content) => {
+          const match = content.match(/const VOLUNTEERS_DATA = \[(.*?)\];/s);
+          let volunteersBlock = match ? match[1] : content;
+          
+          const idRegex = /id:\s*(\d+)/g;
+          let maxId = 15;
+          let m;
+          while ((m = idRegex.exec(volunteersBlock)) !== null) {
+            const idVal = parseInt(m[1]);
+            if (idVal > maxId) maxId = idVal;
           }
+          const nextId = maxId + 1;
+          
+          const jsLine = `  { id:${nextId},  name:'${data.name}',      basti:'${data.basti}',          area:'${data.area}',             shakha:'${data.shakha}',   role:'${data.role}',    joining_year:'${data.joining_year}', contact:'${data.contact}', blood_group:'${data.blood_group}',  vyavsay:'${vyavsayField}', gannayak:'${data.gannayak}', ganvesh:'${data.ganvesh}' },`;
+          
+          const lines = content.split('\n');
+          let insertIndex = -1;
+          let foundBlock = false;
+          for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes('const VOLUNTEERS_DATA = [')) {
+              foundBlock = true;
+            }
+            if (foundBlock && lines[i].trim() === '];') {
+              insertIndex = i;
+              break;
+            }
+          }
+          
+          if (insertIndex !== -1) {
+            lines.splice(insertIndex, 0, jsLine);
+            return lines.join('\n');
+          }
+          throw new Error("Could not find closing bracket of VOLUNTEERS_DATA in shared.js");
         }
-        
-        if (insertIndex !== -1) {
-          lines.splice(insertIndex, 0, jsLine);
-          return lines.join('\n');
+      });
+      
+      // ── 2. Update volunteers.csv ────────────────────────────────────────────
+      await updateGitHubFile({
+        token: token,
+        path: 'data/volunteers.csv',
+        commitMessage: `Add volunteer ${data.name} to CSV (via production admin form)`,
+        updateFn: (content) => {
+          const csvLine = `${data.name},${data.basti},${data.area},${data.shakha},${data.role},${data.joining_year},${data.contact},${data.blood_group},${vyavsayField},${data.gannayak},${data.ganvesh}`;
+          const trimmed = content.trimEnd();
+          return trimmed + '\n' + csvLine + '\n';
         }
-        throw new Error("Could not find closing bracket of VOLUNTEERS_DATA in shared.js");
-      }
-    });
-    
-    // ── 2. Update volunteers.csv ────────────────────────────────────────────
-    await updateGitHubFile({
-      token: token,
-      path: 'data/volunteers.csv',
-      commitMessage: `Add volunteer ${data.name} to CSV (via production form)`,
-      updateFn: (content) => {
-        let vyavsayField = data.vyavsay;
-        if (data.spec_vyavsay) {
-          vyavsayField = `${data.vyavsay} (${data.spec_vyavsay})`;
+      });
+    } else {
+      // ── 1. Update shared.js (PENDING_VOLUNTEERS_DATA) ──────────────────────────
+      await updateGitHubFile({
+        token: token,
+        path: 'js/shared.js',
+        commitMessage: `Add pending registration ${data.name} (via production form)`,
+        updateFn: (content) => {
+          const match = content.match(/const PENDING_VOLUNTEERS_DATA = \[(.*?)\];/s);
+          let pendingBlock = match ? match[1] : '';
+          
+          const idRegex = /id:\s*(\d+)/g;
+          let maxId = 0;
+          let m;
+          while ((m = idRegex.exec(pendingBlock)) !== null) {
+            const idVal = parseInt(m[1]);
+            if (idVal > maxId) maxId = idVal;
+          }
+          const nextId = maxId + 1;
+          
+          const jsLine = `  { id:${nextId},  name:'${data.name}',      basti:'${data.basti}',          area:'${data.area}',             shakha:'${data.shakha}',   role:'${data.role}',    joining_year:'${data.joining_year}', contact:'${data.contact}', blood_group:'${data.blood_group}',  vyavsay:'${vyavsayField}', gannayak:'${data.gannayak}', ganvesh:'${data.ganvesh}' },`;
+          
+          const lines = content.split('\n');
+          let insertIndex = -1;
+          let foundBlock = false;
+          for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes('const PENDING_VOLUNTEERS_DATA = [')) {
+              foundBlock = true;
+            }
+            if (foundBlock && lines[i].trim() === '];') {
+              insertIndex = i;
+              break;
+            }
+          }
+          
+          if (insertIndex !== -1) {
+            lines.splice(insertIndex, 0, jsLine);
+            return lines.join('\n');
+          }
+          throw new Error("Could not find closing bracket of PENDING_VOLUNTEERS_DATA in shared.js");
         }
-        const csvLine = `${data.name},${data.basti},${data.area},${data.shakha},${data.role},${data.joining_year},${data.contact},${data.blood_group},${vyavsayField},${data.gannayak},${data.ganvesh}`;
-        const trimmed = content.trimEnd();
-        return trimmed + '\n' + csvLine + '\n';
-      }
-    });
+      });
+      
+      // ── 2. Update pending_volunteers.csv ────────────────────────────────────
+      await updateGitHubFile({
+        token: token,
+        path: 'data/pending_volunteers.csv',
+        commitMessage: `Add pending volunteer ${data.name} to CSV (via production form)`,
+        updateFn: (content) => {
+          const csvLine = `${data.name},${data.basti},${data.area},${data.shakha},${data.role},${data.joining_year},${data.contact},${data.blood_group},${vyavsayField},${data.gannayak},${data.ganvesh}`;
+          const trimmed = content.trimEnd();
+          return trimmed + '\n' + csvLine + '\n';
+        }
+      });
+    }
     
     return {
       statusCode: 200,
