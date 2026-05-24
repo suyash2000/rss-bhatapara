@@ -280,10 +280,36 @@ async function handleSubmit(e){
   btn.textContent = 'सबमिट हो रहा है…';
 
   try {
-    const res = await fetch(form.action, {
+    const fd = new FormData(form);
+    const keyMap = {
+      'नाम': 'name',
+      'मोबाइल': 'contact',
+      'बस्ती': 'basti',
+      'वार्ड': 'area',
+      'शाखा': 'shakha',
+      'भूमिका': 'role',
+      'रक्त समूह': 'blood_group',
+      'व्यवसाय': 'vyavsay',
+      'विशिष्ट व्यवसाय': 'spec_vyavsay',
+      'गणवेशधारी स्वयंसेवक': 'ganvesh',
+      'गणनायक': 'gannayak',
+      'सम्मिलन वर्ष': 'joining_year',
+      'पता': 'address',
+      'अतिरिक्त जानकारी': 'extra_info'
+    };
+    const data = {};
+    fd.forEach((val, key) => {
+      const engKey = keyMap[key] || key;
+      data[engKey] = val;
+    });
+
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const actionUrl = isLocal ? '/api/join' : '/.netlify/functions/add-volunteer';
+
+    const res = await fetch(actionUrl, {
       method: 'POST',
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
 
     if (res.ok) {

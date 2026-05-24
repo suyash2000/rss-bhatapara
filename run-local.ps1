@@ -35,19 +35,177 @@ try {
                 $user = $loginData.username
                 $pass = $loginData.password
                 
-                if ($user -eq "admin" -and $pass -eq "admin") {
+                # In local dev server, accept any credentials for ease of testing,
+                # or verify that they are not empty.
+                if ($user -and $pass) {
                     $responseBody = '{"success": true}'
                     $response.StatusCode = 200
-                    Write-Host " -> 200 OK (Auth Success)" -ForegroundColor Green
+                    Write-Host " -> 200 OK (Auth Success: '$user')" -ForegroundColor Green
                 } else {
-                    $responseBody = '{"success": false, "message": "Invalid credentials. Use admin/admin."}'
+                    $responseBody = '{"success": false, "message": "Username and password cannot be empty."}'
                     $response.StatusCode = 401
-                    Write-Host " -> 401 Unauthorized (Auth Failed)" -ForegroundColor Yellow
+                    Write-Host " -> 401 Unauthorized (Empty Credentials)" -ForegroundColor Yellow
                 }
             } catch {
                 $responseBody = '{"success": false, "message": "Bad request"}'
                 $response.StatusCode = 400
                 Write-Host " -> 400 Bad Request" -ForegroundColor Red
+            }
+            
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/join") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+            
+            try {
+                $data = ConvertFrom-Json $body
+                
+                $name = $data.name
+                $basti = $data.basti
+                $area = $data.area
+                $shakha = $data.shakha
+                $role = $data.role
+                $blood_group = $data.blood_group
+                $vyavsay = $data.vyavsay
+                $spec_vyavsay = $data.spec_vyavsay
+                $ganvesh = $data.ganvesh
+                $gannayak = $data.gannayak
+                $joining_year = $data.joining_year
+                $contact = $data.contact
+                
+                # Format specific occupation detail
+                $vyavsayField = $vyavsay
+                if ($spec_vyavsay) {
+                    $vyavsayField = "$vyavsay ($spec_vyavsay)"
+                }
+                
+                # 1. Update CSV file
+                $csvPath = Join-Path (Get-Location) "data\volunteers.csv"
+                $csvLine = "$name,$basti,$area,$shakha,$role,$joining_year,$contact,$blood_group,$vyavsayField,$gannayak,$ganvesh"
+                [System.IO.File]::AppendAllText($csvPath, "`n" + $csvLine, [System.Text.Encoding]::UTF8)
+                Write-Host " -> Added '$name' to volunteers.csv" -ForegroundColor Yellow
+                
+                # 2. Update shared.js database array
+                $sharedJsPath = Join-Path (Get-Location) "js\shared.js"
+                if (Test-Path $sharedJsPath) {
+                    $jsContent = [System.IO.File]::ReadAllText($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    
+                    # Extract only the VOLUNTEERS_DATA array portion to find the correct maximum ID
+                    $volunteersBlock = $jsContent
+                    if ($jsContent -match 'const VOLUNTEERS_DATA = \[(?s)(.*?)\];') {
+                        $volunteersBlock = $Matches[1]
+                    }
+                    
+                    $matches = [regex]::Matches($volunteersBlock, 'id:\s*(\d+)')
+                    $nextId = 16
+                    if ($matches.Count -gt 0) {
+                        $ids = @()
+                        foreach ($m in $matches) {
+                            $ids += [int]$m.Groups[1].Value
+                        }
+                        $maxId = ($ids | Measure-Object -Maximum).Maximum
+                        $nextId = $maxId + 1
+                    }
+                    
+                    $jsLine = "  { id:$nextId,  name:'$name',      basti:'$basti',          area:'$area',             shakha:'$shakha',   role:'$role',    joining_year:'$joining_year', contact:'$contact', blood_group:'$blood_group',  vyavsay:'$vyavsayField', gannayak:'$gannayak', ganvesh:'$ganvesh' },"
+                    
+                    $lines = [System.IO.File]::ReadAllLines($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $insertIndex = -1
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Trim() -eq "];" -and $lines[$i-1].Contains("id:")) {
+                            $insertIndex = $i
+                            break
+                        }
+                    }
+                    
+                    if ($insertIndex -ne -1) {
+                        $newLines = $lines[0..($insertIndex-1)] + $jsLine + $lines[$insertIndex..($lines.Length-1)]
+                        [System.IO.File]::WriteAllLines($sharedJsPath, $newLines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Added '$name' to shared.js (ID: $nextId)" -ForegroundColor Yellow
+                    }
+                }
+                
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Registration Saved)" -ForegroundColor Green
+            } catch {
+                $responseBody = '{"success": false, "message": "Bad request"}'
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+            
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/edit-volunteer") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+            
+            try {
+                $data = ConvertFrom-Json $body
+                
+                $id = [int]$data.id
+                $name = $data.name
+                $basti = $data.basti
+                $area = $data.area
+                $shakha = $data.shakha
+                $role = $data.role
+                $blood_group = $data.blood_group
+                $vyavsay = $data.vyavsay
+                $ganvesh = $data.ganvesh
+                $gannayak = $data.gannayak
+                $joining_year = $data.joining_year
+                $contact = $data.contact
+                
+                # 1. Update shared.js database array by modifying the line of that volunteer ID
+                $sharedJsPath = Join-Path (Get-Location) "js\shared.js"
+                if (Test-Path $sharedJsPath) {
+                    $lines = [System.IO.File]::ReadAllLines($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $updated = $false
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i] -match "\bid:\s*$id\b") {
+                            $lines[$i] = "  { id:$id,  name:'$name',      basti:'$basti',          area:'$area',             shakha:'$shakha',   role:'$role',    joining_year:'$joining_year', contact:'$contact', blood_group:'$blood_group',  vyavsay:'$vyavsay', gannayak:'$gannayak', ganvesh:'$ganvesh' },"
+                            $updated = $true
+                            break
+                        }
+                    }
+                    if ($updated) {
+                        [System.IO.File]::WriteAllLines($sharedJsPath, $lines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Updated '$name' (ID: $id) in shared.js" -ForegroundColor Yellow
+                    }
+                }
+                
+                # 2. Sync volunteers.csv from the updated shared.js data to keep them in perfect lockstep
+                $csvPath = Join-Path (Get-Location) "data\volunteers.csv"
+                if (Test-Path $sharedJsPath) {
+                    $jsContent = [System.IO.File]::ReadAllText($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $volunteersBlock = $jsContent
+                    if ($jsContent -match 'const VOLUNTEERS_DATA = \[(?s)(.*?)\];') {
+                        $volunteersBlock = $Matches[1]
+                    }
+                    $matches = [regex]::Matches($volunteersBlock, '(?s)\{\s*id:\s*(?<id>\d+),\s*name:\s*''(?<name>.*?)'',\s*basti:\s*''(?<basti>.*?)'',\s*area:\s*''(?<area>.*?)'',\s*shakha:\s*''(?<shakha>.*?)'',\s*role:\s*''(?<role>.*?)'',\s*joining_year:\s*''(?<year>.*?)'',\s*contact:\s*''(?<contact>.*?)'',\s*blood_group:\s*''(?<blood>.*?)'',\s*vyavsay:\s*''(?<vyavsay>.*?)'',\s*gannayak:\s*''(?<gannayak>.*?)'',\s*ganvesh:\s*''(?<ganvesh>.*?)''\s*\}')
+                    
+                    $csvLines = @("name,basti,area,shakha,role,joining_year,contact,blood_group,vyavsay,gannayak,ganvesh")
+                    foreach ($m in $matches) {
+                        $csvLines += "$($m.Groups['name'].Value),$($m.Groups['basti'].Value),$($m.Groups['area'].Value),$($m.Groups['shakha'].Value),$($m.Groups['role'].Value),$($m.Groups['year'].Value),$($m.Groups['contact'].Value),$($m.Groups['blood'].Value),$($m.Groups['vyavsay'].Value),$($m.Groups['gannayak'].Value),$($m.Groups['ganvesh'].Value)"
+                    }
+                    [System.IO.File]::WriteAllLines($csvPath, $csvLines, [System.Text.Encoding]::UTF8)
+                    Write-Host " -> Synced and updated volunteers.csv" -ForegroundColor Yellow
+                }
+                
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Edit Saved)" -ForegroundColor Green
+            } catch {
+                $responseBody = '{"success": false, "message": "Bad request"}'
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
             }
             
             $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)

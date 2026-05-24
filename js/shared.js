@@ -1,4 +1,4 @@
-// ── Active Nav Link ───────────────────────────────────────────────────────────
+﻿// ── Active Nav Link ───────────────────────────────────────────────────────────
 (function () {
   const path = location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-link').forEach(a => {
@@ -99,6 +99,7 @@ const VOLUNTEERS_DATA = [
   { id:13, name:'हरीश पांडेय',      basti:'माता देवला बस्ती',             area:'माता देवालय वार्ड',          shakha:'माता देवाला शाखा',   role:'सेवा प्रमुख',  joining_year:'2019', contact:'9703214785', blood_group:'O-',  vyavsay:'सरकारी नौकरी', gannayak:'दीपक साहू', ganvesh:'हाँ' },
   { id:14, name:'विनोद साहू',       basti:'शहीद वीर नारायण सिंह बस्ती',   area:'लाल बहादुर शास्त्री वार्ड', shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2023', contact:'9592145873', blood_group:'A-',  vyavsay:'व्यापारी', gannayak:'विजय वर्मा', ganvesh:'नहीं' },
   { id:15, name:'अरुण तिवारी',      basti:'संत माता कर्मा बस्ती',         area:'रामसागर पारा वार्ड',         shakha:'यज्ञ शाला शाखा',     role:'मुख्य शिक्षक', joining_year:'2018', contact:'9481236974', blood_group:'AB+', vyavsay:'इंजीनियर', gannayak:'मनीष यादव', ganvesh:'हाँ' },
+  { id:16,  name:'रवि गुप्ता',      basti:'श्यामा प्रसाद बस्ती',          area:'हाथनीपारा वार्ड',             shakha:'केशव प्रभात शाखा',   role:'मुख्य शिक्षक',    joining_year:'2025', contact:'8817694170', blood_group:'O+',  vyavsay:'इंजीनियर (Computer Science)', gannayak:'मनीष यादव', ganvesh:'हाँ' },
 ];
 
 const SHAKHA_DATA = [
