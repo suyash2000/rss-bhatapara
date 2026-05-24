@@ -276,8 +276,9 @@ function buildDash(){
         <td data-label="गणवेश">${v.ganvesh}</td>
         <td data-label="कार्रवाई">
           <div class="row-actions">
-            <button class="ra-btn ra-call" onclick="approveVolunteer(${v.id})" style="background:#e8f5e9; color:#2e7d32; padding:0.35rem 0.75rem; font-weight:700;">✔️ स्वीकृत</button>
-            <button class="ra-btn ra-edit" onclick="rejectVolunteer(${v.id})" style="background:#ffebee; color:#c62828; padding:0.35rem 0.75rem; font-weight:700;">❌ अस्वीकृत</button>
+            <button class="ra-btn ra-call" onclick="approveVolunteer(${v.id})" style="background:#e8f5e9; color:#2e7d32; padding:0.35rem 0.6rem; font-weight:700;">✔️ स्वीकृत</button>
+            <button class="ra-btn ra-edit" onclick="openEditModal(${v.id}, true)" style="background:rgba(77,20,0,0.08); color:var(--brown); padding:0.35rem 0.6rem; font-weight:700;">✏️ बदलें</button>
+            <button class="ra-btn ra-edit" onclick="rejectVolunteer(${v.id})" style="background:#ffebee; color:#c62828; padding:0.35rem 0.6rem; font-weight:700;">❌ अस्वीकृत</button>
           </div>
         </td>
       </tr>
@@ -384,10 +385,12 @@ function exportCSV(){
   a.click();
 }
 
-function openEditModal(id) {
-  const v = VOLUNTEERS_DATA.find(x => x.id === id);
+function openEditModal(id, isPending = false) {
+  const dataset = isPending ? PENDING_VOLUNTEERS_DATA : VOLUNTEERS_DATA;
+  const v = dataset.find(x => x.id === id);
   if (!v) return;
   document.getElementById('edit-id').value = v.id;
+  document.getElementById('edit-is-pending').value = isPending ? "true" : "false";
   document.getElementById('edit-name').value = v.name || '';
   document.getElementById('edit-contact').value = v.contact || '';
   document.getElementById('edit-shakha').value = v.shakha || '';
@@ -410,6 +413,7 @@ function closeEditModal() {
 async function handleEditSubmit(e) {
   e.preventDefault();
   const id = parseInt(document.getElementById('edit-id').value);
+  const isPending = document.getElementById('edit-is-pending').value === "true";
   const data = {
     id: id,
     name: document.getElementById('edit-name').value,
@@ -431,7 +435,12 @@ async function handleEditSubmit(e) {
   
   try {
     const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    const actionUrl = isLocal ? '/api/edit-volunteer' : '/.netlify/functions/edit-volunteer';
+    let actionUrl;
+    if (isPending) {
+      actionUrl = isLocal ? '/api/edit-pending-volunteer' : '/.netlify/functions/edit-pending-volunteer';
+    } else {
+      actionUrl = isLocal ? '/api/edit-volunteer' : '/.netlify/functions/edit-volunteer';
+    }
 
     const res = await fetch(actionUrl, {
       method: 'POST',
@@ -512,6 +521,7 @@ async function rejectVolunteer(id) {
     </h3>
     <form id="edit-form" onsubmit="handleEditSubmit(event)">
       <input type="hidden" id="edit-id"/>
+      <input type="hidden" id="edit-is-pending" value="false"/>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
         <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
           <label style="font-size:0.8rem; font-weight:700;">नाम</label>

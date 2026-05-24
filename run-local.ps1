@@ -474,6 +474,86 @@ try {
             $response.ContentLength64 = $bytes.Length
             $response.ContentType = "application/json; charset=utf-8"
             $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/edit-pending-volunteer") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+            
+            try {
+                $data = ConvertFrom-Json $body
+                
+                $id = [int]$data.id
+                $name = $data.name
+                $basti = $data.basti
+                $area = $data.area
+                $shakha = $data.shakha
+                $role = $data.role
+                $blood_group = $data.blood_group
+                $vyavsay = $data.vyavsay
+                $ganvesh = $data.ganvesh
+                $gannayak = $data.gannayak
+                $joining_year = $data.joining_year
+                $contact = $data.contact
+                
+                # 1. Update shared.js database array in the PENDING_VOLUNTEERS_DATA block
+                $sharedJsPath = Join-Path (Get-Location) "js\shared.js"
+                if (Test-Path $sharedJsPath) {
+                    $lines = [System.IO.File]::ReadAllLines($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $updated = $false
+                    
+                    # Search within PENDING_VOLUNTEERS_DATA block
+                    $insidePending = $false
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Contains("const PENDING_VOLUNTEERS_DATA = [")) {
+                            $insidePending = $true
+                        }
+                        if ($insidePending -and $lines[$i] -match "\bid:\s*$id\b") {
+                            $lines[$i] = "  { id:$id,  name:'$name',      basti:'$basti',          area:'$area',             shakha:'$shakha',   role:'$role',    joining_year:'$joining_year', contact:'$contact', blood_group:'$blood_group',  vyavsay:'$vyavsay', gannayak:'$gannayak', ganvesh:'$ganvesh' },"
+                            $updated = $true
+                            break
+                        }
+                        if ($insidePending -and $lines[$i].Trim() -eq "];") {
+                            $insidePending = $false
+                        }
+                    }
+                    
+                    if ($updated) {
+                        [System.IO.File]::WriteAllLines($sharedJsPath, $lines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Updated pending volunteer '$name' (ID: $id) in shared.js" -ForegroundColor Yellow
+                    }
+                }
+                
+                # 2. Sync pending_volunteers.csv
+                $pendingCsvPath = Join-Path (Get-Location) "data\pending_volunteers.csv"
+                if (Test-Path $sharedJsPath) {
+                    $jsContent = [System.IO.File]::ReadAllText($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $pendingBlock = $jsContent
+                    if ($jsContent -match 'const PENDING_VOLUNTEERS_DATA = \[(?s)(.*?)\];') {
+                        $pendingBlock = $Matches[1]
+                    }
+                    $matches = [regex]::Matches($pendingBlock, '(?s)\{\s*id:\s*(?<id>\d+),\s*name:\s*''(?<name>.*?)'',\s*basti:\s*''(?<basti>.*?)'',\s*area:\s*''(?<area>.*?)'',\s*shakha:\s*''(?<shakha>.*?)'',\s*role:\s*''(?<role>.*?)'',\s*joining_year:\s*''(?<year>.*?)'',\s*contact:\s*''(?<contact>.*?)'',\s*blood_group:\s*''(?<blood>.*?)'',\s*vyavsay:\s*''(?<vyavsay>.*?)'',\s*gannayak:\s*''(?<gannayak>.*?)'',\s*ganvesh:\s*''(?<ganvesh>.*?)''\s*\}')
+                    
+                    $csvLines = @("name,basti,area,shakha,role,joining_year,contact,blood_group,vyavsay,gannayak,ganvesh")
+                    foreach ($m in $matches) {
+                        $csvLines += "$($m.Groups['name'].Value),$($m.Groups['basti'].Value),$($m.Groups['area'].Value),$($m.Groups['shakha'].Value),$($m.Groups['role'].Value),$($m.Groups['year'].Value),$($m.Groups['contact'].Value),$($m.Groups['blood'].Value),$($m.Groups['vyavsay'].Value),$($m.Groups['gannayak'].Value),$($m.Groups['ganvesh'].Value)"
+                    }
+                    [System.IO.File]::WriteAllLines($pendingCsvPath, $csvLines, [System.Text.Encoding]::UTF8)
+                    Write-Host " -> Synced and updated pending_volunteers.csv" -ForegroundColor Yellow
+                }
+                
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Pending Edit Saved)" -ForegroundColor Green
+            } catch {
+                $responseBody = '{"success": false, "message": "Bad request"}'
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+            
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
         } else {
             # Static files
             $relPath = $localPath.TrimStart('/')

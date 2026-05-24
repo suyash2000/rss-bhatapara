@@ -100,6 +100,7 @@ const VOLUNTEERS_DATA = [
   { id:14, name:'विनोद साहू',       basti:'शहीद वीर नारायण सिंह बस्ती',   area:'लाल बहादुर शास्त्री वार्ड', shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2023', contact:'9592145873', blood_group:'A-',  vyavsay:'व्यापारी', gannayak:'विजय वर्मा', ganvesh:'नहीं' },
   { id:15, name:'अरुण तिवारी',      basti:'संत माता कर्मा बस्ती',         area:'रामसागर पारा वार्ड',         shakha:'यज्ञ शाला शाखा',     role:'मुख्य शिक्षक', joining_year:'2018', contact:'9481236974', blood_group:'AB+', vyavsay:'इंजीनियर', gannayak:'मनीष यादव', ganvesh:'हाँ' },
   { id:16,  name:'रवि गुप्ता',      basti:'श्यामा प्रसाद बस्ती',          area:'हाथनीपारा वार्ड',             shakha:'केशव प्रभात शाखा',   role:'मुख्य शिक्षक',    joining_year:'2025', contact:'8817694170', blood_group:'O+',  vyavsay:'इंजीनियर (Computer Science)', gannayak:'मनीष यादव', ganvesh:'हाँ' },
+  { id:17,  name:'Suyash',      basti:'शहीद वीर नारायण सिंह बस्ती',          area:'संत कँवरराम वार्ड',             shakha:'केशव प्रभात शाखा',   role:'',    joining_year:'2019', contact:'0471276824', blood_group:'B-',  vyavsay:'डॉक्टर (Surgeon )', gannayak:'नवीन निषाद', ganvesh:'नहीं' },
 ];
 
 const PENDING_VOLUNTEERS_DATA = [
