@@ -107,7 +107,7 @@
 <div class="page-hero">
   <div class="page-hero-content">
     <div class="page-tag">👥 स्वयंसेवक</div>
-    <h1 class="page-title">स्वयंसेवक <span>निर्देशिका</span></h1>
+    <h1 class="page-title">स्वयंसेवक</h1>
     <p class="page-subtitle">कार्ड पर क्लिक करें – पूरी जानकारी, फ़ोन और WhatsApp की सुविधा।</p>
     <div style="margin-top:1.25rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
       <a href="join.html" class="btn btn-primary btn-sm">+ नया सदस्य जोड़ें</a>
@@ -146,10 +146,13 @@
 
     <!-- Extra Filters Row 2 -->
     <div class="filter-row-2">
+      <select id="f-basti"><option value="">सभी बस्ती</option></select>
       <select id="f-blood"><option value="">सभी रक्त समूह</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
       <select id="f-vyavsay"><option value="">सभी व्यवसाय</option></select>
       <select id="f-year"><option value="">सभी वर्ष</option></select>
       <select id="f-area"><option value="">सभी वार्ड</option></select>
+      <select id="f-gannayak"><option value="">सभी गणनायक</option></select>
+      <select id="f-ganvesh"><option value="">सभी गणवेशधारी</option><option>हाँ</option><option>नहीं</option></select>
       <button onclick="resetFilters()" style="padding:0.5rem 1rem;border-radius:20px;border:1.5px solid rgba(255,107,0,0.3);background:transparent;color:var(--bhagwa);font-family:inherit;font-size:0.82rem;font-weight:700;cursor:pointer;">✕ रीसेट</button>
     </div>
 
@@ -206,7 +209,7 @@
 
 <script src="js/shared.js"></script>
 <script>
-let all = VOLUNTEERS_DATA, currentMember = null;
+let all = VOLUNTEERS_DATA, filtered = VOLUNTEERS_DATA, currentMember = null;
 
 function initials(n){ return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
 
@@ -217,12 +220,13 @@ function render(list){
   const g = document.getElementById('vol-grid');
   if(!list.length){ g.innerHTML='<p style="color:#aaa;padding:2rem;grid-column:1/-1;text-align:center;">कोई स्वयंसेवक नहीं मिला।</p>'; return; }
   g.innerHTML = list.map(v=>`
-    <div class="vol-card reveal" onclick="openModal(${v.id})">
+    <div class="vol-card reveal visible" onclick="openModal(${v.id})">
       <div class="vol-year">${v.joining_year}</div>
       <div class="vol-avatar">${initials(v.name)}</div>
       <div class="vol-name">${v.name}</div>
       <div class="vol-role">${v.role}</div>
       <div class="vol-meta">
+        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>${v.basti}</div>
         <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3"/></svg>${v.area}</div>
         <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>${v.shakha}</div>
       </div>
@@ -232,20 +236,24 @@ function render(list){
         <button class="card-action ca-view" onclick="openModal(${v.id})">👁 देखें</button>
       </div>
     </div>`).join('');
-  observeReveal();
+
 }
 
 function populate(){
-  const fS = document.getElementById('f-shakha');
-  const fR = document.getElementById('f-role');
-  const fV = document.getElementById('f-vyavsay');
-  const fY = document.getElementById('f-year');
-  const fA = document.getElementById('f-area');
+  const fS  = document.getElementById('f-shakha');
+  const fR  = document.getElementById('f-role');
+  const fV  = document.getElementById('f-vyavsay');
+  const fY  = document.getElementById('f-year');
+  const fA  = document.getElementById('f-area');
+  const fB  = document.getElementById('f-basti');
+  const fG  = document.getElementById('f-gannayak');
   [...new Set(all.map(v=>v.shakha))].sort().forEach(s=>fS.innerHTML+=`<option>${s}</option>`);
   [...new Set(all.map(v=>v.role))].sort().forEach(r=>fR.innerHTML+=`<option>${r}</option>`);
   [...new Set(all.map(v=>v.vyavsay))].sort().forEach(v=>fV.innerHTML+=`<option>${v}</option>`);
   [...new Set(all.map(v=>v.joining_year))].sort().forEach(y=>fY.innerHTML+=`<option>${y}</option>`);
   [...new Set(all.map(v=>v.area))].sort().forEach(a=>fA.innerHTML+=`<option>${a}</option>`);
+  [...new Set(all.map(v=>v.basti))].sort().forEach(b=>fB.innerHTML+=`<option>${b}</option>`);
+  [...new Set(all.map(v=>v.gannayak).filter(Boolean))].sort().forEach(g=>fG.innerHTML+=`<option>${g}</option>`);
 }
 
 function getFilters(){
@@ -257,24 +265,31 @@ function getFilters(){
     vy:  document.getElementById('f-vyavsay').value,
     yr:  document.getElementById('f-year').value,
     ar:  document.getElementById('f-area').value,
+    bs:  document.getElementById('f-basti').value,
+    gn:  document.getElementById('f-gannayak').value,
+    gv:  document.getElementById('f-ganvesh').value,
   };
 }
 
 function filter(){
-  const {q,sh,ro,bl,vy,yr,ar} = getFilters();
-  render(all.filter(v=>
+  const {q,sh,ro,bl,vy,yr,ar,bs,gn,gv} = getFilters();
+  filtered = all.filter(v=>
     v.name.toLowerCase().includes(q) &&
     (!sh||v.shakha===sh) && (!ro||v.role===ro) &&
     (!bl||v.blood_group===bl) && (!vy||v.vyavsay===vy) &&
-    (!yr||v.joining_year===yr) && (!ar||v.area===ar)
-  ));
+    (!yr||v.joining_year===yr) && (!ar||v.area===ar) &&
+    (!bs||v.basti===bs) &&
+    (!gn||v.gannayak===gn) && (!gv||v.ganvesh===gv)
+  );
+  render(filtered);
 }
 
 function resetFilters(){
-  ['vol-search','f-shakha','f-role','f-blood','f-vyavsay','f-year','f-area'].forEach(id=>{
+  ['vol-search','f-shakha','f-role','f-blood','f-vyavsay','f-year','f-area','f-basti','f-gannayak','f-ganvesh'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el.tagName==='INPUT') el.value=''; else el.value='';
+    if(el) el.value='';
   });
+  filtered = all;
   render(all);
 }
 
@@ -290,8 +305,11 @@ function openModal(id){
   document.getElementById('m-details').innerHTML = `
     <div class="detail-item"><div class="detail-label">पूरा नाम</div><div class="detail-value">${v.name}</div></div>
     <div class="detail-item"><div class="detail-label">भूमिका</div><div class="detail-value">${v.role}</div></div>
-    <div class="detail-item"><div class="detail-label">शाखा</div><div class="detail-value">${v.shakha}</div></div>
+    <div class="detail-item"><div class="detail-label">गणनायक</div><div class="detail-value">${v.gannayak || '—'}</div></div>
+    <div class="detail-item"><div class="detail-label">गणवेशधारी</div><div class="detail-value">${v.ganvesh || 'नहीं'}</div></div>
+    <div class="detail-item"><div class="detail-label">बस्ती</div><div class="detail-value">${v.basti}</div></div>
     <div class="detail-item"><div class="detail-label">वार्ड / क्षेत्र</div><div class="detail-value">${v.area}</div></div>
+    <div class="detail-item"><div class="detail-label">शाखा</div><div class="detail-value">${v.shakha}</div></div>
     <div class="detail-item"><div class="detail-label">संपर्क</div><div class="detail-value">${v.contact}</div></div>
     <div class="detail-item"><div class="detail-label">सम्मिलन वर्ष</div><div class="detail-value">${v.joining_year}</div></div>
     <div class="detail-item"><div class="detail-label">रक्त समूह</div><div class="detail-value"><span class="blood-badge ${bloodClass(v.blood_group)}">${v.blood_group}</span></div></div>
@@ -331,6 +349,8 @@ function printMember(){
     <tr><td>पूरा नाम</td><td>${v.name}</td></tr>
     <tr><td>शाखा</td><td>${v.shakha}</td></tr>
     <tr><td>भूमिका</td><td>${v.role}</td></tr>
+    <tr><td>गणनायक</td><td>${v.gannayak || '—'}</td></tr>
+    <tr><td>गणवेशधारी</td><td>${v.ganvesh || 'नहीं'}</td></tr>
     <tr><td>वार्ड / क्षेत्र</td><td>${v.area}</td></tr>
     <tr><td>मोबाइल</td><td>${v.contact}</td></tr>
     <tr><td>रक्त समूह</td><td><strong>${v.blood_group}</strong></td></tr>
@@ -354,6 +374,8 @@ function printAllSheet(){
   const fYear   = document.getElementById('f-year').value;
   const fArea   = document.getElementById('f-area').value;
   const fSearch = document.getElementById('vol-search').value.trim();
+  const fGannayak = document.getElementById('f-gannayak').value;
+  const fGanvesh  = document.getElementById('f-ganvesh').value;
   if(fSearch)  fDesc.push('खोज: ' + fSearch);
   if(fShakha)  fDesc.push('शाखा: ' + fShakha);
   if(fRole)    fDesc.push('भूमिका: ' + fRole);
@@ -361,11 +383,14 @@ function printAllSheet(){
   if(fVyav)    fDesc.push('व्यवसाय: ' + fVyav);
   if(fYear)    fDesc.push('वर्ष: ' + fYear);
   if(fArea)    fDesc.push('वार्ड: ' + fArea);
+  if(fGannayak) fDesc.push('गणनायक: ' + fGannayak);
+  if(fGanvesh)  fDesc.push('गणवेशधारी: ' + fGanvesh);
   const filterLine = fDesc.length ? 'फ़िल्टर: ' + fDesc.join(' | ') : 'संपूर्ण सूची';
   const w = window.open('','_blank');
   const rows = list.map((v,i)=>`<tr style="background:${i%2===0?'#fff8f0':'#fff'}">
     <td>${i+1}</td><td><strong>${v.name}</strong></td><td>${v.shakha}</td><td>${v.role}</td>
-    <td>${v.area}</td><td>${v.contact}</td><td>${v.blood_group}</td><td>${v.vyavsay}</td><td>${v.joining_year}</td>
+    <td>${v.gannayak || '—'}</td><td>${v.ganvesh || 'नहीं'}</td><td>${v.area}</td><td>${v.contact}</td>
+    <td>${v.blood_group}</td><td>${v.vyavsay}</td><td>${v.joining_year}</td>
   </tr>`).join('');
   w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक – RSS भाटापारा</title>
   <style>
@@ -387,7 +412,7 @@ function printAllSheet(){
     <span class="filter-tag">${filterLine}</span></div>
   </div>
   <table><thead><tr>
-    <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th><th>वार्ड</th><th>मोबाइल</th><th>रक्त समूह</th><th>व्यवसाय</th><th>वर्ष</th>
+    <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th><th>गणनायक</th><th>गणवेशधारी</th><th>वार्ड</th><th>मोबाइल</th><th>रक्त समूह</th><th>व्यवसाय</th><th>वर्ष</th>
   </tr></thead><tbody>${rows}</tbody></table>
   <div class="footer">RSS भाटापारा &nbsp;|&nbsp; भारत माता की जय 🇮🇳</div>
   <script>window.onload=()=>window.print();<\/script>
@@ -395,12 +420,13 @@ function printAllSheet(){
   w.document.close();
 }
 
-['vol-search','f-shakha','f-role','f-blood','f-vyavsay','f-year','f-area'].forEach(id=>
-  document.getElementById(id).addEventListener(id==='vol-search'?'input':'change', filter)
-);
-
 populate();
 render(all);
+
+['vol-search','f-shakha','f-role','f-blood','f-vyavsay','f-year','f-area','f-basti','f-gannayak','f-ganvesh'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener(id === 'vol-search' ? 'input' : 'change', filter);
+});
 </script>
 </body>
 </html>

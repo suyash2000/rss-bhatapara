@@ -84,21 +84,21 @@ function parseCSV(text) {
 
 // ── Inline Data ───────────────────────────────────────────────────────────────
 const VOLUNTEERS_DATA = [
-  { id:1,  name:'राहुल शर्मा',      area:'वार्ड 5',  shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2021', contact:'9876543210', blood_group:'B+',  vyavsay:'शिक्षक' },
-  { id:2,  name:'अमित पटेल',        area:'वार्ड 3',  shakha:'यज्ञ शाला शाखा',     role:'शाखा प्रमुख',  joining_year:'2018', contact:'9845123456', blood_group:'O+',  vyavsay:'व्यापारी' },
-  { id:3,  name:'विकास सिंह',       area:'वार्ड 7',  shakha:'लवकुश शाखा',         role:'मुख्य शिक्षक', joining_year:'2019', contact:'9712345678', blood_group:'A+',  vyavsay:'कृषि' },
-  { id:4,  name:'सुरेश यादव',       area:'वार्ड 1',  shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2020', contact:'9632147852', blood_group:'AB+', vyavsay:'सरकारी नौकरी' },
-  { id:5,  name:'मनोज वर्मा',       area:'वार्ड 9',  shakha:'माता देवाला शाखा',   role:'गणवेश प्रमुख', joining_year:'2017', contact:'9587412369', blood_group:'B-',  vyavsay:'इंजीनियर' },
-  { id:6,  name:'अजय कुमार',        area:'वार्ड 2',  shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2022', contact:'9456321478', blood_group:'O-',  vyavsay:'छात्र' },
-  { id:7,  name:'देवेन्द्र तिवारी', area:'वार्ड 6',  shakha:'केशव प्रभात शाखा',   role:'शाखा प्रमुख',  joining_year:'2016', contact:'9321456987', blood_group:'A-',  vyavsay:'डॉक्टर' },
-  { id:8,  name:'रमेश चंद्रा',      area:'वार्ड 4',  shakha:'पटपर शाखा',          role:'बाल शिक्षक',   joining_year:'2023', contact:'9214587632', blood_group:'B+',  vyavsay:'शिक्षक' },
-  { id:9,  name:'प्रकाश गुप्ता',    area:'वार्ड 8',  shakha:'यज्ञ शाला शाखा',     role:'कार्यकर्ता',    joining_year:'2020', contact:'9147852369', blood_group:'AB-', vyavsay:'व्यापारी' },
-  { id:10, name:'नितिन मिश्रा',     area:'वार्ड 10', shakha:'लवकुश शाखा',         role:'नगर प्रमुख',   joining_year:'2015', contact:'9036985214', blood_group:'O+',  vyavsay:'अधिवक्ता' },
-  { id:11, name:'संजय सोनी',        area:'वार्ड 5',  shakha:'पटपर शाखा',          role:'बाल शिक्षक',   joining_year:'2021', contact:'9925874136', blood_group:'A+',  vyavsay:'छात्र' },
-  { id:12, name:'कमलेश राव',        area:'वार्ड 3',  shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2022', contact:'9814523697', blood_group:'B+',  vyavsay:'कृषि' },
-  { id:13, name:'हरीश पांडेय',      area:'वार्ड 7',  shakha:'माता देवाला शाखा',   role:'सेवा प्रमुख',  joining_year:'2019', contact:'9703214785', blood_group:'O-',  vyavsay:'सरकारी नौकरी' },
-  { id:14, name:'विनोद साहू',       area:'वार्ड 1',  shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2023', contact:'9592145873', blood_group:'A-',  vyavsay:'व्यापारी' },
-  { id:15, name:'अरुण तिवारी',      area:'वार्ड 9',  shakha:'यज्ञ शाला शाखा',     role:'मुख्य शिक्षक', joining_year:'2018', contact:'9481236974', blood_group:'AB+', vyavsay:'इंजीनियर' },
+  { id:1,  name:'राहुल शर्मा',      basti:'श्यामा प्रसाद बस्ती',          area:'नया पारा वार्ड',             shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2021', contact:'9876543210', blood_group:'B+',  vyavsay:'शिक्षक', gannayak:'राजेश तिवारी', ganvesh:'हाँ' },
+  { id:2,  name:'अमित पटेल',        basti:'महाकाल बस्ती',                  area:'सुभाष वार्ड',                shakha:'यज्ञ शाला शाखा',     role:'शाखा प्रमुख',  joining_year:'2018', contact:'9845123456', blood_group:'O+',  vyavsay:'व्यापारी', gannayak:'संजय अवस्थी', ganvesh:'हाँ' },
+  { id:3,  name:'विकास सिंह',       basti:'शहीद वीर नारायण सिंह बस्ती',   area:'भगत सिंह वार्ड',             shakha:'लवकुश शाखा',         role:'मुख्य शिक्षक', joining_year:'2019', contact:'9712345678', blood_group:'A+',  vyavsay:'कृषि', gannayak:'दीपक साहू', ganvesh:'हाँ' },
+  { id:4,  name:'सुरेश यादव',       basti:'श्यामा प्रसाद बस्ती',          area:'हाथनीपारा वार्ड',            shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2020', contact:'9632147852', blood_group:'AB+', vyavsay:'सरकारी नौकरी', gannayak:'विजय वर्मा', ganvesh:'नहीं' },
+  { id:5,  name:'मनोज वर्मा',       basti:'माता देवला बस्ती',             area:'शंकर वार्ड',                 shakha:'माता देवाला शाखा',   role:'गणवेश प्रमुख', joining_year:'2017', contact:'9587412369', blood_group:'B-',  vyavsay:'इंजीनियर', gannayak:'मनीष यादव', ganvesh:'हाँ' },
+  { id:6,  name:'अजय कुमार',        basti:'परशुराम बस्ती',                area:'महावीर वार्ड',               shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2022', contact:'9456321478', blood_group:'O-',  vyavsay:'छात्र', gannayak:'राकेश शुक्ला', ganvesh:'नहीं' },
+  { id:7,  name:'देवेन्द्र तिवारी', basti:'परशुराम बस्ती',                area:'परशुराम वार्ड',              shakha:'केशव प्रभात शाखा',   role:'शाखा प्रमुख',  joining_year:'2016', contact:'9321456987', blood_group:'A-',  vyavsay:'डॉक्टर', gannayak:'अमित चौबे', ganvesh:'हाँ' },
+  { id:8,  name:'रमेश चंद्रा',      basti:'राम सप्ताह बस्ती',             area:'गांधी मंदिर वार्ड',          shakha:'पटपर शाखा',          role:'बाल शिक्षक',   joining_year:'2023', contact:'9214587632', blood_group:'B+',  vyavsay:'शिक्षक', gannayak:'नवीन निषाद', ganvesh:'हाँ' },
+  { id:9,  name:'प्रकाश गुप्ता',    basti:'महाकाल बस्ती',                  area:'नेहरू वार्ड',                shakha:'यज्ञ शाला शाखा',     role:'कार्यकर्ता',    joining_year:'2020', contact:'9147852369', blood_group:'AB-', vyavsay:'व्यापारी', gannayak:'राहुल देवांगन', ganvesh:'नहीं' },
+  { id:10, name:'नितिन मिश्रा',     basti:'संत माता कर्मा बस्ती',         area:'सदर वार्ड',                  shakha:'लवकुश शाखा',         role:'नगर प्रमुख',   joining_year:'2015', contact:'9036985214', blood_group:'O+',  vyavsay:'अधिवक्ता', gannayak:'संतोष साहू', ganvesh:'हाँ' },
+  { id:11, name:'संजय सोनी',        basti:'राम सप्ताह बस्ती',             area:'संजय वार्ड',                 shakha:'पटपर शाखा',          role:'बाल शिक्षक',   joining_year:'2021', contact:'9925874136', blood_group:'A+',  vyavsay:'छात्र', gannayak:'राजेश तिवारी', ganvesh:'हाँ' },
+  { id:12, name:'कमलेश राव',        basti:'माता देवला बस्ती',             area:'बजरंग वार्ड',                shakha:'केशव प्रभात शाखा',   role:'कार्यकर्ता',    joining_year:'2022', contact:'9814523697', blood_group:'B+',  vyavsay:'कृषि', gannayak:'संजय अवस्थी', ganvesh:'नहीं' },
+  { id:13, name:'हरीश पांडेय',      basti:'माता देवला बस्ती',             area:'माता देवालय वार्ड',          shakha:'माता देवाला शाखा',   role:'सेवा प्रमुख',  joining_year:'2019', contact:'9703214785', blood_group:'O-',  vyavsay:'सरकारी नौकरी', gannayak:'दीपक साहू', ganvesh:'हाँ' },
+  { id:14, name:'विनोद साहू',       basti:'शहीद वीर नारायण सिंह बस्ती',   area:'लाल बहादुर शास्त्री वार्ड', shakha:'गायत्री मंदिर शाखा', role:'कार्यकर्ता',    joining_year:'2023', contact:'9592145873', blood_group:'A-',  vyavsay:'व्यापारी', gannayak:'विजय वर्मा', ganvesh:'नहीं' },
+  { id:15, name:'अरुण तिवारी',      basti:'संत माता कर्मा बस्ती',         area:'रामसागर पारा वार्ड',         shakha:'यज्ञ शाला शाखा',     role:'मुख्य शिक्षक', joining_year:'2018', contact:'9481236974', blood_group:'AB+', vyavsay:'इंजीनियर', gannayak:'मनीष यादव', ganvesh:'हाँ' },
 ];
 
 const SHAKHA_DATA = [

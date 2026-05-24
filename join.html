@@ -72,11 +72,7 @@
   <div class="container">
     <div class="form-card reveal">
 
-      <div class="info-box">
-        📌 <strong>महत्वपूर्ण:</strong> यह फ़ॉर्म <strong>Formspree</strong> सेवा के माध्यम से सबमिट होता है।
-        फ़ॉर्म सबमिट होने के बाद जानकारी सीधे admin के ईमेल पर पहुंचेगी।
-        अपना Formspree Form ID नीचे के <code>action</code> में डालें।
-      </div>
+
 
       <!-- SUCCESS MESSAGE -->
       <div class="success-box" id="success-box">
@@ -86,9 +82,8 @@
         <a href="volunteers.html" class="btn btn-primary btn-sm" style="display:inline-flex;margin-top:1rem;">स्वयंसेवक सूची देखें</a>
       </div>
 
-      <!-- FORM — Replace YOUR_FORMSPREE_ID with your actual Formspree form ID -->
       <form id="join-form"
-            action="https://formspree.io/f/YOUR_FORMSPREE_ID"
+            action="https://formspree.io/f/mzdonqdp"
             method="POST"
             onsubmit="handleSubmit(event)">
 
@@ -109,12 +104,50 @@
           </div>
 
           <div class="form-group">
+            <label class="form-label" for="f-basti">बस्ती का नाम <span>*</span></label>
+            <select class="form-control" id="f-basti" name="बस्ती" required>
+              <option value="">बस्ती चुनें</option>
+              <option>श्यामा प्रसाद बस्ती</option>
+              <option>महाकाल बस्ती</option>
+              <option>परशुराम बस्ती</option>
+              <option>राम सप्ताह बस्ती</option>
+              <option>संत माता कर्मा बस्ती</option>
+              <option>शहीद वीर नारायण सिंह बस्ती</option>
+              <option>माता देवला बस्ती</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label class="form-label" for="f-area">वार्ड / क्षेत्र <span>*</span></label>
             <select class="form-control" id="f-area" name="वार्ड" required>
               <option value="">वार्ड चुनें</option>
-              <option>वार्ड 1</option><option>वार्ड 2</option><option>वार्ड 3</option>
-              <option>वार्ड 4</option><option>वार्ड 5</option><option>वार्ड 6</option>
-              <option>वार्ड 7</option><option>वार्ड 8</option><option>वार्ड 9</option><option>वार्ड 10</option>
+              <option>हाथनीपारा वार्ड</option>
+              <option>महावीर वार्ड</option>
+              <option>सुभाष वार्ड</option>
+              <option>शक्ति वार्ड</option>
+              <option>नया पारा वार्ड</option>
+              <option>परशुराम वार्ड</option>
+              <option>दाऊ कृष्णकुमार वार्ड</option>
+              <option>गांधी मंदिर वार्ड</option>
+              <option>शंकर वार्ड</option>
+              <option>सदर वार्ड</option>
+              <option>संजय वार्ड</option>
+              <option>नेहरू वार्ड</option>
+              <option>नयागंज वार्ड</option>
+              <option>भगत सिंह वार्ड</option>
+              <option>महासती वार्ड</option>
+              <option>संत माता कर्मा वार्ड</option>
+              <option>बलभद्र वार्ड</option>
+              <option>गुरु नानक वार्ड</option>
+              <option>संत रविदास वार्ड</option>
+              <option>रामसागर पारा वार्ड</option>
+              <option>मुंशी इस्माइल वार्ड</option>
+              <option>लाल बहादुर शास्त्री वार्ड</option>
+              <option>बजरंग वार्ड</option>
+              <option>स्टेशन वार्ड</option>
+              <option>पं. दीनदयाल उपाध्याय वार्ड</option>
+              <option>संत कँवरराम वार्ड</option>
+              <option>माता देवालय वार्ड</option>
             </select>
           </div>
 
@@ -138,7 +171,24 @@
               <option>कार्यकर्ता</option><option>शाखा प्रमुख</option>
               <option>मुख्य शिक्षक</option><option>बाल शिक्षक</option>
               <option>गणवेश प्रमुख</option><option>सेवा प्रमुख</option>
-              <option>नगर प्रमुख</option>
+              <option>नगर प्रमुख</option><option>गणनायक</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-gannayak">गणनायक <span>*</span></label>
+            <select class="form-control" id="f-gannayak" name="गणनायक" required>
+              <option value="">गणनायक चुनें</option>
+              <option>राजेश तिवारी</option>
+              <option>संजय अवस्थी</option>
+              <option>दीपक साहू</option>
+              <option>विजय वर्मा</option>
+              <option>मनीष यादव</option>
+              <option>राकेश शुक्ला</option>
+              <option>अमित चौबे</option>
+              <option>नवीन निषाद</option>
+              <option>राहुल देवांगन</option>
+              <option>संतोष साहू</option>
             </select>
           </div>
 
@@ -161,9 +211,23 @@
             </select>
           </div>
 
+          <div class="form-group" id="vyavsay-detail-group" style="display: none;">
+            <label class="form-label" for="f-vyavsay-detail">विशिष्ट व्यवसाय विवरण</label>
+            <input class="form-control" type="text" id="f-vyavsay-detail" name="विशिष्ट व्यवसाय" placeholder="जैसे: 12वीं कक्षा, किराना दुकान, सिविल इंजीनियर आदि"/>
+          </div>
+
           <div class="form-group">
             <label class="form-label" for="f-year">सम्मिलन वर्ष</label>
             <input class="form-control" type="number" id="f-year" name="सम्मिलन वर्ष" min="1990" max="2030" placeholder="2024"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-ganvesh">गणवेशधारी स्वयंसेवक? <span>*</span></label>
+            <select class="form-control" id="f-ganvesh" name="गणवेशधारी स्वयंसेवक" required>
+              <option value="">चुनें</option>
+              <option value="हाँ">हाँ</option>
+              <option value="नहीं">नहीं</option>
+            </select>
           </div>
 
           <div class="form-group full">
@@ -210,24 +274,72 @@
 <script>
 async function handleSubmit(e){
   e.preventDefault();
-  const btn = document.getElementById('submit-btn');
+  const btn  = document.getElementById('submit-btn');
   const form = document.getElementById('join-form');
   btn.disabled = true;
   btn.textContent = 'सबमिट हो रहा है…';
+
   try {
-    const res = await fetch(form.action, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} });
-    if(res.ok){
-      form.style.display='none';
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (res.ok) {
+      // ── 1. Show success message ───────────────────────────────────────────
+      form.style.display = 'none';
       document.getElementById('success-box').classList.add('show');
+
+      // ── 2. Build WhatsApp message with all form data ─────────────────────
+      const fd = new FormData(form);
+      const get = key => fd.get(key) || '—';
+
+      const msg =
+        `🚩 *नया स्वयंसेवक पंजीकरण – RSS भाटापारा*\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `👤 *नाम:* ${get('नाम')}\n` +
+        `📞 *मोबाइल:* ${get('मोबाइल')}\n` +
+        `🏘️ *बस्ती:* ${get('बस्ती')}\n` +
+        `🗺️ *वार्ड:* ${get('वार्ड')}\n` +
+        `🏛️ *शाखा:* ${get('शाखा')}\n` +
+        `🎯 *भूमिका:* ${get('भूमिका')}\n` +
+        `👥 *गणनायक:* ${get('गणनायक')}\n` +
+        `🩸 *रक्त समूह:* ${get('रक्त समूह')}\n` +
+        `💼 *व्यवसाय:* ${get('व्यवसाय')}${get('विशिष्ट व्यवसाय') !== '—' && get('विशिष्ट व्यवसाय') ? ' (' + get('विशिष्ट व्यवसाय') + ')' : ''}\n` +
+        `🎖️ *गणवेशधारी:* ${get('गणवेशधारी स्वयंसेवक')}\n` +
+        `📅 *सम्मिलन वर्ष:* ${get('सम्मिलन वर्ष')}\n` +
+        `🏠 *पता:* ${get('पता')}\n` +
+        `📝 *अतिरिक्त जानकारी:* ${get('अतिरिक्त जानकारी')}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `🇮🇳 भारत माता की जय!`;
+
+      const waUrl = `https://wa.me/918817694170?text=${encodeURIComponent(msg)}`;
+      setTimeout(() => window.open(waUrl, '_blank'), 800);
+
     } else {
-      btn.disabled=false; btn.textContent='🙏 पुनः प्रयास करें';
+      btn.disabled = false;
+      btn.textContent = '🙏 पुनः प्रयास करें';
       alert('त्रुटि हुई। कृपया पुनः प्रयास करें।');
     }
-  } catch(err){
-    btn.disabled=false; btn.textContent='🙏 पुनः प्रयास करें';
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = '🙏 पुनः प्रयास करें';
     alert('नेटवर्क त्रुटि। कृपया जांचें।');
   }
 }
+
+// Toggle specific occupation input details dynamically
+document.getElementById('f-vyavsay').addEventListener('change', function() {
+  const detailGroup = document.getElementById('vyavsay-detail-group');
+  if (this.value) {
+    detailGroup.style.display = 'flex';
+  } else {
+    detailGroup.style.display = 'none';
+    document.getElementById('f-vyavsay-detail').value = '';
+  }
+});
+
 observeReveal();
 </script>
 </body>
