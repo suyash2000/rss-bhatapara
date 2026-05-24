@@ -59,6 +59,7 @@
     .ra-call { background:#e8f5e9; color:#2e7d32; }
     .ra-wa { background:#e3f2fd; color:#1565c0; }
     .ra-pdf { background:rgba(255,107,0,0.1); color:var(--bhagwa); }
+    .ra-edit { background:rgba(77,20,0,0.08); color:var(--brown); }
     .ra-btn:hover { opacity:0.8; transform:scale(1.05); }
 
     /* CHARTS BAR */
@@ -259,6 +260,7 @@ function renderTable(list){
           <a class="ra-btn ra-call" href="tel:${v.contact}">📞</a>
           <a class="ra-btn ra-wa" href="https://wa.me/91${v.contact}" target="_blank">💬</a>
           <button class="ra-btn ra-pdf" onclick="printRow(${v.id})">PDF</button>
+          <button class="ra-btn ra-edit" onclick="openEditModal(${v.id})">✏️</button>
         </div>
       </td>
     </tr>`).join('');
@@ -331,6 +333,206 @@ function exportCSV(){
   a.download = 'rss-bhatapara-swayamsevak.csv';
   a.click();
 }
+
+function openEditModal(id) {
+  const v = VOLUNTEERS_DATA.find(x => x.id === id);
+  if (!v) return;
+  document.getElementById('edit-id').value = v.id;
+  document.getElementById('edit-name').value = v.name || '';
+  document.getElementById('edit-contact').value = v.contact || '';
+  document.getElementById('edit-shakha').value = v.shakha || '';
+  document.getElementById('edit-role').value = v.role || '';
+  document.getElementById('edit-basti').value = v.basti || '';
+  document.getElementById('edit-area').value = v.area || '';
+  document.getElementById('edit-blood').value = v.blood_group || '';
+  document.getElementById('edit-vyavsay').value = v.vyavsay || '';
+  document.getElementById('edit-year').value = v.joining_year || '';
+  document.getElementById('edit-ganvesh').value = v.ganvesh || 'नहीं';
+  document.getElementById('edit-gannayak').value = v.gannayak || '';
+  
+  document.getElementById('edit-modal-overlay').style.display = 'flex';
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal-overlay').style.display = 'none';
+}
+
+async function handleEditSubmit(e) {
+  e.preventDefault();
+  const id = parseInt(document.getElementById('edit-id').value);
+  const data = {
+    id: id,
+    name: document.getElementById('edit-name').value,
+    contact: document.getElementById('edit-contact').value,
+    shakha: document.getElementById('edit-shakha').value,
+    role: document.getElementById('edit-role').value,
+    basti: document.getElementById('edit-basti').value,
+    area: document.getElementById('edit-area').value,
+    blood_group: document.getElementById('edit-blood').value,
+    vyavsay: document.getElementById('edit-vyavsay').value,
+    joining_year: document.getElementById('edit-year').value,
+    ganvesh: document.getElementById('edit-ganvesh').value,
+    gannayak: document.getElementById('edit-gannayak').value
+  };
+  
+  const btn = document.querySelector('#edit-form button[type="submit"]');
+  btn.textContent = '⏳ सहेज रहे हैं…';
+  btn.disabled = true;
+  
+  try {
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const actionUrl = isLocal ? '/api/edit-volunteer' : '/.netlify/functions/edit-volunteer';
+
+    const res = await fetch(actionUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert('सफलतापूर्वक अपडेट किया गया!');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + resData.message);
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट करने में विफल।');
+  } finally {
+    btn.textContent = '💾 सहेजें (Save Changes)';
+    btn.disabled = false;
+    closeEditModal();
+  }
+}
 </script>
+
+<!-- EDIT VOLUNTEER MODAL -->
+<div class="modal-overlay" id="edit-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px);">
+  <div class="modal" style="background:#fff; border-radius:24px; width:100%; max-width:600px; padding:2rem; box-shadow:0 24px 80px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto;">
+    <h3 style="color:var(--brown); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+      <span>✏️ स्वयंसेवक विवरण बदलें</span>
+      <button onclick="closeEditModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa;">✕</button>
+    </h3>
+    <form id="edit-form" onsubmit="handleEditSubmit(event)">
+      <input type="hidden" id="edit-id"/>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">नाम</label>
+          <input class="login-input" type="text" id="edit-name" required style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">मोबाइल</label>
+          <input class="login-input" type="tel" id="edit-contact" required style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">शाखा</label>
+          <select class="login-input" id="edit-shakha" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
+            <option>केशव प्रभात शाखा</option>
+            <option>यज्ञ शाला शाखा</option>
+            <option>लवकुश शाखा</option>
+            <option>माता देवाला शाखा</option>
+            <option>गायत्री मंदिर शाखा</option>
+            <option>पटपर शाखा</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">दायित्व/भूमिका</label>
+          <select class="login-input" id="edit-role" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
+            <option>कार्यकर्ता</option>
+            <option>शाखा प्रमुख</option>
+            <option>मुख्य शिक्षक</option>
+            <option>बाल शिक्षक</option>
+            <option>गणवेश प्रमुख</option>
+            <option>सेवा प्रमुख</option>
+            <option>नगर प्रमुख</option>
+            <option>गणनायक</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">बस्ती</label>
+          <select class="login-input" id="edit-basti" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
+            <option>श्यामा प्रसाद बस्ती</option>
+            <option>महाकाल बस्ती</option>
+            <option>परशुराम बस्ती</option>
+            <option>राम सप्ताह बस्ती</option>
+            <option>संत माता कर्मा बस्ती</option>
+            <option>शहीद वीर नारायण सिंह बस्ती</option>
+            <option>माता देवला बस्ती</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">वार्ड</label>
+          <select class="login-input" id="edit-area" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
+            <option>हाथनीपारा वार्ड</option>
+            <option>महावीर वार्ड</option>
+            <option>सुभाष वार्ड</option>
+            <option>शक्ति वार्ड</option>
+            <option>नया पारा वार्ड</option>
+            <option>परशुराम वार्ड</option>
+            <option>दाऊ कृष्णकुमार वार्ड</option>
+            <option>गांधी मंदिर वार्ड</option>
+            <option>शंकर वार्ड</option>
+            <option>सदर वार्ड</option>
+            <option>संजय वार्ड</option>
+            <option>नेहरू वार्ड</option>
+            <option>नयागंज वार्ड</option>
+            <option>भगत सिंह वार्ड</option>
+            <option>महासती वार्ड</option>
+            <option>संत माता कर्मा वार्ड</option>
+            <option>बलभद्र वार्ड</option>
+            <option>गुरु नानक वार्ड</option>
+            <option>संत रविदास वार्ड</option>
+            <option>रामसागर पारा वार्ड</option>
+            <option>मुंशी इस्माइल वार्ड</option>
+            <option>लाल बहादुर शास्त्री वार्ड</option>
+            <option>बजरंग वार्ड</option>
+            <option>स्टेशन वार्ड</option>
+            <option>पं. दीनदयाल उपाध्याय वार्ड</option>
+            <option>संत कँवरराम वार्ड</option>
+            <option>माता देवालय वार्ड</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">रक्त समूह</label>
+          <select class="login-input" id="edit-blood" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
+            <option value="">रक्त समूह चुनें</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">व्यवसाय</label>
+          <input class="login-input" type="text" id="edit-vyavsay" style="margin-bottom:0; text-align:left;" placeholder="जैसे: शिक्षक, छात्र (12वीं), किराना दुकान"/>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">सम्मिलन वर्ष</label>
+          <input class="login-input" type="number" id="edit-year" style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">गणवेशधारी</label>
+          <select class="login-input" id="edit-ganvesh" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
+            <option>हाँ</option>
+            <option>नहीं</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem; grid-column: 1/-1;">
+          <label style="font-size:0.8rem; font-weight:700;">गणनायक</label>
+          <select class="login-input" id="edit-gannayak" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
+            <option>राजेश तिवारी</option>
+            <option>संजय अवस्थी</option>
+            <option>दीपक साहू</option>
+            <option>विजय वर्मा</option>
+            <option>मनीष यादव</option>
+            <option>राकेश शुक्ला</option>
+            <option>अमित चौबे</option>
+            <option>नवीन निषाद</option>
+            <option>राहुल देवांगन</option>
+            <option>संतोष साहू</option>
+          </select>
+        </div>
+      </div>
+      <button class="login-btn" type="submit" style="margin-top:1.5rem; border-radius:12px;">💾 सहेजें (Save Changes)</button>
+    </form>
+  </div>
+</div>
 </body>
 </html>
