@@ -74,6 +74,11 @@
 
 
 
+      <!-- ADMIN REGISTRATION BADGE -->
+      <div id="admin-notice-box" style="display:none; background:rgba(46,125,50,0.1); border:1.5px dashed #2e7d32; border-radius:12px; padding:0.75rem 1rem; margin-bottom:1.5rem; font-size:0.85rem; color:#2e7d32; font-weight:700;">
+        🛡️ व्यवस्थापक लॉगिन सक्रिय: यह सदस्य सीधे स्वीकृत होकर डेटाबेस में जुड़ जाएगा।
+      </div>
+
       <!-- SUCCESS MESSAGE -->
       <div class="success-box" id="success-box">
         <div style="font-size:3rem;margin-bottom:0.75rem;">🎉</div>
@@ -302,6 +307,7 @@ async function handleSubmit(e){
       const engKey = keyMap[key] || key;
       data[engKey] = val;
     });
+    data.isAdmin = sessionStorage.getItem('rss_admin') === '1';
 
     const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     const actionUrl = isLocal ? '/api/join' : '/.netlify/functions/add-volunteer';
@@ -315,7 +321,12 @@ async function handleSubmit(e){
     if (res.ok) {
       // ── 1. Show success message ───────────────────────────────────────────
       form.style.display = 'none';
-      document.getElementById('success-box').classList.add('show');
+      const successBox = document.getElementById('success-box');
+      if (sessionStorage.getItem('rss_admin') === '1') {
+        successBox.querySelector('h3').textContent = 'स्वयंसेवक सीधे जोड़ दिया गया!';
+        successBox.querySelector('p').innerHTML = 'स्वयंसेवक को सीधे स्वीकृत करके डेटाबेस में जोड़ दिया गया है।<br/>भारत माता की जय! 🇮🇳';
+      }
+      successBox.classList.add('show');
 
       // ── 2. Build WhatsApp message with all form data ─────────────────────
       const fd = new FormData(form);
@@ -365,6 +376,11 @@ document.getElementById('f-vyavsay').addEventListener('change', function() {
     document.getElementById('f-vyavsay-detail').value = '';
   }
 });
+
+if (sessionStorage.getItem('rss_admin') === '1') {
+  const adminBox = document.getElementById('admin-notice-box');
+  if (adminBox) adminBox.style.display = 'block';
+}
 
 observeReveal();
 </script>

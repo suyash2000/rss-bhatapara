@@ -102,6 +102,9 @@ const VOLUNTEERS_DATA = [
   { id:16,  name:'रवि गुप्ता',      basti:'श्यामा प्रसाद बस्ती',          area:'हाथनीपारा वार्ड',             shakha:'केशव प्रभात शाखा',   role:'मुख्य शिक्षक',    joining_year:'2025', contact:'8817694170', blood_group:'O+',  vyavsay:'इंजीनियर (Computer Science)', gannayak:'मनीष यादव', ganvesh:'हाँ' },
 ];
 
+const PENDING_VOLUNTEERS_DATA = [
+];
+
 const SHAKHA_DATA = [
   { id:1, name:'केशव प्रभात शाखा',   timing:'प्रात: 6:00 – 7:00', address:'केशव भवन, भाटापारा',            contact_person:'देवेन्द्र तिवारी', contact:'9321456987', schedule:['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'], activities:['शारीरिक अभ्यास','गीत-गान','बौद्धिक'], strength:42, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
   { id:2, name:'यज्ञ शाला शाखा',     timing:'प्रात: 5:30 – 6:30', address:'यज्ञ शाला परिसर, भाटापारा',     contact_person:'अमित पटेल',        contact:'9845123456', schedule:['सोमवार','बुधवार','शुक्रवार','शनिवार'], activities:['योग','सूर्य नमस्कार','प्राणायाम'], strength:35, mukhya_shikshak:'', shakha_karyavah:'', gan_shikshak:'', gan_nayak:'' },
