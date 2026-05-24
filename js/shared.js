@@ -101,6 +101,7 @@ const VOLUNTEERS_DATA = [
   { id:15, name:'अरुण तिवारी',      basti:'संत माता कर्मा बस्ती',         area:'रामसागर पारा वार्ड',         shakha:'यज्ञ शाला शाखा',     role:'मुख्य शिक्षक', joining_year:'2018', contact:'9481236974', blood_group:'AB+', vyavsay:'इंजीनियर', gannayak:'मनीष यादव', ganvesh:'हाँ' },
   { id:16,  name:'रवि गुप्ता',      basti:'श्यामा प्रसाद बस्ती',          area:'हाथनीपारा वार्ड',             shakha:'केशव प्रभात शाखा',   role:'मुख्य शिक्षक',    joining_year:'2025', contact:'8817694170', blood_group:'O+',  vyavsay:'इंजीनियर (Computer Science)', gannayak:'मनीष यादव', ganvesh:'हाँ' },
   { id:17,  name:'रवि गुप्ता',      basti:'संत माता कर्मा बस्ती',          area:'संजय वार्ड',             shakha:'पटपर शाखा',   role:'शाखा प्रमुख',    joining_year:'2023', contact:'9897478598', blood_group:'B-',  vyavsay:'शिक्षक (Computer Science)', gannayak:'राहुल देवांगन', ganvesh:'नहीं' },
+  { id:18,  name:'Suyash',      basti:'राम सप्ताह बस्ती',          area:'शक्ति वार्ड',             shakha:'यज्ञ शाला शाखा',   role:'शाखा प्रमुख',    joining_year:'2000', contact:'0471276824', blood_group:'AB-',  vyavsay:'कृषि (Krishan )', gannayak:'संतोष साहू', ganvesh:'नहीं' },
 ];
 
 const SHAKHA_DATA = [
