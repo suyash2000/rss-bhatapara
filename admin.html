@@ -6,14 +6,28 @@
   <title>Admin Dashboard – RSS भाटापारा</title>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
-    body { background:#f0f0f0; }
+    :root {
+      --bhagwa: #FF6B00;
+      --bhagwa-dark: #cc5500;
+      --bhagwa-light: #FF9A4D;
+      --brown: #4D1C00;
+      --brown-muted: #8c7365;
+      --brown-light: #a68b7c;
+      --cream: #FFF8F0;
+      --cream-dark: #fff3e6;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.15);
+    }
+    body { background:var(--cream-dark); color:var(--brown); font-family:sans-serif; }
     /* LOGIN */
     .login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1a0800,#3D1C00,#6B3A1F); padding:1rem; }
-    .login-box { background:#fff; border-radius:24px; padding:2.5rem; width:100%; max-width:400px; box-shadow:0 24px 60px rgba(0,0,0,0.3); text-align:center; }
+    .login-box { background:var(--white); border-radius:24px; padding:2.5rem; width:100%; max-width:400px; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); text-align:center; backdrop-filter:blur(8px); }
     .login-icon { font-size:3rem; margin-bottom:0.75rem; }
-    .login-box h2 { color:var(--brown); font-size:1.3rem; margin-bottom:0.25rem; }
+    .login-box h2 { color:var(--bhagwa); font-size:1.3rem; margin-bottom:0.25rem; }
     .login-box p { color:var(--brown-muted); font-size:0.82rem; margin-bottom:1.75rem; }
-    .login-input { width:100%; padding:0.75rem 1rem; border:1.5px solid rgba(255,107,0,0.25); border-radius:12px; font-family:inherit; font-size:0.9rem; color:var(--brown); background:var(--cream); outline:none; margin-bottom:1rem; transition:border 0.25s; }
+    .login-input { width:100%; padding:0.75rem 1rem; border:1.5px solid rgba(255,107,0,0.25); border-radius:12px; font-family:inherit; font-size:0.9rem; color:var(--brown); background:var(--cream-dark); outline:none; margin-bottom:1rem; transition:border 0.25s; }
     .login-input:focus { border-color:var(--bhagwa); }
     .login-btn { width:100%; padding:0.85rem; background:var(--bhagwa); color:#fff; border:none; border-radius:30px; font-family:inherit; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.3s; }
     .login-btn:hover { background:var(--bhagwa-dark); }
@@ -22,7 +36,7 @@
     /* DASHBOARD */
     .dash { display:none; }
     .dash.active { display:block; }
-    .dash-nav { background:var(--brown); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:60px; position:sticky; top:0; z-index:100; }
+    .dash-nav { background:var(--brown); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:60px; position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(255,107,0,0.2); }
     .dash-nav h1 { color:var(--bhagwa); font-size:1rem; font-weight:800; }
     .dash-nav-right { display:flex; gap:0.75rem; align-items:center; }
     .dash-nav-right a, .dash-nav-right button { color:rgba(255,220,170,0.75); font-size:0.8rem; font-weight:600; background:none; border:1px solid rgba(255,107,0,0.3); border-radius:20px; padding:0.3rem 0.85rem; cursor:pointer; font-family:inherit; text-decoration:none; transition:all 0.2s; }
@@ -31,18 +45,19 @@
 
     /* STAT CARDS */
     .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.25rem; margin-bottom:2rem; }
-    .stat-card { background:#fff; border-radius:16px; padding:1.5rem; border-left:4px solid var(--bhagwa); box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+    .stat-card { background:var(--white); border-radius:16px; padding:1.5rem; border-left:4px solid var(--bhagwa); box-shadow:var(--shadow-sm); border:1px solid rgba(255,107,0,0.12); border-left-width:4px; transition:transform 0.3s, box-shadow 0.3s; }
+    .stat-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
     .stat-card .sc-num { font-size:2rem; font-weight:900; color:var(--bhagwa); }
     .stat-card .sc-label { font-size:0.75rem; color:var(--brown-muted); text-transform:uppercase; letter-spacing:1px; margin-top:0.2rem; }
 
     /* TABLE */
-    .table-card { background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.07); overflow:hidden; margin-bottom:2rem; }
+    .table-card { background:var(--white); border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid rgba(255,107,0,0.12); overflow:hidden; margin-bottom:2rem; }
     .table-toolbar { display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,107,0,0.1); flex-wrap:wrap; gap:0.75rem; }
     .table-toolbar h3 { font-size:1rem; font-weight:800; color:var(--brown); }
     .table-toolbar-right { display:flex; gap:0.5rem; flex-wrap:wrap; }
-    .tb-btn { padding:0.45rem 1rem; border-radius:20px; border:1.5px solid rgba(255,107,0,0.25); background:transparent; color:var(--brown-light); font-family:inherit; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .tb-btn { padding:0.45rem 1rem; border-radius:20px; border:1.5px solid rgba(255,107,0,0.25); background:transparent; color:var(--brown); font-family:inherit; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
     .tb-btn:hover, .tb-btn.active { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); }
-    .tb-search { padding:0.45rem 0.85rem; border:1.5px solid rgba(255,107,0,0.22); border-radius:20px; font-family:inherit; font-size:0.82rem; color:var(--brown); background:var(--cream); outline:none; min-width:180px; }
+    .tb-search { padding:0.45rem 0.85rem; border:1.5px solid rgba(255,107,0,0.22); border-radius:20px; font-family:inherit; font-size:0.82rem; color:var(--brown); background:var(--cream-dark); outline:none; min-width:180px; }
     .tb-search:focus { border-color:var(--bhagwa); }
     table { width:100%; border-collapse:collapse; }
     thead tr { background:var(--cream); }
@@ -64,15 +79,23 @@
 
     /* CHARTS BAR */
     .chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:2rem; }
-    .chart-card { background:#fff; border-radius:16px; padding:1.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.07); }
+    .chart-card { background:var(--white); border-radius:16px; padding:1.5rem; box-shadow:var(--shadow-sm); border:1px solid rgba(255,107,0,0.12); }
     .chart-card h3 { font-size:0.9rem; font-weight:800; color:var(--brown); margin-bottom:1.25rem; }
     .bar-chart-row { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem; font-size:0.8rem; }
     .bcr-label { width:90px; text-align:right; color:var(--brown-muted); flex-shrink:0; }
-    .bcr-bar-wrap { flex:1; background:rgba(255,107,0,0.1); border-radius:4px; height:18px; }
-    .bcr-bar { background:var(--bhagwa); border-radius:4px; height:100%; transition:width 1s ease; display:flex; align-items:center; justify-content:flex-end; padding-right:0.4rem; }
+    .bcr-bar-wrap { flex:1; background:rgba(255,107,0,0.15); border-radius:8px; height:20px; overflow:hidden; }
+    .bcr-bar { background:linear-gradient(90deg, var(--bhagwa), var(--bhagwa-light)); border-radius:8px; height:100%; transition:width 1s cubic-bezier(0.4, 0, 0.2, 1); display:flex; align-items:center; justify-content:flex-end; padding-right:0.4rem; }
     .bcr-bar span { font-size:0.68rem; font-weight:700; color:#fff; }
 
     @media(max-width:768px){ .chart-grid{grid-template-columns:1fr;} table thead{display:none;} td{display:block;padding:0.4rem 1rem;} td::before{content:attr(data-label);font-weight:700;color:var(--bhagwa);margin-right:0.5rem;font-size:0.72rem;} }
+
+    /* VARG ADMIN TABS */
+    .varg-admin-tabs { display:flex; gap:0.5rem; flex-wrap:wrap; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,107,0,0.1); }
+    .vatab { padding:0.4rem 1rem; border-radius:20px; border:1.5px solid rgba(255,107,0,0.25); background:transparent; color:var(--brown); font-family:inherit; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .vatab:hover { background:rgba(255,107,0,0.08); border-color:var(--bhagwa); }
+    .vatab.active { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); }
+    .varg-panel { display:none; }
+    .varg-panel.active { display:block; }
   </style>
 </head>
 <body>
@@ -85,7 +108,7 @@
     <p>RSS भाटापारा – Admin Dashboard</p>
     <input class="login-input" type="text"     id="l-user" placeholder="Username" autocomplete="username"/>
     <input class="login-input" type="password" id="l-pass" placeholder="Password" autocomplete="current-password"/>
-    <button class="login-btn" onclick="doLogin()">🔓 लॉगिन करें</button>
+    <button class="login-btn" id="l-login-btn" onclick="doLogin()">🔓 लॉगिन करें</button>
     <p class="login-err" id="login-err">❌ गलत username या password</p>
     <p style="margin-top:1.25rem;font-size:0.72rem;color:#bbb;">RSS भाटापारा Admin Portal</p>
   </div>
@@ -122,14 +145,14 @@
 
     <!-- PENDING APPROVALS TABLE -->
     <div class="table-card" id="pending-card" style="display:none; border-left:4px solid #ff9800; margin-bottom:2rem;">
-      <div class="table-toolbar" style="background:#fff3e0;">
-        <h3 style="color:#e65100;">⏳ लंबित पंजीकरण (Pending Approvals)</h3>
+      <div class="table-toolbar" style="background:rgba(255,152,0,0.15);">
+        <h3 style="color:#ff9800;">⏳ लंबित पंजीकरण (Pending Approvals)</h3>
         <span id="pending-count-badge" style="background:#ff9800; color:#fff; font-size:0.75rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:20px;">0</span>
       </div>
       <div style="overflow-x:auto;">
         <table>
           <thead>
-            <tr style="background:#fff8f0;">
+            <tr style="background:rgba(255,107,0,0.08);">
               <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th>
               <th>वार्ड</th><th>संपर्क</th><th>व्यवसाय</th><th>गणवेश</th><th>कार्रवाई</th>
             </tr>
@@ -166,16 +189,167 @@
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- EVENTS MANAGEMENT SECTION -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div class="table-card" style="margin-bottom:2rem; border-left:4px solid var(--bhagwa);">
+      <div class="table-toolbar" style="background:rgba(255,107,0,0.15);">
+        <h3 style="color:var(--bhagwa);">📅 आगामी कार्यक्रम प्रबंधन</h3>
+        <button class="tb-btn" id="event-add-btn" onclick="openAddEventModal()" style="background:var(--bhagwa);color:#fff;border-color:var(--bhagwa);">+ नया कार्यक्रम जोड़ें</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>शीर्षक</th>
+              <th>दिनांक</th>
+              <th>समय</th>
+              <th>स्थान</th>
+              <th>श्रेणी</th>
+              <th>स्थिति</th>
+              <th>कार्रवाई</th>
+            </tr>
+          </thead>
+          <tbody id="events-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- VARG MANAGEMENT SECTION -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div class="table-card" style="margin-bottom:2rem; border-left:4px solid #5c6bc0;">
+      <div class="table-toolbar" style="background:rgba(92,107,192,0.15);">
+        <h3 style="color:#7986cb;">🎓 प्रशिक्षण वर्ग प्रबंधन</h3>
+        <button class="tb-btn" id="varg-add-btn" onclick="openAddVargModal()" style="background:#5c6bc0;color:#fff;border-color:#5c6bc0;">+ नया रिकॉर्ड जोड़ें</button>
+      </div>
+
+      <!-- Tab buttons -->
+      <div class="varg-admin-tabs" id="varg-admin-tabs">
+        <button class="vatab active" data-vi="0">📗 प्रारम्भिक वर्ग</button>
+        <button class="vatab" data-vi="1">📘 प्राथमिक शिक्षा वर्ग</button>
+        <button class="vatab" data-vi="2">📙 संघ शिक्षा वर्ग</button>
+        <button class="vatab" data-vi="3">📕 कार्यकर्ता विकास वर्ग 1</button>
+        <button class="vatab" data-vi="4">📓 कार्यकर्ता विकास वर्ग 2</button>
+      </div>
+
+      <!-- Panels (one per varg) -->
+      <div id="varg-panel-0" class="varg-panel active"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-0"></tbody></table></div></div>
+      <div id="varg-panel-1" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-1"></tbody></table></div></div>
+      <div id="varg-panel-2" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-2"></tbody></table></div></div>
+      <div id="varg-panel-3" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-3"></tbody></table></div></div>
+      <div id="varg-panel-4" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-4"></tbody></table></div></div>
+    </div>
+
   </div><!-- /dash-body -->
 </div><!-- /dash -->
 
+<!-- VARG ADD / EDIT MODAL -->
+<div id="varg-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px);">
+  <div style="background:var(--white); color:var(--brown); border-radius:24px; width:100%; max-width:520px; padding:2rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); max-height:90vh; overflow-y:auto;">
+    <h3 style="color:var(--brown); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+      <span id="varg-modal-title">🎓 वर्ग रिकॉर्ड जोड़ें</span>
+      <button onclick="closeVargModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa;">✕</button>
+    </h3>
+    <form id="varg-form" onsubmit="handleVargSubmit(event)">
+      <input type="hidden" id="varg-action" value="add"/>
+      <input type="hidden" id="varg-varg-idx" value="0"/>
+      <input type="hidden" id="varg-entry-idx" value=""/>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">नाम <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="text" id="varg-name" required placeholder="पूरा नाम" style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">मोबाइल <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="tel" id="varg-mobile" required placeholder="10 अंकों का नंबर" style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">वर्ग <span style="color:var(--bhagwa)">*</span></label>
+          <select class="login-input" id="varg-select" style="margin-bottom:0; height:41px; padding:0.5rem 1rem;">
+            <option value="0">📗 प्रारम्भिक वर्ग</option>
+            <option value="1">📘 प्राथमिक शिक्षा वर्ग</option>
+            <option value="2">📙 संघ शिक्षा वर्ग</option>
+            <option value="3">📕 कार्यकर्ता विकास वर्ग 1</option>
+            <option value="4">📓 कार्यकर्ता विकास वर्ग 2</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">वर्ग सत्र (वर्ष) <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="number" id="varg-session" required min="2000" max="2035" placeholder="जैसे: 2024" style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
+          <label style="font-size:0.8rem; font-weight:700;">वर्ग स्थल <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="text" id="varg-sthal" required placeholder="जैसे: RSS कार्यालय, भाटापारा" style="margin-bottom:0; text-align:left;"/>
+        </div>
+      </div>
+      <button class="login-btn" type="submit" id="varg-submit-btn" style="margin-top:1.5rem; border-radius:12px; background:#5c6bc0;">💾 सहेजें</button>
+    </form>
+  </div>
+</div>
+
+<!-- EVENT ADD / EDIT MODAL -->
+<div id="event-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px);">
+  <div style="background:var(--white); color:var(--brown); border-radius:24px; width:100%; max-width:520px; padding:2rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); max-height:90vh; overflow-y:auto;">
+    <h3 style="color:var(--brown); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+      <span id="event-modal-title">📅 कार्यक्रम जोड़ें</span>
+      <button onclick="closeEventModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa;">✕</button>
+    </h3>
+    <form id="event-form" onsubmit="handleEventSubmit(event)">
+      <input type="hidden" id="event-action" value="add"/>
+      <input type="hidden" id="event-id" value=""/>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
+        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
+          <label style="font-size:0.8rem; font-weight:700;">शीर्षक <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="text" id="event-title" required placeholder="जैसे: गुरु पूर्णिमा उत्सव" style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">दिनांक <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="date" id="event-date" required style="margin-bottom:0; text-align:left; height:41px; padding:0.5rem 1rem;"/>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">समय <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="text" id="event-time" required placeholder="जैसे: 07:00 AM" style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">श्रेणी <span style="color:var(--bhagwa)">*</span></label>
+          <select class="login-input" id="event-type" style="margin-bottom:0; height:41px; padding:0.5rem 1rem;">
+            <option>उत्सव</option>
+            <option>सेवा</option>
+            <option>पथ संचलन</option>
+            <option>प्रशिक्षण</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem;">
+          <label style="font-size:0.8rem; font-weight:700;">स्थिति <span style="color:var(--bhagwa)">*</span></label>
+          <select class="login-input" id="event-status" style="margin-bottom:0; height:41px; padding:0.5rem 1rem;">
+            <option value="upcoming">आगामी (Upcoming)</option>
+            <option value="completed">संपन्न (Completed)</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
+          <label style="font-size:0.8rem; font-weight:700;">स्थान <span style="color:var(--bhagwa)">*</span></label>
+          <input class="login-input" type="text" id="event-location" required placeholder="जैसे: RSS मैदान, भाटापारा" style="margin-bottom:0; text-align:left;"/>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
+          <label style="font-size:0.8rem; font-weight:700;">विवरण</label>
+          <textarea class="login-input" id="event-description" placeholder="कार्यक्रम का विवरण…" style="margin-bottom:0; text-align:left; height:80px; resize:vertical; padding:0.5rem 1rem; font-family:inherit;"></textarea>
+        </div>
+      </div>
+      <button class="login-btn" type="submit" id="event-submit-btn" style="margin-top:1.5rem; border-radius:12px; background:var(--bhagwa);">💾 सहेजें</button>
+    </form>
+  </div>
+</div>
+
 <script src="js/shared.js"></script>
+<script src="js/varg-data.js"></script>
 <script>
 // ── Auth ──────────────────────────────────────────────────────────────────────
 async function doLogin(){
   const u = document.getElementById('l-user').value.trim();
   const p = document.getElementById('l-pass').value;
-  const btn = document.querySelector('.login-btn');
+  const btn = document.getElementById('l-login-btn');
   const errEl = document.getElementById('login-err');
   errEl.style.display = 'none';
   btn.textContent = '⏳ जाँच रहे हैं…';
@@ -288,6 +462,8 @@ function buildDash(){
   }
 
   renderTable(VOLUNTEERS_DATA);
+  renderVargAdmin();
+  renderEventsAdmin();
 }
 
 function bloodClass(bg){ return 'blood-'+(bg.replace(/[+-]/,'')); }
@@ -535,11 +711,290 @@ async function deleteVolunteer(id) {
     alert('सर्वर से कनेक्ट करने में विफल।');
   }
 }
+
+// ── EVENTS Admin ─────────────────────────────────────────────────────────────
+function renderEventsAdmin() {
+  const tbody = document.getElementById('events-tbody');
+  if (!tbody) return;
+  if (typeof EVENTS_DATA === 'undefined' || !EVENTS_DATA.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#bbb;padding:2rem;">कोई कार्यक्रम नहीं। ऊपर "+ नया कार्यक्रम जोड़ें" बटन दबाएं।</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = EVENTS_DATA.map((e, i) => `
+    <tr>
+      <td data-label="#">${i+1}</td>
+      <td data-label="शीर्षक"><strong>${e.title}</strong></td>
+      <td data-label="दिनांक">${e.date}</td>
+      <td data-label="समय">${e.time}</td>
+      <td data-label="स्थान">${e.location}</td>
+      <td data-label="श्रेणी"><span class="blood-badge" style="background:rgba(255,107,0,0.1); color:var(--bhagwa); font-weight:700;">${e.type}</span></td>
+      <td data-label="स्थिति">
+        <span class="status-badge ${e.status==='upcoming'?'badge-upcoming':'badge-completed'}">
+          ${e.status==='upcoming'?'आगामी':'संपन्न'}
+        </span>
+      </td>
+      <td data-label="कार्रवाई">
+        <div class="row-actions">
+          <button class="ra-btn ra-edit" onclick="openEditEventModal(${e.id})">✏️ बदलें</button>
+          <button class="ra-btn ra-edit" onclick="deleteEvent(${e.id})" style="background:#ffebee;color:#c62828;">🗑️ हटाएं</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openAddEventModal() {
+  document.getElementById('event-modal-title').textContent = '📅 कार्यक्रम जोड़ें';
+  document.getElementById('event-action').value = 'add';
+  document.getElementById('event-id').value = '';
+  document.getElementById('event-title').value = '';
+  document.getElementById('event-date').value = '';
+  document.getElementById('event-time').value = '';
+  document.getElementById('event-type').selectedIndex = 0;
+  document.getElementById('event-status').selectedIndex = 0;
+  document.getElementById('event-location').value = '';
+  document.getElementById('event-description').value = '';
+  document.getElementById('event-modal-overlay').style.display = 'flex';
+}
+
+function openEditEventModal(id) {
+  const e = EVENTS_DATA.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('event-modal-title').textContent = '✏️ कार्यक्रम बदलें';
+  document.getElementById('event-action').value = 'edit';
+  document.getElementById('event-id').value = String(e.id);
+  document.getElementById('event-title').value = e.title || '';
+  document.getElementById('event-date').value = e.date || '';
+  document.getElementById('event-time').value = e.time || '';
+  document.getElementById('event-type').value = e.type || 'उत्सव';
+  document.getElementById('event-status').value = e.status || 'upcoming';
+  document.getElementById('event-location').value = e.location || '';
+  document.getElementById('event-description').value = e.description || '';
+  document.getElementById('event-modal-overlay').style.display = 'flex';
+}
+
+function closeEventModal() {
+  document.getElementById('event-modal-overlay').style.display = 'none';
+}
+
+async function handleEventSubmit(e) {
+  e.preventDefault();
+  const action = document.getElementById('event-action').value;
+  const idVal  = document.getElementById('event-id').value;
+  const payload = {
+    action,
+    title:       document.getElementById('event-title').value.trim(),
+    date:        document.getElementById('event-date').value.trim(),
+    time:        document.getElementById('event-time').value.trim(),
+    type:        document.getElementById('event-type').value,
+    status:      document.getElementById('event-status').value,
+    location:    document.getElementById('event-location').value.trim(),
+    description: document.getElementById('event-description').value.trim(),
+  };
+  if (action === 'edit') {
+    payload.id = parseInt(idVal);
+  }
+
+  const btn = document.getElementById('event-submit-btn');
+  btn.textContent = '⏳ सहेज रहे हैं…';
+  btn.disabled = true;
+
+  try {
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const apiUrl  = isLocal ? `/api/event-${action}` : '/.netlify/functions/events-manage';
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert(action === 'add' ? 'कार्यक्रम रिकॉर्ड सफलतापूर्वक जोड़ा गया!' : 'कार्यक्रम रिकॉर्ड सफलतापूर्वक अपडेट किया गया!');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + (resData.message || 'अजनक त्रुटि'));
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट नहीं हो सका।');
+  } finally {
+    btn.textContent = '💾 सहेजें';
+    btn.disabled = false;
+  }
+}
+
+async function deleteEvent(id) {
+  const e = EVENTS_DATA.find(x => x.id === id);
+  if (!confirm(`क्या आप कार्यक्रम "${e.title}" को सूची से हटाना चाहते हैं?`)) return;
+
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const apiUrl  = isLocal ? '/api/event-delete' : '/.netlify/functions/events-manage';
+
+  try {
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', id: id })
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert('कार्यक्रम सफलतापूर्वक हटा दिया गया है।');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + resData.message);
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट नहीं हो सका।');
+  }
+}
+
+// ── VARG Admin ───────────────────────────────────────────────────────────────
+const VADMIN_VARG_NAMES = ['प्रारम्भिक वर्ग','प्राथमिक शिक्षा वर्ग','संघ शिक्षा वर्ग','कार्यकर्ता विकास वर्ग 1','कार्यकर्ता विकास वर्ग 2'];
+let vargAdminCurrentTab = 0;
+
+function renderVargAdmin() {
+  for (let vi = 0; vi < 5; vi++) {
+    const tbody = document.getElementById('varg-tbody-' + vi);
+    if (!tbody) continue;
+    const list = VARG_DATA[vi];
+    if (!list || !list.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#bbb;padding:2rem;">कोई रिकॉर्ड नहीं। ऊपर "+ नया रिकॉर्ड जोड़ें" बटन दबाएं।</td></tr>`;
+      continue;
+    }
+    tbody.innerHTML = list.map((v, i) => `
+      <tr>
+        <td data-label="#">${i+1}</td>
+        <td data-label="नाम"><strong>${v.name}</strong></td>
+        <td data-label="मोबाइल"><a href="tel:${v.mobile}" style="color:var(--bhagwa)">${v.mobile}</a></td>
+        <td data-label="वर्ग सत्र">${v.session}</td>
+        <td data-label="वर्ग स्थल">${v.sthal}</td>
+        <td data-label="कार्रवाई">
+          <div class="row-actions">
+            <button class="ra-btn ra-edit" onclick="openEditVargModal(${vi}, ${i})">✏️ बदलें</button>
+            <button class="ra-btn ra-edit" onclick="deleteVargEntry(${vi}, ${i})" style="background:#ffebee;color:#c62828;">🗑️ हटाएं</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+}
+
+// Tab switching for varg admin
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.getElementById('varg-admin-tabs');
+  if (tabs) tabs.addEventListener('click', e => {
+    const btn = e.target.closest('.vatab'); if (!btn) return;
+    document.querySelectorAll('.vatab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.varg-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    vargAdminCurrentTab = parseInt(btn.dataset.vi);
+    document.getElementById('varg-panel-' + vargAdminCurrentTab).classList.add('active');
+  });
+});
+
+function openAddVargModal() {
+  document.getElementById('varg-modal-title').textContent = '🎓 वर्ग रिकॉर्ड जोड़ें';
+  document.getElementById('varg-action').value = 'add';
+  document.getElementById('varg-entry-idx').value = '';
+  document.getElementById('varg-select').value = String(vargAdminCurrentTab);
+  document.getElementById('varg-varg-idx').value = String(vargAdminCurrentTab);
+  document.getElementById('varg-name').value = '';
+  document.getElementById('varg-mobile').value = '';
+  document.getElementById('varg-session').value = '';
+  document.getElementById('varg-sthal').value = '';
+  document.getElementById('varg-select').disabled = false;
+  document.getElementById('varg-modal-overlay').style.display = 'flex';
+}
+
+function openEditVargModal(vi, ei) {
+  const v = VARG_DATA[vi][ei];
+  if (!v) return;
+  document.getElementById('varg-modal-title').textContent = '✏️ वर्ग रिकॉर्ड बदलें';
+  document.getElementById('varg-action').value = 'edit';
+  document.getElementById('varg-varg-idx').value = String(vi);
+  document.getElementById('varg-entry-idx').value = String(ei);
+  document.getElementById('varg-select').value = String(vi);
+  document.getElementById('varg-select').disabled = true; // can't change varg on edit
+  document.getElementById('varg-name').value = v.name || '';
+  document.getElementById('varg-mobile').value = v.mobile || '';
+  document.getElementById('varg-session').value = v.session || '';
+  document.getElementById('varg-sthal').value = v.sthal || '';
+  document.getElementById('varg-modal-overlay').style.display = 'flex';
+}
+
+function closeVargModal() {
+  document.getElementById('varg-modal-overlay').style.display = 'none';
+  document.getElementById('varg-select').disabled = false;
+}
+
+async function handleVargSubmit(e) {
+  e.preventDefault();
+  const action   = document.getElementById('varg-action').value;
+  const vargIdx  = parseInt(document.getElementById('varg-select').value);
+  const entryIdx = document.getElementById('varg-entry-idx').value;
+  const payload  = {
+    action,
+    vargIdx,
+    name:    document.getElementById('varg-name').value.trim(),
+    mobile:  document.getElementById('varg-mobile').value.trim(),
+    session: document.getElementById('varg-session').value.trim(),
+    sthal:   document.getElementById('varg-sthal').value.trim(),
+  };
+  if (action === 'edit') payload.entryIdx = parseInt(entryIdx);
+
+  const btn = document.getElementById('varg-submit-btn');
+  btn.textContent = '⏳ सहेज रहे हैं…';
+  btn.disabled = true;
+
+  try {
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const apiUrl  = isLocal ? `/api/varg-${action}` : '/.netlify/functions/varg-manage';
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert(action === 'add' ? 'रिकॉर्ड सफलतापूर्वक जोड़ा गया!' : 'रिकॉर्ड सफलतापूर्वक अपडेट किया गया!');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + (resData.message || 'अज्ञात त्रुटि'));
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट नहीं हो सका।');
+  } finally {
+    btn.textContent = '💾 सहेजें';
+    btn.disabled = false;
+  }
+}
+
+async function deleteVargEntry(vi, ei) {
+  const v = VARG_DATA[vi][ei];
+  if (!confirm(`क्या आप "${v.name}" को ${VADMIN_VARG_NAMES[vi]} से हटाना चाहते हैं?`)) return;
+
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const apiUrl  = isLocal ? '/api/varg-delete' : '/.netlify/functions/varg-manage';
+
+  try {
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', vargIdx: vi, entryIdx: ei })
+    });
+    const resData = await res.json();
+    if (resData.success) {
+      alert('रिकॉर्ड हटा दिया गया।');
+      location.reload();
+    } else {
+      alert('त्रुटि: ' + (resData.message || 'अज्ञात त्रुटि'));
+    }
+  } catch (err) {
+    alert('सर्वर से कनेक्ट नहीं हो सका।');
+  }
+}
 </script>
 
 <!-- EDIT VOLUNTEER MODAL -->
 <div class="modal-overlay" id="edit-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px);">
-  <div class="modal" style="background:#fff; border-radius:24px; width:100%; max-width:600px; padding:2rem; box-shadow:0 24px 80px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto;">
+  <div class="modal" style="background:var(--white); color:var(--brown); border-radius:24px; width:100%; max-width:600px; padding:2rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); max-height:90vh; overflow-y:auto;">
     <h3 style="color:var(--brown); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
       <span>✏️ स्वयंसेवक विवरण बदलें</span>
       <button onclick="closeEditModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa;">✕</button>

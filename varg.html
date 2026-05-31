@@ -41,7 +41,7 @@
     .varg-count { font-size:0.8rem; color:var(--brown-muted); margin-left:auto; }
 
     /* ── Table ── */
-    .varg-table-wrap { background:#fff; border-radius:16px; box-shadow:0 2px 16px rgba(0,0,0,0.07); overflow:hidden; }
+    .varg-table-wrap { background:var(--white); border-radius:16px; box-shadow:0 2px 16px rgba(0,0,0,0.07); overflow:hidden; }
     .varg-table-wrap table { width:100%; border-collapse:collapse; }
     .varg-table-wrap thead tr { background:var(--bhagwa); }
     .varg-table-wrap th { padding:0.85rem 1rem; text-align:left; font-size:0.75rem; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
@@ -258,9 +258,41 @@
   <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
 </button>
 
-<script src="js/shared.js"></script>
 <script src="js/varg-data.js"></script>
 <script>
+  // ── Scroll Reveal (standalone, no shared.js dependency) ──────────────────
+  function observeReveal() {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => io.observe(el));
+  }
+
+  // ── Hamburger / Back-to-top ───────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.getElementById('nav-links');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => {
+        const open = navLinks.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', open);
+      });
+      document.querySelectorAll('.nav-link').forEach(a =>
+        a.addEventListener('click', () => navLinks.classList.remove('open'))
+      );
+    }
+    const btt = document.getElementById('btt');
+    if (btt) {
+      window.addEventListener('scroll', () => btt.classList.toggle('visible', window.scrollY > 400));
+      btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+    // Mark active nav link
+    const path = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-link').forEach(a => {
+      if (a.getAttribute('href').split('/').pop() === path) a.classList.add('active');
+    });
+  });
+
   // Tab switching
   document.getElementById('varg-tabs').addEventListener('click', e => {
     const btn = e.target.closest('.vtab'); if (!btn) return;

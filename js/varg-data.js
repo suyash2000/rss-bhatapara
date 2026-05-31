@@ -1,4 +1,9 @@
-// ── VARG DATA ──────────────────────────────────────────────────────────────────
+﻿// ── VARG DATA (प्रशिक्षण वर्ग) ───────────────────────────────────────────────────
+// Used ONLY by: varg.html (प्रशिक्षण वर्ग page)
+// NOT related to VOLUNTEERS_DATA in shared.js (स्वयंसेवक page)
+//
+// ये रिकॉर्ड RSS प्रशिक्षण वर्गों के हैं — स्वयंसेवक सूची से अलग हैं।
+//
 // Structure: { name, mobile, session (year), sthal (place) }
 // VARG_DATA[0] = प्रारम्भिक वर्ग
 // VARG_DATA[1] = प्राथमिक शिक्षा वर्ग
@@ -49,6 +54,7 @@ const VARG_DATA = [
   [
     { name:'नितिन मिश्रा',       mobile:'9036985214', session:'2024', sthal:'प्रांत कार्यालय, रायपुर' },
     { name:'देवेन्द्र तिवारी',   mobile:'9321456987', session:'2024', sthal:'प्रांत कार्यालय, रायपुर' },
+    { name:'Suyash Gupta', mobile:'6233566465', session:'2027', sthal:'Bhopal' },
   ],
 
 ];

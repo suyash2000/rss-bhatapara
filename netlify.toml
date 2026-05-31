@@ -1,2 +1,16 @@
 [build]
   functions = "netlify/functions"
+
+[build.processing]
+  skip_processing = true
+
+[[headers]]
+  for = "/js/shared.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/js/varg-data.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+

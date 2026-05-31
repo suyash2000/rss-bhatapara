@@ -1,4 +1,4 @@
-$port = 8080
+$port = 8085
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
 
@@ -625,7 +625,357 @@ try {
             $response.ContentLength64 = $bytes.Length
             $response.ContentType = "application/json; charset=utf-8"
             $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/varg-add") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+
+            try {
+                $data = ConvertFrom-Json $body
+                $vargIdx  = [int]$data.vargIdx
+                $name     = $data.name
+                $mobile   = $data.mobile
+                $session  = $data.session
+                $sthal    = $data.sthal
+
+                $vargDataPath = Join-Path (Get-Location) "js\varg-data.js"
+                if (Test-Path $vargDataPath) {
+                    $lines = [System.IO.File]::ReadAllLines($vargDataPath, [System.Text.Encoding]::UTF8)
+
+                    # Find the marker comment "// ── $vargIdx:"
+                    $markerLine = -1
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i] -match "//\s*.*\s*${vargIdx}:") {
+                            $markerLine = $i; break
+                        }
+                    }
+
+                    # Find opening '[' after marker
+                    $openBracket = -1
+                    for ($i = $markerLine; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Trim() -eq "[") { $openBracket = $i; break }
+                    }
+
+                    # Find closing '],' or ']'
+                    $closeBracket = -1
+                    for ($i = $openBracket + 1; $i -lt $lines.Length; $i++) {
+                        $t = $lines[$i].Trim()
+                        if ($t -eq "]," -or $t -eq "]") { $closeBracket = $i; break }
+                    }
+
+                    if ($openBracket -ne -1 -and $closeBracket -ne -1) {
+                        $newLine = "    { name:'$name', mobile:'$mobile', session:'$session', sthal:'$sthal' },"
+                        $newLines = $lines[0..($closeBracket-1)] + $newLine + $lines[$closeBracket..($lines.Length-1)]
+                        [System.IO.File]::WriteAllLines($vargDataPath, $newLines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Added '$name' to VARG_DATA[$vargIdx]" -ForegroundColor Yellow
+                    }
+                }
+
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Varg Add)" -ForegroundColor Green
+            } catch {
+                $responseBody = "{`"success`": false, `"message`": `"$_`"}"
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/varg-edit") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+
+            try {
+                $data = ConvertFrom-Json $body
+                $vargIdx  = [int]$data.vargIdx
+                $entryIdx = [int]$data.entryIdx
+                $name     = $data.name
+                $mobile   = $data.mobile
+                $session  = $data.session
+                $sthal    = $data.sthal
+
+                $vargDataPath = Join-Path (Get-Location) "js\varg-data.js"
+                if (Test-Path $vargDataPath) {
+                    $lines = [System.IO.File]::ReadAllLines($vargDataPath, [System.Text.Encoding]::UTF8)
+
+                    $markerLine = -1
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i] -match "//\s*.*\s*${vargIdx}:") { $markerLine = $i; break }
+                    }
+                    $openBracket = -1
+                    for ($i = $markerLine; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Trim() -eq "[") { $openBracket = $i; break }
+                    }
+                    $closeBracket = -1
+                    for ($i = $openBracket + 1; $i -lt $lines.Length; $i++) {
+                        $t = $lines[$i].Trim()
+                        if ($t -eq "]," -or $t -eq "]") { $closeBracket = $i; break }
+                    }
+
+                    $count = 0
+                    $updated = $false
+                    for ($i = $openBracket + 1; $i -lt $closeBracket; $i++) {
+                        if ($lines[$i].Trim().StartsWith("{")) {
+                            if ($count -eq $entryIdx) {
+                                $lines[$i] = "    { name:'$name', mobile:'$mobile', session:'$session', sthal:'$sthal' },"
+                                $updated = $true
+                                break
+                            }
+                            $count++
+                        }
+                    }
+
+                    if ($updated) {
+                        [System.IO.File]::WriteAllLines($vargDataPath, $lines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Edited entry $entryIdx in VARG_DATA[$vargIdx]" -ForegroundColor Yellow
+                    }
+                }
+
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Varg Edit)" -ForegroundColor Green
+            } catch {
+                $responseBody = "{`"success`": false, `"message`": `"$_`"}"
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/varg-delete") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+
+            try {
+                $data = ConvertFrom-Json $body
+                $vargIdx  = [int]$data.vargIdx
+                $entryIdx = [int]$data.entryIdx
+
+                $vargDataPath = Join-Path (Get-Location) "js\varg-data.js"
+                if (Test-Path $vargDataPath) {
+                    $lines = [System.IO.File]::ReadAllLines($vargDataPath, [System.Text.Encoding]::UTF8)
+
+                    $markerLine = -1
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i] -match "//\s*.*\s*${vargIdx}:") { $markerLine = $i; break }
+                    }
+                    $openBracket = -1
+                    for ($i = $markerLine; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Trim() -eq "[") { $openBracket = $i; break }
+                    }
+                    $closeBracket = -1
+                    for ($i = $openBracket + 1; $i -lt $lines.Length; $i++) {
+                        $t = $lines[$i].Trim()
+                        if ($t -eq "]," -or $t -eq "]") { $closeBracket = $i; break }
+                    }
+
+                    $count = 0
+                    $deleted = $false
+                    $newLines = New-Object System.Collections.Generic.List[string]
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($i -gt $openBracket -and $i -lt $closeBracket -and $lines[$i].Trim().StartsWith("{")) {
+                            if ($count -eq $entryIdx) { $count++; $deleted = $true; continue }
+                            $count++
+                        }
+                        $newLines.Add($lines[$i])
+                    }
+
+                    if ($deleted) {
+                        [System.IO.File]::WriteAllLines($vargDataPath, $newLines.ToArray(), [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Deleted entry $entryIdx from VARG_DATA[$vargIdx]" -ForegroundColor Yellow
+                    }
+                }
+
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Varg Delete)" -ForegroundColor Green
+            } catch {
+                $responseBody = "{`"success`": false, `"message`": `"$_`"}"
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/event-add") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+
+            try {
+                $data = ConvertFrom-Json $body
+                $title       = $data.title
+                $date        = $data.date
+                $time        = $data.time
+                $type        = $data.type
+                $location    = $data.location
+                $description = $data.description
+                $status      = $data.status
+
+                $sharedJsPath = Join-Path (Get-Location) "js\shared.js"
+                if (Test-Path $sharedJsPath) {
+                    $jsContent = [System.IO.File]::ReadAllText($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $maxId = 0
+                    if ($jsContent -match 'const EVENTS_DATA = \[(?s)(.*?)\];') {
+                        $block = $Matches[1]
+                        $idMatches = [regex]::Matches($block, 'id:\s*(?<id>\d+)')
+                        foreach ($m in $idMatches) {
+                            $idVal = [int]$m.Groups['id'].Value
+                            if ($idVal -gt $maxId) { $maxId = $idVal }
+                        }
+                    }
+                    $newId = $maxId + 1
+
+                    $lines = [System.IO.File]::ReadAllLines($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $openBracket = -1
+                    $closeBracket = -1
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Contains("const EVENTS_DATA = [")) {
+                            $openBracket = $i
+                        }
+                        if ($openBracket -ne -1 -and $lines[$i].Trim() -eq "];") {
+                            $closeBracket = $i
+                            break
+                        }
+                    }
+
+                    if ($openBracket -ne -1 -and $closeBracket -ne -1) {
+                        $newLine = "  { id:$newId, title:'$title', date:'$date', time:'$time', location:'$location', type:'$type', description:'$description', status:'$status' },"
+                        $newLines = $lines[0..($closeBracket-1)] + $newLine + $lines[$closeBracket..($lines.Length-1)]
+                        [System.IO.File]::WriteAllLines($sharedJsPath, $newLines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Added event '$title' (ID: $newId) to shared.js" -ForegroundColor Yellow
+                    }
+                }
+
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Event Add)" -ForegroundColor Green
+            } catch {
+                $responseBody = "{`"success`": false, `"message`": `"$_`"}"
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/event-edit") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+
+            try {
+                $data = ConvertFrom-Json $body
+                $id          = [int]$data.id
+                $title       = $data.title
+                $date        = $data.date
+                $time        = $data.time
+                $type        = $data.type
+                $location    = $data.location
+                $description = $data.description
+                $status      = $data.status
+
+                $sharedJsPath = Join-Path (Get-Location) "js\shared.js"
+                if (Test-Path $sharedJsPath) {
+                    $lines = [System.IO.File]::ReadAllLines($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $insideEvents = $false
+                    $updated = $false
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Contains("const EVENTS_DATA = [")) {
+                            $insideEvents = $true
+                        }
+                        if ($insideEvents -and $lines[$i] -match "\bid:\s*$id\b") {
+                            $lines[$i] = "  { id:$id, title:'$title', date:'$date', time:'$time', location:'$location', type:'$type', description:'$description', status:'$status' },"
+                            $updated = $true
+                            break
+                        }
+                        if ($insideEvents -and $lines[$i].Trim() -eq "];") {
+                            $insideEvents = $false
+                        }
+                    }
+
+                    if ($updated) {
+                        [System.IO.File]::WriteAllLines($sharedJsPath, $lines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Updated event '$title' (ID: $id) in shared.js" -ForegroundColor Yellow
+                    }
+                }
+
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Event Edit)" -ForegroundColor Green
+            } catch {
+                $responseBody = "{`"success`": false, `"message`": `"$_`"}"
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+        } elseif ($request.HttpMethod -eq "POST" -and $localPath -eq "/api/event-delete") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream, [System.Text.Encoding]::UTF8)
+            $body = $reader.ReadToEnd()
+            $reader.Close()
+
+            try {
+                $data = ConvertFrom-Json $body
+                $id = [int]$data.id
+
+                $sharedJsPath = Join-Path (Get-Location) "js\shared.js"
+                if (Test-Path $sharedJsPath) {
+                    $lines = [System.IO.File]::ReadAllLines($sharedJsPath, [System.Text.Encoding]::UTF8)
+                    $insideEvents = $false
+                    $foundLineIndex = -1
+                    for ($i = 0; $i -lt $lines.Length; $i++) {
+                        if ($lines[$i].Contains("const EVENTS_DATA = [")) {
+                            $insideEvents = $true
+                        }
+                        if ($insideEvents -and $lines[$i] -match "\bid:\s*$id\b") {
+                            $foundLineIndex = $i
+                            break
+                        }
+                        if ($insideEvents -and $lines[$i].Trim() -eq "];") {
+                            $insideEvents = $false
+                        }
+                    }
+
+                    if ($foundLineIndex -ne -1) {
+                        $newLines = @()
+                        for ($i = 0; $i -lt $lines.Length; $i++) {
+                            if ($i -eq $foundLineIndex) { continue }
+                            $newLines += $lines[$i]
+                        }
+                        [System.IO.File]::WriteAllLines($sharedJsPath, $newLines, [System.Text.Encoding]::UTF8)
+                        Write-Host " -> Deleted event ID $id from shared.js" -ForegroundColor Yellow
+                    }
+                }
+
+                $responseBody = '{"success": true}'
+                $response.StatusCode = 200
+                Write-Host " -> 200 OK (Event Delete)" -ForegroundColor Green
+            } catch {
+                $responseBody = "{`"success`": false, `"message`": `"$_`"}"
+                $response.StatusCode = 400
+                Write-Host " -> 400 Bad Request: $_" -ForegroundColor Red
+            }
+
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentLength64 = $bytes.Length
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.OutputStream.Write($bytes, 0, $bytes.Length)
         } else {
+
             # Static files
             $relPath = $localPath.TrimStart('/')
             if ([string]::IsNullOrEmpty($relPath)) { $relPath = "index.html" }
@@ -655,7 +1005,12 @@ try {
                 }
                 
                 $response.ContentType = $contentType
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+                if ($ext -eq ".js" -or $ext -eq ".csv" -or $ext -eq ".json") {
+                    $response.AddHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+                }
+                if ($request.HttpMethod -ne "HEAD") {
+                    $response.OutputStream.Write($bytes, 0, $bytes.Length)
+                }
                 Write-Host " -> 200 OK" -ForegroundColor Green
             } else {
                 $response.StatusCode = 404

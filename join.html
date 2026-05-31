@@ -7,7 +7,7 @@
   <meta name="description" content="RSS भाटापारा में नया स्वयंसेवक पंजीकरण फ़ॉर्म।"/>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
-    .form-card { background:#fff; border-radius:24px; padding:2.5rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.12); max-width:700px; margin:0 auto; }
+    .form-card { background:var(--white); border-radius:24px; padding:2.5rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.12); max-width:700px; margin:0 auto; }
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
     .form-group { display:flex; flex-direction:column; gap:0.4rem; }
     .form-group.full { grid-column:1/-1; }
@@ -92,162 +92,190 @@
             method="POST"
             onsubmit="handleSubmit(event)">
 
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-bar-container">
+          <div class="progress-line-bg"></div>
+          <div class="progress-line-fill" id="progress-line-fill"></div>
+          <div class="step-node active" onclick="goToStep(1)">
+            1
+            <span class="step-label">व्यक्तिगत विवरण</span>
+          </div>
+          <div class="step-node" onclick="goToStep(2)">
+            2
+            <span class="step-label">संघ विवरण</span>
+          </div>
+          <div class="step-node" onclick="goToStep(3)">
+            3
+            <span class="step-label">अतिरिक्त जानकारी</span>
+          </div>
+        </div>
+
         <!-- Hidden fields for identification -->
         <input type="hidden" name="_subject" value="नया स्वयंसेवक पंजीकरण – RSS भाटापारा"/>
         <input type="hidden" name="_language" value="hi"/>
 
-        <div class="form-grid">
-
-          <div class="form-group">
-            <label class="form-label" for="f-name">पूरा नाम <span>*</span></label>
-            <input class="form-control" type="text" id="f-name" name="नाम" required placeholder="जैसे: राहुल शर्मा"/>
+        <!-- STEP 1: Personal Details -->
+        <div class="form-step active" id="step-1">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="f-name">पूरा नाम <span>*</span></label>
+              <input class="form-control" type="text" id="f-name" name="नाम" required placeholder="जैसे: राहुल शर्मा"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-contact">मोबाइल नंबर <span>*</span></label>
+              <input class="form-control" type="tel" id="f-contact" name="मोबाइल" required placeholder="10 अंकों का नंबर" pattern="[0-9]{10}" maxlength="10"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-blood">रक्त समूह</label>
+              <select class="form-control" id="f-blood" name="रक्त समूह">
+                <option value="">रक्त समूह चुनें</option>
+                <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="f-address">पूरा पता</label>
+              <input class="form-control" type="text" id="f-address" name="पता" placeholder="मकान नंबर, गली, मोहल्ला, भाटापारा"/>
+            </div>
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-contact">मोबाइल नंबर <span>*</span></label>
-            <input class="form-control" type="tel" id="f-contact" name="मोबाइल" required placeholder="10 अंकों का नंबर" pattern="[0-9]{10}" maxlength="10"/>
+          <div class="wizard-actions">
+            <div></div>
+            <button type="button" class="wizard-btn-next" onclick="nextStep()">आगे बढ़ें &rarr;</button>
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-basti">बस्ती का नाम <span>*</span></label>
-            <select class="form-control" id="f-basti" name="बस्ती" required>
-              <option value="">बस्ती चुनें</option>
-              <option>श्यामा प्रसाद बस्ती</option>
-              <option>महाकाल बस्ती</option>
-              <option>परशुराम बस्ती</option>
-              <option>राम सप्ताह बस्ती</option>
-              <option>संत माता कर्मा बस्ती</option>
-              <option>शहीद वीर नारायण सिंह बस्ती</option>
-              <option>माता देवला बस्ती</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-area">वार्ड / क्षेत्र <span>*</span></label>
-            <select class="form-control" id="f-area" name="वार्ड" required>
-              <option value="">वार्ड चुनें</option>
-              <option>हाथनीपारा वार्ड</option>
-              <option>महावीर वार्ड</option>
-              <option>सुभाष वार्ड</option>
-              <option>शक्ति वार्ड</option>
-              <option>नया पारा वार्ड</option>
-              <option>परशुराम वार्ड</option>
-              <option>दाऊ कृष्णकुमार वार्ड</option>
-              <option>गांधी मंदिर वार्ड</option>
-              <option>शंकर वार्ड</option>
-              <option>सदर वार्ड</option>
-              <option>संजय वार्ड</option>
-              <option>नेहरू वार्ड</option>
-              <option>नयागंज वार्ड</option>
-              <option>भगत सिंह वार्ड</option>
-              <option>महासती वार्ड</option>
-              <option>संत माता कर्मा वार्ड</option>
-              <option>बलभद्र वार्ड</option>
-              <option>गुरु नानक वार्ड</option>
-              <option>संत रविदास वार्ड</option>
-              <option>रामसागर पारा वार्ड</option>
-              <option>मुंशी इस्माइल वार्ड</option>
-              <option>लाल बहादुर शास्त्री वार्ड</option>
-              <option>बजरंग वार्ड</option>
-              <option>स्टेशन वार्ड</option>
-              <option>पं. दीनदयाल उपाध्याय वार्ड</option>
-              <option>संत कँवरराम वार्ड</option>
-              <option>माता देवालय वार्ड</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-shakha">शाखा <span>*</span></label>
-            <select class="form-control" id="f-shakha" name="शाखा" required>
-              <option value="">शाखा चुनें</option>
-              <option>केशव प्रभात शाखा</option>
-              <option>यज्ञ शाला शाखा</option>
-              <option>लवकुश शाखा</option>
-              <option>माता देवाला शाखा</option>
-              <option>गायत्री मंदिर शाखा</option>
-              <option>पटपर शाखा</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-role">भूमिका</label>
-            <select class="form-control" id="f-role" name="भूमिका">
-              <option value="">भूमिका चुनें</option>
-              <option>कार्यकर्ता</option><option>शाखा प्रमुख</option>
-              <option>मुख्य शिक्षक</option><option>बाल शिक्षक</option>
-              <option>गणवेश प्रमुख</option><option>सेवा प्रमुख</option>
-              <option>नगर प्रमुख</option><option>गणनायक</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-gannayak">गणनायक <span>*</span></label>
-            <select class="form-control" id="f-gannayak" name="गणनायक" required>
-              <option value="">गणनायक चुनें</option>
-              <option>राजेश तिवारी</option>
-              <option>संजय अवस्थी</option>
-              <option>दीपक साहू</option>
-              <option>विजय वर्मा</option>
-              <option>मनीष यादव</option>
-              <option>राकेश शुक्ला</option>
-              <option>अमित चौबे</option>
-              <option>नवीन निषाद</option>
-              <option>राहुल देवांगन</option>
-              <option>संतोष साहू</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-blood">रक्त समूह</label>
-            <select class="form-control" id="f-blood" name="रक्त समूह">
-              <option value="">रक्त समूह चुनें</option>
-              <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-              <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-vyavsay">व्यवसाय</label>
-            <select class="form-control" id="f-vyavsay" name="व्यवसाय">
-              <option value="">व्यवसाय चुनें</option>
-              <option>छात्र</option><option>शिक्षक</option><option>व्यापारी</option>
-              <option>कृषि</option><option>सरकारी नौकरी</option><option>इंजीनियर</option>
-              <option>डॉक्टर</option><option>अधिवक्ता</option><option>अन्य</option>
-            </select>
-          </div>
-
-          <div class="form-group" id="vyavsay-detail-group" style="display: none;">
-            <label class="form-label" for="f-vyavsay-detail">विशिष्ट व्यवसाय विवरण</label>
-            <input class="form-control" type="text" id="f-vyavsay-detail" name="विशिष्ट व्यवसाय" placeholder="जैसे: 12वीं कक्षा, किराना दुकान, सिविल इंजीनियर आदि"/>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-year">सम्मिलन वर्ष</label>
-            <input class="form-control" type="number" id="f-year" name="सम्मिलन वर्ष" min="1990" max="2030" placeholder="2024"/>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="f-ganvesh">गणवेशधारी स्वयंसेवक? <span>*</span></label>
-            <select class="form-control" id="f-ganvesh" name="गणवेशधारी स्वयंसेवक" required>
-              <option value="">चुनें</option>
-              <option value="हाँ">हाँ</option>
-              <option value="नहीं">नहीं</option>
-            </select>
-          </div>
-
-          <div class="form-group full">
-            <label class="form-label" for="f-address">पूरा पता</label>
-            <input class="form-control" type="text" id="f-address" name="पता" placeholder="मकान नंबर, गली, मोहल्ला, भाटापारा"/>
-          </div>
-
-          <div class="form-group full">
-            <label class="form-label" for="f-msg">अतिरिक्त जानकारी</label>
-            <textarea class="form-control" id="f-msg" name="अतिरिक्त जानकारी" rows="3" placeholder="कोई भी अन्य जानकारी…" style="resize:vertical;"></textarea>
-          </div>
-
         </div>
 
-        <button type="submit" class="submit-btn" id="submit-btn">🙏 पंजीकरण करें – भारत माता की जय!</button>
+        <!-- STEP 2: RSS Details -->
+        <div class="form-step" id="step-2">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="f-basti">बस्ती का नाम <span>*</span></label>
+              <select class="form-control" id="f-basti" name="बस्ती" required>
+                <option value="">बस्ती चुनें</option>
+                <option>श्यामा प्रसाद बस्ती</option>
+                <option>महाकाल बस्ती</option>
+                <option>परशुराम बस्ती</option>
+                <option>राम सप्ताह बस्ती</option>
+                <option>संत माता कर्मा बस्ती</option>
+                <option>शहीद वीर नारायण सिंह बस्ती</option>
+                <option>माता देवला बस्ती</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-area">वार्ड / क्षेत्र <span>*</span></label>
+              <select class="form-control" id="f-area" name="वार्ड" required>
+                <option value="">वार्ड चुनें</option>
+                <option>हाथनीपारा वार्ड</option>
+                <option>महावीर वार्ड</option>
+                <option>सुभाष वार्ड</option>
+                <option>शक्ति वार्ड</option>
+                <option>नया पारा वार्ड</option>
+                <option>परशुराम वार्ड</option>
+                <option>दाऊ कृष्णकुमार वार्ड</option>
+                <option>गांधी मंदिर वार्ड</option>
+                <option>शंकर वार्ड</option>
+                <option>सदर वार्ड</option>
+                <option>संजय वार्ड</option>
+                <option>नेहरू वार्ड</option>
+                <option>नयागंज वार्ड</option>
+                <option>भगत सिंह वार्ड</option>
+                <option>महासती वार्ड</option>
+                <option>संत माता कर्मा वार्ड</option>
+                <option>बलभद्र वार्ड</option>
+                <option>गुरु नानक वार्ड</option>
+                <option>संत रविदास वार्ड</option>
+                <option>रामसागर पारा वार्ड</option>
+                <option>मुंशी इस्माइल वार्ड</option>
+                <option>लाल बहादुर शास्त्री वार्ड</option>
+                <option>बजरंग वार्ड</option>
+                <option>स्टेशन वार्ड</option>
+                <option>पं. दीनदयाल उपाध्याय वार्ड</option>
+                <option>संत कँवरराम वार्ड</option>
+                <option>माता देवालय वार्ड</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-shakha">शाखा <span>*</span></label>
+              <select class="form-control" id="f-shakha" name="शाखा" required>
+                <option value="">शाखा चुनें</option>
+                <option>केशव प्रभात शाखा</option>
+                <option>यज्ञ शाला शाखा</option>
+                <option>लवकुश शाखा</option>
+                <option>माता देवाला शाखा</option>
+                <option>गायत्री मंदिर शाखा</option>
+                <option>पटपर शाखा</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-role">भूमिका</label>
+              <select class="form-control" id="f-role" name="भूमिका">
+                <option value="">भूमिका चुनें</option>
+                <option>कार्यकर्ता</option><option>शाखा प्रमुख</option>
+                <option>मुख्य शिक्षक</option><option>बाल शिक्षक</option>
+                <option>गणवेश प्रमुख</option><option>सेवा प्रमुख</option>
+                <option>नगर प्रमुख</option><option>गणनायक</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-gannayak">गणनायक <span>*</span></label>
+              <select class="form-control" id="f-gannayak" name="गणनायक" required>
+                <option value="">गणनायक चुनें</option>
+                <option>राजेश तिवारी</option>
+                <option>संजय अवस्थी</option>
+                <option>दीपक साहू</option>
+                <option>विजय वर्मा</option>
+                <option>मनीष यादव</option>
+                <option>राकेश शुक्ला</option>
+                <option>अमित चौबे</option>
+                <option>नवीन निषाद</option>
+                <option>राहुल देवांगन</option>
+                <option>संतोष साहू</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-year">सम्मिलन वर्ष</label>
+              <input class="form-control" type="number" id="f-year" name="सम्मिलन वर्ष" min="1990" max="2030" placeholder="2024"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-ganvesh">गणवेशधारी स्वयंसेवक? <span>*</span></label>
+              <select class="form-control" id="f-ganvesh" name="गणवेशधारी स्वयंसेवक" required>
+                <option value="">चुनें</option>
+                <option value="हाँ">हाँ</option>
+                <option value="नहीं">नहीं</option>
+              </select>
+            </div>
+          </div>
+          <div class="wizard-actions">
+            <button type="button" class="wizard-btn-prev" onclick="prevStep()">&larr; पीछे जाएं</button>
+            <button type="button" class="wizard-btn-next" onclick="nextStep()">आगे बढ़ें &rarr;</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Professional Details & Extra Info -->
+        <div class="form-step" id="step-3">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="f-vyavsay">व्यवसाय</label>
+              <select class="form-control" id="f-vyavsay" name="व्यवसाय">
+                <option value="">व्यवसाय चुनें</option>
+                <option>छात्र</option><option>शिक्षक</option><option>व्यापारी</option>
+                <option>कृषि</option><option>सरकारी नौकरी</option><option>इंजीनियर</option>
+                <option>डॉक्टर</option><option>अधिवक्ता</option><option>अन्य</option>
+              </select>
+            </div>
+            <div class="form-group" id="vyavsay-detail-group" style="display: none;">
+              <label class="form-label" for="f-vyavsay-detail">विशिष्ट व्यवसाय विवरण</label>
+              <input class="form-control" type="text" id="f-vyavsay-detail" name="विशिष्ट व्यवसाय" placeholder="जैसे: 12वीं कक्षा, किराना दुकान, सिविल इंजीनियर आदि"/>
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="f-msg">अतिरिक्त जानकारी</label>
+              <textarea class="form-control" id="f-msg" name="अतिरिक्त जानकारी" rows="3" placeholder="कोई भी अन्य जानकारी…" style="resize:vertical;"></textarea>
+            </div>
+          </div>
+          <div class="wizard-actions">
+            <button type="button" class="wizard-btn-prev" onclick="prevStep()">&larr; पीछे जाएं</button>
+            <button type="submit" class="submit-btn" id="submit-btn" style="margin-top:0; width:auto;">🙏 पंजीकरण करें – भारत माता की जय!</button>
+          </div>
+        </div>
       </form>
 
     </div>
@@ -277,10 +305,91 @@
 
 <script src="js/shared.js"></script>
 <script>
+let currentStep = 1;
+const totalSteps = 3;
+
+function updateWizard() {
+  // Update step active classes
+  for (let i = 1; i <= totalSteps; i++) {
+    const stepEl = document.getElementById(`step-${i}`);
+    if (stepEl) {
+      if (i === currentStep) {
+        stepEl.classList.add('active');
+      } else {
+        stepEl.classList.remove('active');
+      }
+    }
+  }
+
+  // Update progress bar line
+  const fill = document.getElementById('progress-line-fill');
+  if (fill) {
+    fill.style.width = `${((currentStep - 1) / (totalSteps - 1)) * 100}%`;
+  }
+
+  // Update progress bar nodes
+  const nodes = document.querySelectorAll('.step-node');
+  nodes.forEach((node, idx) => {
+    const stepNum = idx + 1;
+    node.classList.remove('active', 'completed');
+    if (stepNum === currentStep) {
+      node.classList.add('active');
+    } else if (stepNum < currentStep) {
+      node.classList.add('completed');
+    }
+  });
+}
+
+function validateStep(step) {
+  const stepEl = document.getElementById(`step-${step}`);
+  if (!stepEl) return true;
+  const inputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+  let isValid = true;
+  inputs.forEach(input => {
+    if (!input.checkValidity()) {
+      input.reportValidity();
+      isValid = false;
+    }
+  });
+  return isValid;
+}
+
+function nextStep() {
+  if (validateStep(currentStep)) {
+    if (currentStep < totalSteps) {
+      currentStep++;
+      updateWizard();
+    }
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) {
+    currentStep--;
+    updateWizard();
+  }
+}
+
+function goToStep(step) {
+  if (step < currentStep) {
+    currentStep = step;
+    updateWizard();
+  } else if (step > currentStep) {
+    for (let i = currentStep; i < step; i++) {
+      if (!validateStep(i)) return;
+    }
+    currentStep = step;
+    updateWizard();
+  }
+}
+
 async function handleSubmit(e){
   e.preventDefault();
-  const btn  = document.getElementById('submit-btn');
   const form = document.getElementById('join-form');
+  if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+    return;
+  }
+  const btn  = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = 'सबमिट हो रहा है…';
 
@@ -325,6 +434,11 @@ async function handleSubmit(e){
       if (sessionStorage.getItem('rss_admin') === '1') {
         successBox.querySelector('h3').textContent = 'स्वयंसेवक सीधे जोड़ दिया गया!';
         successBox.querySelector('p').innerHTML = 'स्वयंसेवक को सीधे स्वीकृत करके डेटाबेस में जोड़ दिया गया है।<br/>भारत माता की जय! 🇮🇳';
+        const btnLink = successBox.querySelector('a');
+        if (btnLink) {
+          btnLink.href = 'admin.html';
+          btnLink.textContent = '⚙ Admin Dashboard पर जाएं';
+        }
       }
       successBox.classList.add('show');
 
@@ -382,6 +496,7 @@ if (sessionStorage.getItem('rss_admin') === '1') {
   if (adminBox) adminBox.style.display = 'block';
 }
 
+updateWizard();
 observeReveal();
 </script>
 </body>

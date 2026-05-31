@@ -14,9 +14,10 @@
     }
     .shakha-modal-overlay.open { display:flex; }
     .shakha-modal {
-      background:#fff; border-radius:24px; max-width:560px; width:100%;
+      background:var(--white); color:var(--brown); border-radius:24px; max-width:560px; width:100%;
       box-shadow:0 24px 80px rgba(0,0,0,0.25); overflow:hidden;
       animation:modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      border: 1px solid rgba(255,107,0,0.15);
     }
     @keyframes modalIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
     .shakha-modal-header {
@@ -35,15 +36,15 @@
     .shakha-modal-close:hover { background:rgba(255,255,255,0.3); }
     .shakha-modal-body { padding:1.75rem 2rem; }
     .modal-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; margin-bottom:1.25rem; }
-    .modal-info-item { background:#fff8f0; border:1px solid rgba(255,107,0,0.12); border-radius:12px; padding:0.8rem 1rem; }
+    .modal-info-item { background:var(--cream-dark); border:1px solid rgba(255,107,0,0.12); border-radius:12px; padding:0.8rem 1rem; }
     .modal-info-label { font-size:0.68rem; font-weight:700; color:#FF6B00; text-transform:uppercase; letter-spacing:0.7px; margin-bottom:0.25rem; }
-    .modal-info-value { font-size:0.9rem; font-weight:700; color:#3D1C00; }
+    .modal-info-value { font-size:0.9rem; font-weight:700; color:var(--brown); }
     .modal-info-value.empty { color:#ccc; font-weight:400; font-style:italic; font-size:0.82rem; }
-    .modal-roles-title { font-size:0.78rem; font-weight:800; color:#3D1C00; text-transform:uppercase; letter-spacing:0.8px; margin:1.25rem 0 0.7rem; border-top:1px solid rgba(255,107,0,0.1); padding-top:1rem; }
+    .modal-roles-title { font-size:0.78rem; font-weight:800; color:var(--brown); text-transform:uppercase; letter-spacing:0.8px; margin:1.25rem 0 0.7rem; border-top:1px solid rgba(255,107,0,0.1); padding-top:1rem; }
     .modal-roles-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
-    .modal-role-card { background:linear-gradient(135deg,#fff8f0,#fff3e8); border:1.5px solid rgba(255,107,0,0.18); border-radius:12px; padding:0.85rem 1rem; }
+    .modal-role-card { background:linear-gradient(135deg,var(--cream),var(--cream-dark)); border:1.5px solid rgba(255,107,0,0.18); border-radius:12px; padding:0.85rem 1rem; }
     .modal-role-label { font-size:0.66rem; font-weight:700; color:#FF6B00; text-transform:uppercase; letter-spacing:0.7px; }
-    .modal-role-value { font-size:0.92rem; font-weight:800; color:#3D1C00; margin-top:0.2rem; }
+    .modal-role-value { font-size:0.92rem; font-weight:800; color:var(--brown); margin-top:0.2rem; }
     .modal-role-value.empty { color:#bbb; font-weight:400; font-size:0.8rem; font-style:italic; }
     .modal-pills { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.5rem; }
     .modal-pill { background:rgba(255,107,0,0.1); color:var(--bhagwa,#FF6B00); border-radius:20px; padding:0.2rem 0.7rem; font-size:0.72rem; font-weight:600; }
@@ -94,7 +95,7 @@
 </div>
 
 <!-- SHAKHA OVERVIEW STRIP -->
-<div style="background:#fff;padding:2rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
+<div style="background:var(--white);padding:2rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
   <div class="container" style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;text-align:center;">
     <div><div style="font-size:2rem;font-weight:900;color:var(--bhagwa);">6</div><div style="font-size:0.72rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">कुल शाखाएं</div></div>
     <div><div style="font-size:2rem;font-weight:900;color:var(--bhagwa);">161+</div><div style="font-size:0.72rem;color:var(--brown-muted);text-transform:uppercase;letter-spacing:1px;">कुल स्वयंसेवक</div></div>
@@ -115,7 +116,7 @@
 </section>
 
 <!-- SHAKHA SCHEDULE TABLE -->
-<section class="page-section" style="background:#fff;">
+<section class="page-section" style="background:var(--white);">
   <div class="container">
     <div class="section-header reveal">
       <div class="section-tag">📅 साप्ताहिक समय-सारिणी</div>
@@ -249,7 +250,7 @@
   // Schedule table
   const days = ['सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
   document.getElementById('schedule-table').innerHTML = SHAKHA_DATA.map((s,i) => `
-    <tr style="background:${i%2===0?'var(--cream)':'#fff'};">
+    <tr style="background:${i%2===0?'var(--cream)':'var(--white)'};">
       <td style="padding:0.8rem 1rem;font-weight:700;color:var(--brown);">${s.name}</td>
       ${days.map(d => `<td style="padding:0.8rem 1rem;text-align:center;">${s.schedule.includes(d)?'<span style="color:var(--bhagwa);font-weight:700;">✓</span>':'<span style="color:#ddd;">–</span>'}</td>`).join('')}
     </tr>`).join('');

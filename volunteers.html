@@ -26,7 +26,8 @@
     }
 
     .modal {
-      background: #fff;
+      background: var(--white);
+      color: var(--brown);
       border-radius: 24px;
       width: 100%;
       max-width: 560px;
@@ -34,6 +35,7 @@
       overflow-y: auto;
       box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
       animation: modal-in 0.3s ease;
+      border: 1px solid rgba(255, 107, 0, 0.15);
     }
 
     @keyframes modal-in {
@@ -49,7 +51,7 @@
     }
 
     .modal-header {
-      background: linear-gradient(135deg, var(--brown), var(--brown-light));
+      background: linear-gradient(135deg, #3D1C00, #6B3A1F);
       padding: 1.75rem 2rem 1.5rem;
       border-radius: 24px 24px 0 0;
       position: relative;
@@ -310,7 +312,7 @@
       .modal-overlay,
       .card-actions,
       .search-bar,
-      .filter-row-2,
+      .advanced-filters-drawer,
       footer,
       .page-hero,
       .page-section>.container>.section-header {
@@ -417,7 +419,7 @@
   </div>
 
   <!-- STATS STRIP -->
-  <div style="background:#fff;padding:1.75rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
+  <div style="background:var(--white);padding:1.75rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
     <div class="container" style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;text-align:center;">
       <div>
         <div style="font-size:1.8rem;font-weight:900;color:var(--bhagwa);" id="s-total">15</div>
@@ -457,44 +459,72 @@
             <option value="">सभी दयित्व</option>
           </select>
         </div>
+        <button id="toggle-advanced-btn" onclick="toggleAdvancedFilters()" class="filter-toggle-btn" type="button">
+          ⚙️ उन्नत फ़िल्टर
+        </button>
       </div>
 
-      <!-- Extra Filters Row 2 -->
-      <div class="filter-row-2">
-        <select id="f-basti">
-          <option value="">सभी बस्ती</option>
-        </select>
-        <select id="f-blood">
-          <option value="">सभी रक्त समूह</option>
-          <option>A+</option>
-          <option>A-</option>
-          <option>B+</option>
-          <option>B-</option>
-          <option>O+</option>
-          <option>O-</option>
-          <option>AB+</option>
-          <option>AB-</option>
-        </select>
-        <select id="f-vyavsay">
-          <option value="">सभी व्यवसाय</option>
-        </select>
-        <select id="f-year">
-          <option value="">सभी वर्ष</option>
-        </select>
-        <select id="f-area">
-          <option value="">सभी वार्ड</option>
-        </select>
-        <select id="f-gannayak">
-          <option value="">सभी गणनायक</option>
-        </select>
-        <select id="f-ganvesh">
-          <option value="">सभी गणवेशधारी</option>
-          <option>हाँ</option>
-          <option>नहीं</option>
-        </select>
-        <button onclick="resetFilters()"
-          style="padding:0.5rem 1rem;border-radius:20px;border:1.5px solid rgba(255,107,0,0.3);background:transparent;color:var(--bhagwa);font-family:inherit;font-size:0.82rem;font-weight:700;cursor:pointer;">✕
-          रीसेट</button>
+      <!-- Advanced Filters Drawer -->
+      <div class="advanced-filters-drawer" id="advanced-filters">
+        <div class="drawer-grid">
+          <div class="drawer-filter-wrap">
+            <label for="f-basti">बस्ती</label>
+            <select id="f-basti">
+              <option value="">सभी बस्ती</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-blood">रक्त समूह</label>
+            <select id="f-blood">
+              <option value="">सभी रक्त समूह</option>
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>O+</option>
+              <option>O-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-vyavsay">व्यवसाय</label>
+            <select id="f-vyavsay">
+              <option value="">सभी व्यवसाय</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-year">वर्ष</label>
+            <select id="f-year">
+              <option value="">सभी वर्ष</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-area">वार्ड / क्षेत्र</label>
+            <select id="f-area">
+              <option value="">सभी वार्ड</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-gannayak">गणनायक</label>
+            <select id="f-gannayak">
+              <option value="">सभी गणनायक</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-ganvesh">गणवेशधारी</label>
+            <select id="f-ganvesh">
+              <option value="">सभी गणवेशधारी</option>
+              <option>हाँ</option>
+              <option>नहीं</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap" style="justify-content: flex-end;">
+            <button onclick="resetFilters()" class="filter-reset-btn" type="button">
+              ✕ रीसेट
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="grid-4" id="vol-grid">
@@ -643,6 +673,15 @@
         (!gn || v.gannayak === gn) && (!gv || v.ganvesh === gv)
       );
       render(filtered);
+    }
+
+    function toggleAdvancedFilters() {
+      const drawer = document.getElementById('advanced-filters');
+      const btn = document.getElementById('toggle-advanced-btn');
+      if (drawer && btn) {
+        drawer.classList.toggle('open');
+        btn.classList.toggle('active');
+      }
     }
 
     function resetFilters() {
