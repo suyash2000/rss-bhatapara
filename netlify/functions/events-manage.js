@@ -1,142 +1,66 @@
-const owner = 'suyash2000';
-const repo  = 'rss-bhatapara';
-const branch = 'main';
+// ── events-manage.js ──────────────────────────────────────────────────────────
+// Handles add/edit/delete for data/events.json. Requires Bearer token.
+// ─────────────────────────────────────────────────────────────────────────────
 
-async function updateGitHubFile({ token, path, updateFn, commitMessage }) {
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  const headers = {
-    'Authorization': `token ${token}`,
-    'Accept': 'application/vnd.github+json',
-    'User-Agent': 'Netlify-Function'
-  };
+const { verifyToken, unauthorized } = require('./_auth');
+const owner = 'suyash2000', repo = 'rss-bhatapara', branch = 'main';
 
-  const res = await fetch(url, { headers });
-  if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.statusText}`);
-  const fileData = await res.json();
-  const currentContent = Buffer.from(fileData.content, 'base64').toString('utf8');
-
-  const updatedContent = updateFn(currentContent);
-
-  const putRes = await fetch(url, {
-    method: 'PUT',
-    headers: { ...headers, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message: commitMessage,
-      content: Buffer.from(updatedContent, 'utf8').toString('base64'),
-      sha: fileData.sha,
-      branch
-    })
+async function githubReadJSON(token, path) {
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json', 'User-Agent': 'Netlify-Function' }
   });
-
-  if (!putRes.ok) {
-    const err = await putRes.text();
-    throw new Error(`Failed to commit ${path}: ${err}`);
-  }
-  return await putRes.json();
+  if (!res.ok) throw new Error(`Fetch ${path}: ${res.statusText}`);
+  const file = await res.json();
+  return { data: JSON.parse(Buffer.from(file.content, 'base64').toString('utf8')), sha: file.sha };
 }
-
-function findEventsArrayBounds(lines) {
-  let openBracket = -1;
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].includes('const EVENTS_DATA = [')) { openBracket = i; break; }
-  }
-  if (openBracket === -1) throw new Error(`Opening bracket for EVENTS_DATA not found`);
-
-  let closeBracket = -1;
-  for (let i = openBracket + 1; i < lines.length; i++) {
-    const t = lines[i].trim();
-    if (t === '];') { closeBracket = i; break; }
-  }
-  if (closeBracket === -1) throw new Error(`Closing bracket for EVENTS_DATA not found`);
-
-  return { openBracket, closeBracket };
+async function githubWriteJSON(token, path, sha, data, message) {
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', 'User-Agent': 'Netlify-Function' },
+    body: JSON.stringify({ message, content: Buffer.from(JSON.stringify(data, null, 2)).toString('base64'), sha, branch })
+  });
+  if (!res.ok) throw new Error(`Write ${path}: ${await res.text()}`);
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: 'Method Not Allowed' }) };
-  }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+  const auth = verifyToken(event);
+  if (!auth.valid) return unauthorized(auth.reason);
 
   try {
-    const token = process.env.GITHUB_TOKEN;
-    if (!token) {
-      return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: 'Server not configured: GITHUB_TOKEN missing.' }) };
+    const githubToken = process.env.GITHUB_TOKEN;
+    if (!githubToken) return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: 'GITHUB_TOKEN missing' }) };
+
+    const body   = JSON.parse(event.body);
+    const action = body.action;   // 'add' | 'edit' | 'delete'
+    const id     = body.id !== undefined ? parseInt(body.id) : -1;
+
+    const { data: events, sha } = await githubReadJSON(githubToken, 'data/events.json');
+
+    if (action === 'add') {
+      const maxId = events.reduce((m, e) => Math.max(m, e.id || 0), 0);
+      events.push({ id: maxId + 1, title: body.title, date: body.date, time: body.time, location: body.location, type: body.type, description: body.description, status: body.status });
+      await githubWriteJSON(githubToken, 'data/events.json', sha, events, `Add event: ${body.title}`);
+
+    } else if (action === 'edit') {
+      const idx = events.findIndex(e => e.id === id);
+      if (idx === -1) throw new Error(`Event ID ${id} not found`);
+      events[idx] = { id, title: body.title, date: body.date, time: body.time, location: body.location, type: body.type, description: body.description, status: body.status };
+      await githubWriteJSON(githubToken, 'data/events.json', sha, events, `Edit event ID ${id}: ${body.title}`);
+
+    } else if (action === 'delete') {
+      const idx = events.findIndex(e => e.id === id);
+      if (idx === -1) throw new Error(`Event ID ${id} not found`);
+      const [removed] = events.splice(idx, 1);
+      await githubWriteJSON(githubToken, 'data/events.json', sha, events, `Delete event ID ${id}: ${removed.title}`);
+
+    } else {
+      throw new Error(`Unknown action: ${action}`);
     }
 
-    const data = JSON.parse(event.body);
-    const action = data.action;   // 'add' | 'edit' | 'delete'
-    const id     = data.id !== undefined ? parseInt(data.id) : -1;
-
-    let commitMessage = '';
-    if (action === 'add')    commitMessage = `Add event (via admin)`;
-    if (action === 'edit')   commitMessage = `Edit event ID ${id} (via admin)`;
-    if (action === 'delete') commitMessage = `Delete event ID ${id} (via admin)`;
-
-    await updateGitHubFile({
-      token,
-      path: 'js/shared.js',
-      commitMessage,
-      updateFn: (content) => {
-        const lines = content.split('\n');
-        const { openBracket, closeBracket } = findEventsArrayBounds(lines);
-
-        if (action === 'add') {
-          // Find max ID in block
-          let maxId = 0;
-          for (let i = openBracket + 1; i < closeBracket; i++) {
-            const m = lines[i].match(/id:\s*(\d+)/);
-            if (m) {
-              const idVal = parseInt(m[1]);
-              if (idVal > maxId) maxId = idVal;
-            }
-          }
-          const newId = maxId + 1;
-          const { title, date, time, location, type, description, status } = data;
-          const newLine = `  { id:${newId}, title:'${title}', date:'${date}', time:'${time}', location:'${location}', type:'${type}', description:'${description}', status:'${status}' },`;
-          lines.splice(closeBracket, 0, newLine);
-
-        } else if (action === 'edit') {
-          let updated = false;
-          for (let i = openBracket + 1; i < closeBracket; i++) {
-            if (lines[i].includes(`id:${id},`) || lines[i].includes(`id: ${id},`) || new RegExp(`\\bid:\\s*${id}\\b`).test(lines[i])) {
-              const { title, date, time, location, type, description, status } = data;
-              lines[i] = `  { id:${id}, title:'${title}', date:'${date}', time:'${time}', location:'${location}', type:'${type}', description:'${description}', status:'${status}' },`;
-              updated = true;
-              break;
-            }
-          }
-          if (!updated) throw new Error(`Event with ID ${id} not found to edit`);
-
-        } else if (action === 'delete') {
-          let deleted = false;
-          for (let i = openBracket + 1; i < closeBracket; i++) {
-            if (lines[i].includes(`id:${id},`) || lines[i].includes(`id: ${id},`) || new RegExp(`\\bid:\\s*${id}\\b`).test(lines[i])) {
-              lines.splice(i, 1);
-              deleted = true;
-              break;
-            }
-          }
-          if (!deleted) throw new Error(`Event with ID ${id} not found to delete`);
-
-        } else {
-          throw new Error(`Unknown action: ${action}`);
-        }
-
-        return lines.join('\n');
-      }
-    });
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ success: true })
-    };
+    return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ success: true }) };
 
   } catch (err) {
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ success: false, message: err.message })
-    };
+    return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: err.message }) };
   }
 };

@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>वर्ग विवरण – RSS भाटापारा</title>
   <meta name="description" content="RSS भाटापारा के सभी प्रशिक्षण वर्गों के स्वयंसेवकों का विवरण।"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="RSS भाटापारा"/>
+  <link rel="apple-touch-icon" href="images/icon-192.png"/>
+  <meta name="theme-color" content="#FF6B00"/>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
     /* ── Varg Tabs ── */
@@ -258,6 +264,8 @@
   <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
 </button>
 
+<script src="js/shared.js"></script>
+<script src="js/data-loader.js"></script>
 <script src="js/varg-data.js"></script>
 <script>
   // ── Scroll Reveal (standalone, no shared.js dependency) ──────────────────
@@ -307,7 +315,7 @@
   function renderVarg(idx, list) {
     const tbody = document.getElementById('tbody-' + idx);
     const vc    = document.getElementById('vc-' + idx);
-    document.getElementById('count-' + idx).textContent = VARG_DATA[idx].length;
+    document.getElementById('count-' + idx).textContent = window.VARG_DATA[idx].length;
     if (!list.length) {
       tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">कोई स्वयंसेवक नहीं मिला।</td></tr>`;
       vc.textContent = '0 मिले';
@@ -316,16 +324,16 @@
     tbody.innerHTML = list.map((v, i) => `
       <tr>
         <td data-label="#">${i+1}</td>
-        <td data-label="नाम"><strong>${v.name}</strong></td>
-        <td data-label="मोबाइल"><a href="tel:${v.mobile}" style="color:var(--bhagwa);text-decoration:none;">${v.mobile}</a></td>
-        <td data-label="वर्ग सत्र"><span class="badge-year">${v.session}</span></td>
-        <td data-label="वर्ग स्थल">📍 ${v.sthal}</td>
+        <td data-label="नाम"><strong>${esc(v.name)}</strong></td>
+        <td data-label="मोबाइल"><a href="tel:${esc(v.mobile)}" style="color:var(--bhagwa);text-decoration:none;">${esc(v.mobile)}</a></td>
+        <td data-label="वर्ग सत्र"><span class="badge-year">${esc(v.session)}</span></td>
+        <td data-label="वर्ग स्थल">📍 ${esc(v.sthal)}</td>
       </tr>`).join('');
     vc.textContent = `${list.length} स्वयंसेवक`;
   }
 
   function filterVarg(idx, q) {
-    const filtered = VARG_DATA[idx].filter(v =>
+    const filtered = window.VARG_DATA[idx].filter(v =>
       v.name.toLowerCase().includes(q.toLowerCase()) ||
       v.sthal.toLowerCase().includes(q.toLowerCase()) ||
       v.session.includes(q)
@@ -334,10 +342,10 @@
   }
 
   function printVarg(idx) {
-    const list = VARG_DATA[idx];
+    const list = window.VARG_DATA[idx];
     const w = window.open('', '_blank');
     const rows = list.map((v,i) => `<tr style="background:${i%2===0?'#fff8f0':'#fff'}">
-      <td>${i+1}</td><td><strong>${v.name}</strong></td><td>${v.mobile}</td><td>${v.session}</td><td>${v.sthal}</td>
+      <td>${i+1}</td><td><strong>${esc(v.name)}</strong></td><td>${esc(v.mobile)}</td><td>${esc(v.session)}</td><td>${esc(v.sthal)}</td>
     </tr>`).join('');
     w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/>
       <title>${VARG_NAMES[idx]} – RSS भाटापारा</title>
@@ -357,8 +365,10 @@
     w.document.close();
   }
 
-  // Initial render for all vargs
-  for (let i = 0; i < 5; i++) renderVarg(i, VARG_DATA[i]);
+  // Load site data dynamically before rendering
+  loadSiteData().then(() => {
+    for (let i = 0; i < 5; i++) renderVarg(i, window.VARG_DATA[i]);
+  });
   observeReveal();
 </script>
 </body>

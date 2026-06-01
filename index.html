@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>RSS भाटापारा – होम | राष्ट्रीय स्वयंसेवक संघ</title>
   <meta name="description" content="राष्ट्रीय स्वयंसेवक संघ भाटापारा का आधिकारिक पोर्टल। स्वयंसेवक प्रबंधन, शाखा विवरण, कार्यक्रम और प्रेरणा।"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="RSS भाटापारा"/>
+  <link rel="apple-touch-icon" href="images/icon-192.png"/>
+  <meta name="theme-color" content="#FF6B00"/>
   <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
@@ -307,6 +313,70 @@
   </div>
 </section>
 
+<!-- LOCATION SECTION -->
+<section class="page-section" style="background:linear-gradient(135deg,#1a0800 0%,#3D1C00 50%,#1a0800 100%); position:relative; overflow:hidden; padding:5rem 1.5rem;">
+  <!-- decorative dot grid -->
+  <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,107,0,0.12) 1px,transparent 1px);background-size:28px 28px;opacity:0.4;pointer-events:none;"></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="section-header reveal">
+      <span class="section-tag" style="border-color:rgba(255,107,0,0.4);color:var(--bhagwa-light);">📍 पता एवं स्थान</span>
+      <h2 class="section-title" style="color:#fff;">हमारा <span>कार्यालय</span></h2>
+      <div class="section-div"></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:2rem; align-items:stretch;" class="loc-grid">
+
+      <!-- Info Cards -->
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="reveal" style="background:rgba(255,255,255,0.05); backdrop-filter:blur(12px); border:1px solid rgba(255,107,0,0.22); border-radius:20px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+          <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#cc3700,#FF6B00);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">📍</div>
+          <div>
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bhagwa);margin-bottom:0.3rem;">पता</div>
+            <div style="font-size:0.95rem;font-weight:600;color:#fff;line-height:1.5;">केशव कृपा, भाटापारा<br/><span style="color:rgba(255,220,170,0.65);font-size:0.82rem;font-weight:400;">छत्तीसगढ़ – 493118, भारत</span></div>
+          </div>
+        </div>
+        <div class="reveal" style="background:rgba(255,255,255,0.05); backdrop-filter:blur(12px); border:1px solid rgba(255,107,0,0.22); border-radius:20px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+          <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#cc3700,#FF6B00);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🕐</div>
+          <div>
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bhagwa);margin-bottom:0.3rem;">शाखा समय</div>
+            <div style="font-size:0.95rem;font-weight:600;color:#fff;line-height:1.5;">प्रात: 6:00 – 7:00 बजे<br/><span style="color:rgba(255,220,170,0.65);font-size:0.82rem;font-weight:400;">प्रतिदिन | सभी शाखाएं</span></div>
+          </div>
+        </div>
+        <div class="reveal" style="background:rgba(255,255,255,0.05); backdrop-filter:blur(12px); border:1px solid rgba(255,107,0,0.22); border-radius:20px; padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;">
+          <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#cc3700,#FF6B00);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">👤</div>
+          <div>
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bhagwa);margin-bottom:0.3rem;">ज़िला प्रचारक</div>
+            <div style="font-size:0.95rem;font-weight:600;color:#fff;">विवेकानंद जी</div>
+          </div>
+        </div>
+        <a href="https://www.google.com/maps/place/%E0%A4%95%E0%A5%87%E0%A4%B6%E0%A4%B5+%E0%A4%95%E0%A5%83%E0%A4%AA%E0%A4%BE+%E0%A4%AD%E0%A4%BE%E0%A4%9F%E0%A4%BE%E0%A4%AA%E0%A4%BE%E0%A4%B0%E0%A4%BE/@21.735163,81.9359074,17.75z/data=!4m6!3m5!1s0x3a28610000624321:0xa7c2bec131903da0!8m2!3d21.7349005!4d81.9364187!16s%2Fg%2F11mcstygxx" target="_blank" rel="noopener" class="btn btn-primary reveal" style="text-align:center;justify-content:center;">📍 Google Maps में खोलें</a>
+      </div>
+
+      <!-- Map Embed -->
+      <div class="reveal" style="border-radius:20px;overflow:hidden;border:2px solid rgba(255,107,0,0.28);box-shadow:0 8px 40px rgba(0,0,0,0.5);min-height:360px;position:relative;">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1850.8428037673567!2d81.9359074!3d21.735163!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a28610000624321%3A0xa7c2bec131903da0!2z4KSV4KWH4KS24KS-4KSV4KS-!5e0!3m2!1shi!2sin!4v1717222222222"
+          width="100%" height="100%"
+          style="border:0; display:block; min-height:360px; filter:saturate(0.7) contrast(1.1);"
+          allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="RSS कार्यालय भाटापारा स्थान">
+        </iframe>
+        <!-- Orange overlay badge -->
+        <div style="position:absolute;top:1rem;left:1rem;background:rgba(13,8,4,0.85);backdrop-filter:blur(8px);border:1px solid rgba(255,107,0,0.35);border-radius:12px;padding:0.5rem 0.85rem;display:flex;align-items:center;gap:0.5rem;">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--bhagwa);box-shadow:0 0 8px var(--bhagwa);display:inline-block;"></span>
+          <span style="font-size:0.78rem;font-weight:700;color:#fff;">RSS कार्यालय, भाटापारा</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <style>
+    @media(max-width:768px){
+      .loc-grid { grid-template-columns:1fr !important; }
+    }
+  </style>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
@@ -330,9 +400,9 @@
       <li><a href="shakha.html">पटपर शाखा</a></li>
     </ul></div>
     <div class="footer-col"><h4>संपर्क</h4><ul>
-      <li><a href="#">RSS कार्यालय, भाटापारा</a></li>
-      <li><a href="#">छत्तीसगढ़, भारत</a></li>
-      <li><a href="#">नगर प्रमुख: नितिन मिश्रा</a></li>
+      <li><a href="https://www.google.com/maps/place/%E0%A4%95%E0%A5%87%E0%A4%B6%E0%A4%B5+%E0%A4%95%E0%A5%83%E0%A4%AA%E0%A4%BE+%E0%A4%AD%E0%A4%BE%E0%A4%9F%E0%A4%BE%E0%A4%AA%E0%A4%BE%E0%A4%B0%E0%A4%BE/@21.735163,81.9359074,17.75z" target="_blank" rel="noopener">📍 RSS कार्यालय, भाटापारा</a></li>
+      <li><a href="#">छत्तीसगढ़ – 493118, भारत</a></li>
+      <li><a href="#">ज़िला प्रचारक: विवेकानंद जी</a></li>
     </ul></div>
   </div>
   <div class="footer-bottom">
@@ -345,6 +415,7 @@
 </button>
 
 <script src="js/shared.js"></script>
+<script src="js/data-loader.js"></script>
 <script>
   initParticles();
   const suvichars = [
@@ -358,20 +429,23 @@
   document.getElementById('suvichar-text').textContent = sv.text;
   document.getElementById('suvichar-author').textContent = sv.author;
 
-  const anns = [
-    { title:'गुरु पूर्णिमा उत्सव की तैयारी', text:'सभी शाखा प्रमुख 25 जून को बैठक में उपस्थित रहें।', date:'16 मई 2026' },
-    { title:'रक्तदान शिविर – पंजीकरण प्रारंभ', text:'भाटापारा रक्तदान महाशिविर में भाग लेने के लिए शाखा प्रमुख से संपर्क करें।', date:'14 मई 2026' },
-    { title:'नया स्वयंसेवक प्रशिक्षण बैच', text:'20 मई से 3-दिवसीय प्रशिक्षण शिविर प्रारंभ होगा। शीघ्र पंजीकरण कराएं।', date:'12 मई 2026' },
-    { title:'मासिक बैठक – सभी कार्यकर्ता', text:'18 मई को RSS कार्यालय में प्रात: 10 बजे मासिक बैठक आयोजित होगी।', date:'10 मई 2026' },
-  ];
-  document.getElementById('ann-list').innerHTML = anns.map(a => `
-    <div class="ann-item reveal">
-      <div class="ann-dot"></div>
-      <div class="ann-content">
-        <h4>${a.title}</h4><p>${a.text}</p>
-        <div class="ann-date">${a.date}</div>
-      </div>
-    </div>`).join('');
+  // Load site data dynamically to populate events widget
+  loadSiteData().then(() => {
+    const upcoming = (window.EVENTS_DATA || []).filter(e => e.status === 'upcoming').slice(0, 4);
+    if (upcoming.length > 0) {
+      document.getElementById('ann-list').innerHTML = upcoming.map(e => `
+        <div class="ann-item reveal">
+          <div class="ann-dot"></div>
+          <div class="ann-content">
+            <h4>${esc(e.title)}</h4><p>${esc(e.description)}</p>
+            <div class="ann-date">📍 ${esc(e.location)} &nbsp;·&nbsp; 🗓️ ${esc(e.date)}</div>
+          </div>
+        </div>`).join('');
+      observeReveal();
+    } else {
+      document.getElementById('ann-list').innerHTML = '<p style="color:#aaa;padding:1rem;">कोई आगामी कार्यक्रम नहीं है।</p>';
+    }
+  });
 
   const heroIO = new IntersectionObserver(e => { if(e[0].isIntersecting){animateCounters();heroIO.disconnect();} });
   heroIO.observe(document.getElementById('main-hero'));

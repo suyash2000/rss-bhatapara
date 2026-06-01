@@ -4,270 +4,824 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Admin Dashboard – RSS भाटापारा</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="RSS भाटापारा"/>
+  <link rel="apple-touch-icon" href="images/icon-192.png"/>
+  <meta name="theme-color" content="#FF6B00"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bhagwa: #FF6B00;
-      --bhagwa-dark: #cc5500;
-      --bhagwa-light: #FF9A4D;
-      --brown: #4D1C00;
-      --brown-muted: #8c7365;
-      --brown-light: #a68b7c;
-      --cream: #FFF8F0;
-      --cream-dark: #fff3e6;
-      --white: #ffffff;
-      --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,0.15);
+      --bhagwa: hsl(25,100%,50%);
+      --bhagwa-dark: hsl(25,100%,38%);
+      --bhagwa-light: hsl(30,100%,65%);
+      --bhagwa-glow: rgba(255,107,0,0.35);
+      --bg-base: #0d0804;
+      --bg-surface: #160e07;
+      --bg-card: rgba(28,16,7,0.8);
+      --bg-glass: rgba(255,255,255,0.04);
+      --border: rgba(255,107,0,0.15);
+      --border-hover: rgba(255,107,0,0.40);
+      --text-primary: #f5ede3;
+      --text-muted: rgba(245,237,227,0.50);
+      --text-dim: rgba(245,237,227,0.28);
+      --shadow-glow: 0 0 40px rgba(255,107,0,0.12);
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.45);
+      --shadow-modal: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,107,0,0.2);
+      --radius: 18px;
+      --radius-sm: 10px;
+      --sidebar-w: 260px;
+      --header-h: 64px;
+      --green: #22c55e;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --red: #f87171;
     }
-    body { background:var(--cream-dark); color:var(--brown); font-family:sans-serif; }
-    /* LOGIN */
-    .login-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1a0800,#3D1C00,#6B3A1F); padding:1rem; }
-    .login-box { background:var(--white); border-radius:24px; padding:2.5rem; width:100%; max-width:400px; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); text-align:center; backdrop-filter:blur(8px); }
-    .login-icon { font-size:3rem; margin-bottom:0.75rem; }
-    .login-box h2 { color:var(--bhagwa); font-size:1.3rem; margin-bottom:0.25rem; }
-    .login-box p { color:var(--brown-muted); font-size:0.82rem; margin-bottom:1.75rem; }
-    .login-input { width:100%; padding:0.75rem 1rem; border:1.5px solid rgba(255,107,0,0.25); border-radius:12px; font-family:inherit; font-size:0.9rem; color:var(--brown); background:var(--cream-dark); outline:none; margin-bottom:1rem; transition:border 0.25s; }
-    .login-input:focus { border-color:var(--bhagwa); }
-    .login-btn { width:100%; padding:0.85rem; background:var(--bhagwa); color:#fff; border:none; border-radius:30px; font-family:inherit; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.3s; }
-    .login-btn:hover { background:var(--bhagwa-dark); }
-    .login-err { color:#c62828; font-size:0.82rem; margin-top:0.5rem; display:none; }
 
-    /* DASHBOARD */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { font-size:16px; scroll-behavior:smooth; }
+    body { font-family:'Outfit','Tiro Devanagari Hindi',sans-serif; background:var(--bg-base); color:var(--text-primary); overflow-x:hidden; min-height:100vh; }
+    ::selection { background:var(--bhagwa); color:#fff; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background:rgba(255,107,0,0.4); border-radius:3px; }
+
+    /* ═══════════════════════════════ LOGIN ═══════════════════════════════ */
+    .login-screen {
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      background:radial-gradient(ellipse at 30% 40%, rgba(255,107,0,0.12) 0%, transparent 60%),
+                 radial-gradient(ellipse at 75% 70%, rgba(255,60,0,0.07) 0%, transparent 50%),
+                 linear-gradient(135deg, #0d0804 0%, #1a0c05 50%, #0d0804 100%);
+      padding:1.5rem; position:relative; overflow:hidden;
+    }
+    .login-particles { position:absolute; inset:0; pointer-events:none; }
+    .lp { position:absolute; border-radius:50%; background:var(--bhagwa); animation:lp-float linear infinite; }
+    @keyframes lp-float {
+      0% { transform:translateY(110vh) scale(0); opacity:0; }
+      8% { opacity:0.12; }
+      92%{ opacity:0.04; }
+      100%{ transform:translateY(-10vh) scale(1.5); opacity:0; }
+    }
+    .login-box {
+      position:relative; z-index:2;
+      background:rgba(28,16,7,0.72);
+      backdrop-filter:blur(24px);
+      border:1px solid rgba(255,107,0,0.22);
+      border-radius:28px;
+      padding:2.75rem 2.25rem;
+      width:100%; max-width:420px;
+      box-shadow:var(--shadow-modal);
+      text-align:center;
+      animation:lb-appear 0.7s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes lb-appear {
+      from { opacity:0; transform:translateY(30px) scale(0.96); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+    .login-emblem {
+      width:68px; height:68px; border-radius:50%;
+      background:linear-gradient(135deg,var(--bhagwa-dark),var(--bhagwa));
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.8rem; margin:0 auto 1.5rem;
+      box-shadow:0 0 0 8px rgba(255,107,0,0.1), 0 0 40px rgba(255,107,0,0.2);
+      animation:pulse-ring 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%,100% { box-shadow:0 0 0 8px rgba(255,107,0,0.1), 0 0 40px rgba(255,107,0,0.2); }
+      50%      { box-shadow:0 0 0 14px rgba(255,107,0,0.05), 0 0 60px rgba(255,107,0,0.35); }
+    }
+    .login-box h2 { font-size:1.5rem; font-weight:800; color:#fff; margin-bottom:0.25rem; }
+    .login-box .login-sub { font-size:0.82rem; color:var(--text-muted); margin-bottom:2rem; }
+    .lf-group { text-align:left; margin-bottom:1rem; }
+    .lf-group label { display:block; font-size:0.75rem; font-weight:700; color:var(--bhagwa-light); letter-spacing:0.8px; text-transform:uppercase; margin-bottom:0.45rem; }
+    .lf-input {
+      width:100%; padding:0.85rem 1rem;
+      background:rgba(255,255,255,0.05);
+      border:1.5px solid rgba(255,107,0,0.2);
+      border-radius:var(--radius-sm);
+      color:var(--text-primary);
+      font-family:inherit; font-size:0.92rem;
+      outline:none;
+      transition:all 0.3s ease;
+    }
+    .lf-input:focus { border-color:var(--bhagwa); background:rgba(255,107,0,0.06); box-shadow:0 0 0 4px rgba(255,107,0,0.15); }
+    .lf-input::placeholder { color:var(--text-dim); }
+    .login-btn {
+      width:100%; padding:0.95rem;
+      background:linear-gradient(135deg,var(--bhagwa-dark),var(--bhagwa));
+      color:#fff; border:none; border-radius:var(--radius-sm);
+      font-family:inherit; font-size:0.95rem; font-weight:700;
+      cursor:pointer; margin-top:0.5rem;
+      box-shadow:0 4px 24px rgba(255,107,0,0.4);
+      transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .login-btn:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(255,107,0,0.55); }
+    .login-btn:active { transform:translateY(0); }
+    .login-err { color:#f87171; font-size:0.82rem; margin-top:0.75rem; display:none; }
+    .login-footer { margin-top:1.75rem; font-size:0.72rem; color:var(--text-dim); }
+
+    /* ═══════════════════════════════ DASHBOARD SHELL ═══════════════════════════════ */
     .dash { display:none; }
-    .dash.active { display:block; }
-    .dash-nav { background:var(--brown); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:60px; position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(255,107,0,0.2); }
-    .dash-nav h1 { color:var(--bhagwa); font-size:1rem; font-weight:800; }
-    .dash-nav-right { display:flex; gap:0.75rem; align-items:center; }
-    .dash-nav-right a, .dash-nav-right button { color:rgba(255,220,170,0.75); font-size:0.8rem; font-weight:600; background:none; border:1px solid rgba(255,107,0,0.3); border-radius:20px; padding:0.3rem 0.85rem; cursor:pointer; font-family:inherit; text-decoration:none; transition:all 0.2s; }
-    .dash-nav-right a:hover, .dash-nav-right button:hover { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); }
-    .dash-body { max-width:1200px; margin:2rem auto; padding:0 1.5rem; }
+    .dash.active { display:flex; min-height:100vh; }
 
-    /* STAT CARDS */
-    .stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.25rem; margin-bottom:2rem; }
-    .stat-card { background:var(--white); border-radius:16px; padding:1.5rem; border-left:4px solid var(--bhagwa); box-shadow:var(--shadow-sm); border:1px solid rgba(255,107,0,0.12); border-left-width:4px; transition:transform 0.3s, box-shadow 0.3s; }
-    .stat-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); }
-    .stat-card .sc-num { font-size:2rem; font-weight:900; color:var(--bhagwa); }
-    .stat-card .sc-label { font-size:0.75rem; color:var(--brown-muted); text-transform:uppercase; letter-spacing:1px; margin-top:0.2rem; }
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width:var(--sidebar-w); flex-shrink:0;
+      background:rgba(13,8,4,0.95);
+      backdrop-filter:blur(20px);
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column;
+      position:fixed; top:0; left:0; height:100vh;
+      z-index:200;
+      transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .sb-brand {
+      padding:1.5rem 1.25rem 1rem;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:0.85rem;
+    }
+    .sb-emblem {
+      width:40px; height:40px; border-radius:10px;
+      background:linear-gradient(135deg,var(--bhagwa-dark),var(--bhagwa));
+      display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+      box-shadow:0 4px 16px rgba(255,107,0,0.3); flex-shrink:0;
+    }
+    .sb-brand-text h1 { font-size:0.9rem; font-weight:800; color:#fff; }
+    .sb-brand-text p { font-size:0.68rem; color:var(--text-muted); margin-top:1px; }
+    .sb-nav { flex:1; padding:1.25rem 0.75rem; overflow-y:auto; }
+    .sb-section-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); padding:0 0.65rem; margin:0.75rem 0 0.4rem; }
+    .sb-link {
+      display:flex; align-items:center; gap:0.75rem;
+      padding:0.65rem 0.85rem; border-radius:var(--radius-sm);
+      color:var(--text-muted); font-size:0.85rem; font-weight:500;
+      text-decoration:none; cursor:pointer;
+      transition:all 0.2s ease; margin-bottom:0.15rem;
+      border:none; background:none; width:100%; text-align:left;
+    }
+    .sb-link .sb-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+    .sb-link:hover { background:rgba(255,107,0,0.08); color:var(--bhagwa-light); }
+    .sb-link.active { background:rgba(255,107,0,0.14); color:var(--bhagwa); font-weight:700; border:1px solid rgba(255,107,0,0.2); }
+    .sb-link.active .sb-icon { filter:drop-shadow(0 0 6px var(--bhagwa)); }
+    .sb-footer {
+      padding:1rem 0.75rem;
+      border-top:1px solid var(--border);
+    }
+    .sb-user {
+      display:flex; align-items:center; gap:0.75rem;
+      padding:0.65rem 0.85rem; border-radius:var(--radius-sm);
+      background:rgba(255,107,0,0.06); border:1px solid rgba(255,107,0,0.12);
+    }
+    .sb-user-avatar {
+      width:34px; height:34px; border-radius:50%;
+      background:linear-gradient(135deg,var(--bhagwa-dark),var(--bhagwa));
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.9rem; font-weight:800; color:#fff; flex-shrink:0;
+    }
+    .sb-user-name { font-size:0.82rem; font-weight:700; color:var(--text-primary); }
+    .sb-user-role { font-size:0.68rem; color:var(--bhagwa); }
+    .sb-logout {
+      width:100%; margin-top:0.6rem; padding:0.55rem;
+      background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2);
+      border-radius:var(--radius-sm); color:#f87171; font-family:inherit;
+      font-size:0.8rem; font-weight:600; cursor:pointer;
+      transition:all 0.2s ease;
+    }
+    .sb-logout:hover { background:rgba(248,113,113,0.18); }
+    .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:199; }
 
-    /* TABLE */
-    .table-card { background:var(--white); border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid rgba(255,107,0,0.12); overflow:hidden; margin-bottom:2rem; }
-    .table-toolbar { display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,107,0,0.1); flex-wrap:wrap; gap:0.75rem; }
-    .table-toolbar h3 { font-size:1rem; font-weight:800; color:var(--brown); }
-    .table-toolbar-right { display:flex; gap:0.5rem; flex-wrap:wrap; }
-    .tb-btn { padding:0.45rem 1rem; border-radius:20px; border:1.5px solid rgba(255,107,0,0.25); background:transparent; color:var(--brown); font-family:inherit; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
-    .tb-btn:hover, .tb-btn.active { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); }
-    .tb-search { padding:0.45rem 0.85rem; border:1.5px solid rgba(255,107,0,0.22); border-radius:20px; font-family:inherit; font-size:0.82rem; color:var(--brown); background:var(--cream-dark); outline:none; min-width:180px; }
-    .tb-search:focus { border-color:var(--bhagwa); }
+    /* ── MAIN CONTENT ── */
+    .dash-main {
+      flex:1; margin-left:var(--sidebar-w);
+      min-height:100vh;
+      background:radial-gradient(ellipse at 80% 20%, rgba(255,107,0,0.06) 0%, transparent 50%);
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height:var(--header-h);
+      background:rgba(13,8,4,0.85); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 1.75rem; position:sticky; top:0; z-index:100;
+    }
+    .topbar-left { display:flex; align-items:center; gap:1rem; }
+    .hamburger-btn {
+      display:none; background:none; border:none; cursor:pointer;
+      color:var(--text-muted); font-size:1.3rem; padding:0.25rem;
+    }
+    .topbar-title { font-size:1.05rem; font-weight:700; color:#fff; }
+    .topbar-subtitle { font-size:0.72rem; color:var(--text-muted); margin-top:1px; }
+    .topbar-right { display:flex; align-items:center; gap:0.75rem; }
+    .topbar-btn {
+      display:flex; align-items:center; gap:0.45rem;
+      padding:0.5rem 1rem; border-radius:20px;
+      border:1px solid var(--border); background:var(--bg-glass);
+      color:var(--text-muted); font-family:inherit; font-size:0.78rem; font-weight:600;
+      cursor:pointer; text-decoration:none;
+      transition:all 0.2s ease;
+    }
+    .topbar-btn:hover { border-color:var(--border-hover); color:var(--bhagwa-light); background:rgba(255,107,0,0.08); }
+
+    /* ── DASHBOARD BODY ── */
+    .dash-body { padding:1.75rem; max-width:1320px; }
+
+    /* ── STAT CARDS ── */
+    .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.25rem; margin-bottom:2rem; }
+    .stat-card {
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      position:relative; overflow:hidden;
+      transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+      backdrop-filter:blur(8px);
+    }
+    .stat-card::before {
+      content:''; position:absolute; top:0; right:0;
+      width:80px; height:80px;
+      border-radius:0 var(--radius) 0 80px;
+      opacity:0.08;
+    }
+    .stat-card:hover { transform:translateY(-4px); border-color:var(--border-hover); box-shadow:var(--shadow-glow); }
+    .stat-icon { font-size:1.5rem; margin-bottom:0.85rem; }
+    .stat-num {
+      font-size:2.2rem; font-weight:900; line-height:1;
+      background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,0.7) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .stat-label { font-size:0.75rem; color:var(--text-muted); margin-top:0.35rem; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; }
+    .stat-card.c-orange::before { background:var(--bhagwa); }
+    .stat-card.c-green::before  { background:var(--green); }
+    .stat-card.c-red::before    { background:var(--red); }
+    .stat-card.c-blue::before   { background:var(--blue); }
+    .stat-card.c-orange .stat-num { background:linear-gradient(135deg,var(--bhagwa),var(--bhagwa-light)); -webkit-background-clip:text; }
+    .stat-card.c-green  .stat-num { background:linear-gradient(135deg,#4ade80,#22c55e); -webkit-background-clip:text; }
+    .stat-card.c-red    .stat-num { background:linear-gradient(135deg,#fca5a5,#f87171); -webkit-background-clip:text; }
+    .stat-card.c-blue   .stat-num { background:linear-gradient(135deg,#93c5fd,#60a5fa); -webkit-background-clip:text; }
+    .stat-trend { font-size:0.72rem; margin-top:0.5rem; color:var(--green); font-weight:600; }
+
+    /* ── CHART GRID ── */
+    .chart-row { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:2rem; }
+    .chart-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem;
+      backdrop-filter:blur(8px);
+    }
+    .chart-card h3 { font-size:0.88rem; font-weight:700; color:var(--text-primary); margin-bottom:1.25rem; display:flex; align-items:center; gap:0.5rem; }
+    .bar-row { display:flex; align-items:center; gap:0.85rem; margin-bottom:0.75rem; }
+    .bar-label { width:100px; font-size:0.75rem; color:var(--text-muted); text-align:right; flex-shrink:0; }
+    .bar-track { flex:1; background:rgba(255,255,255,0.06); border-radius:6px; height:18px; overflow:hidden; }
+    .bar-fill { height:100%; background:linear-gradient(90deg,var(--bhagwa-dark),var(--bhagwa)); border-radius:6px; transition:width 1.2s cubic-bezier(0.4,0,0.2,1); display:flex; align-items:center; justify-content:flex-end; padding-right:0.4rem; }
+    .bar-fill span { font-size:0.68rem; font-weight:700; color:#fff; }
+
+    /* ── TABLE CARD ── */
+    .table-card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+      overflow:hidden; margin-bottom:2rem;
+      backdrop-filter:blur(8px);
+      transition:border-color 0.3s;
+    }
+    .table-card:hover { border-color:rgba(255,107,0,0.25); }
+    .table-toolbar {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:1.25rem 1.5rem; border-bottom:1px solid var(--border);
+      flex-wrap:wrap; gap:0.75rem;
+    }
+    .tt-left { display:flex; align-items:center; gap:0.75rem; }
+    .tt-badge {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      padding:0.3rem 0.85rem; border-radius:20px;
+      font-size:0.75rem; font-weight:700;
+    }
+    .tt-badge-orange { background:rgba(255,107,0,0.15); color:var(--bhagwa); border:1px solid rgba(255,107,0,0.2); }
+    .tt-badge-green  { background:rgba(34,197,94,0.12);  color:var(--green);  border:1px solid rgba(34,197,94,0.2); }
+    .tt-badge-blue   { background:rgba(96,165,250,0.12); color:var(--blue);   border:1px solid rgba(96,165,250,0.2); }
+    .tt-badge-purple { background:rgba(167,139,250,0.12);color:var(--purple); border:1px solid rgba(167,139,250,0.2); }
+    .tt-badge-red    { background:rgba(248,113,113,0.12); color:var(--red);   border:1px solid rgba(248,113,113,0.2); }
+    .table-toolbar h3 { font-size:1rem; font-weight:800; color:#fff; }
+    .tt-right { display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; }
+    .tb-search {
+      padding:0.5rem 0.85rem; border:1.5px solid rgba(255,107,0,0.18);
+      border-radius:var(--radius-sm); font-family:inherit; font-size:0.8rem;
+      color:var(--text-primary); background:rgba(255,255,255,0.05); outline:none;
+      min-width:160px; transition:all 0.25s;
+    }
+    .tb-search:focus { border-color:var(--bhagwa); background:rgba(255,107,0,0.06); }
+    .tb-search option { background:#1a0c05; }
+    .tb-btn {
+      padding:0.5rem 1.1rem; border-radius:20px;
+      border:1.5px solid rgba(255,107,0,0.2); background:transparent;
+      color:var(--text-muted); font-family:inherit; font-size:0.78rem; font-weight:600;
+      cursor:pointer; transition:all 0.2s; white-space:nowrap;
+    }
+    .tb-btn:hover, .tb-btn.active { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); box-shadow:0 4px 14px rgba(255,107,0,0.35); }
+    .tb-btn-primary { background:linear-gradient(135deg,var(--bhagwa-dark),var(--bhagwa)); color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(255,107,0,0.3); }
+    .tb-btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,107,0,0.45); }
     table { width:100%; border-collapse:collapse; }
-    thead tr { background:var(--cream); }
-    th { padding:0.75rem 1rem; text-align:left; font-size:0.75rem; font-weight:700; color:var(--brown-muted); text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
-    td { padding:0.8rem 1rem; font-size:0.85rem; color:var(--brown); border-bottom:1px solid rgba(255,107,0,0.07); }
-    tr:hover td { background:rgba(255,107,0,0.03); }
-    .blood-badge { display:inline-block; padding:0.15rem 0.6rem; border-radius:20px; font-size:0.72rem; font-weight:800; }
-    .blood-A { background:#fce4ec; color:#c62828; }
-    .blood-B { background:#e3f2fd; color:#1565c0; }
-    .blood-AB { background:#f3e5f5; color:#6a1b9a; }
-    .blood-O { background:#e8f5e9; color:#2e7d32; }
-    .row-actions { display:flex; gap:0.4rem; }
-    .ra-btn { padding:0.25rem 0.65rem; border-radius:8px; border:none; font-size:0.72rem; font-weight:700; cursor:pointer; transition:all 0.2s; }
-    .ra-call { background:#e8f5e9; color:#2e7d32; }
-    .ra-wa { background:#e3f2fd; color:#1565c0; }
-    .ra-pdf { background:rgba(255,107,0,0.1); color:var(--bhagwa); }
-    .ra-edit { background:rgba(77,20,0,0.08); color:var(--brown); }
-    .ra-btn:hover { opacity:0.8; transform:scale(1.05); }
+    thead tr { background:rgba(255,107,0,0.06); }
+    th { padding:0.8rem 1rem; text-align:left; font-size:0.7rem; font-weight:700; color:var(--bhagwa); text-transform:uppercase; letter-spacing:0.8px; white-space:nowrap; border-bottom:1px solid var(--border); }
+    td { padding:0.85rem 1rem; font-size:0.83rem; color:var(--text-primary); border-bottom:1px solid rgba(255,107,0,0.06); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tbody tr { transition:background 0.15s; }
+    tbody tr:hover td { background:rgba(255,107,0,0.05); }
+    td strong { color:#fff; font-weight:700; }
 
-    /* CHARTS BAR */
-    .chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:2rem; }
-    .chart-card { background:var(--white); border-radius:16px; padding:1.5rem; box-shadow:var(--shadow-sm); border:1px solid rgba(255,107,0,0.12); }
-    .chart-card h3 { font-size:0.9rem; font-weight:800; color:var(--brown); margin-bottom:1.25rem; }
-    .bar-chart-row { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem; font-size:0.8rem; }
-    .bcr-label { width:90px; text-align:right; color:var(--brown-muted); flex-shrink:0; }
-    .bcr-bar-wrap { flex:1; background:rgba(255,107,0,0.15); border-radius:8px; height:20px; overflow:hidden; }
-    .bcr-bar { background:linear-gradient(90deg, var(--bhagwa), var(--bhagwa-light)); border-radius:8px; height:100%; transition:width 1s cubic-bezier(0.4, 0, 0.2, 1); display:flex; align-items:center; justify-content:flex-end; padding-right:0.4rem; }
-    .bcr-bar span { font-size:0.68rem; font-weight:700; color:#fff; }
+    /* ── BADGES ── */
+    .blood-badge { display:inline-block; padding:0.18rem 0.65rem; border-radius:20px; font-size:0.72rem; font-weight:800; }
+    .blood-A  { background:rgba(248,113,113,0.15); color:#fca5a5; }
+    .blood-B  { background:rgba(96,165,250,0.15); color:#93c5fd; }
+    .blood-AB { background:rgba(167,139,250,0.15); color:#c4b5fd; }
+    .blood-O  { background:rgba(34,197,94,0.15); color:#86efac; }
+    .status-badge { display:inline-flex; align-items:center; gap:0.3rem; padding:0.2rem 0.65rem; border-radius:20px; font-size:0.7rem; font-weight:700; }
+    .badge-upcoming { background:rgba(34,197,94,0.12); color:var(--green); border:1px solid rgba(34,197,94,0.2); }
+    .badge-completed{ background:rgba(255,255,255,0.07); color:var(--text-muted); }
+    .badge-pending  { background:rgba(251,191,36,0.12); color:#fbbf24; border:1px solid rgba(251,191,36,0.2); }
+    .type-chip { display:inline-block; padding:0.15rem 0.55rem; border-radius:8px; font-size:0.68rem; font-weight:700; background:rgba(255,107,0,0.12); color:var(--bhagwa); }
 
-    @media(max-width:768px){ .chart-grid{grid-template-columns:1fr;} table thead{display:none;} td{display:block;padding:0.4rem 1rem;} td::before{content:attr(data-label);font-weight:700;color:var(--bhagwa);margin-right:0.5rem;font-size:0.72rem;} }
+    /* ── ROW ACTIONS ── */
+    .row-actions { display:flex; gap:0.35rem; }
+    .ra-btn {
+      padding:0.28rem 0.65rem; border-radius:8px; border:none;
+      font-size:0.72rem; font-weight:700; cursor:pointer; transition:all 0.2s;
+      white-space:nowrap;
+    }
+    .ra-btn:hover { transform:scale(1.06); opacity:0.9; }
+    .ra-call   { background:rgba(34,197,94,0.15); color:#86efac; }
+    .ra-wa     { background:rgba(96,165,250,0.15); color:#93c5fd; }
+    .ra-pdf    { background:rgba(255,107,0,0.15); color:var(--bhagwa); }
+    .ra-card   { background:rgba(255,215,0,0.15); color:#FFE259; }
+    .ra-edit   { background:rgba(255,255,255,0.08); color:var(--text-primary); }
+    .ra-delete { background:rgba(248,113,113,0.15); color:#fca5a5; }
+    .ra-approve{ background:rgba(34,197,94,0.15); color:#86efac; font-size:0.72rem; }
+    .ra-reject { background:rgba(248,113,113,0.15); color:#fca5a5; }
 
-    /* VARG ADMIN TABS */
-    .varg-admin-tabs { display:flex; gap:0.5rem; flex-wrap:wrap; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,107,0,0.1); }
-    .vatab { padding:0.4rem 1rem; border-radius:20px; border:1.5px solid rgba(255,107,0,0.25); background:transparent; color:var(--brown); font-family:inherit; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
-    .vatab:hover { background:rgba(255,107,0,0.08); border-color:var(--bhagwa); }
-    .vatab.active { background:var(--bhagwa); color:#fff; border-color:var(--bhagwa); }
+    /* ── VARG TABS ── */
+    .varg-tabs { display:flex; gap:0.4rem; flex-wrap:wrap; padding:1rem 1.5rem; border-bottom:1px solid var(--border); }
+    .vtab {
+      padding:0.4rem 0.95rem; border-radius:20px;
+      border:1.5px solid rgba(255,107,0,0.18); background:transparent;
+      color:var(--text-muted); font-family:inherit; font-size:0.78rem; font-weight:600;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .vtab:hover { background:rgba(255,107,0,0.08); border-color:rgba(255,107,0,0.4); color:var(--bhagwa-light); }
+    .vtab.active { background:rgba(255,107,0,0.15); border-color:rgba(255,107,0,0.4); color:var(--bhagwa); font-weight:700; }
     .varg-panel { display:none; }
     .varg-panel.active { display:block; }
+
+    /* ── SECTION DIVIDER ── */
+    .section-label {
+      display:flex; align-items:center; gap:0.75rem;
+      margin:2rem 0 1rem;
+    }
+    .section-label h2 { font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); }
+    .section-label::before, .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* ═══════════════════════════════ MODALS ═══════════════════════════════ */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.75); z-index:2000;
+      align-items:center; justify-content:center;
+      padding:1.25rem; backdrop-filter:blur(6px);
+    }
+    .modal-box {
+      background:linear-gradient(145deg, rgba(28,16,7,0.98), rgba(18,10,4,0.98));
+      border:1px solid rgba(255,107,0,0.25);
+      border-radius:24px; width:100%; max-width:540px;
+      padding:2rem; box-shadow:var(--shadow-modal);
+      max-height:92vh; overflow-y:auto;
+      animation:modal-pop 0.35s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes modal-pop {
+      from { opacity:0; transform:scale(0.92) translateY(20px); }
+      to   { opacity:1; transform:scale(1) translateY(0); }
+    }
+    .modal-header {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:1.75rem; padding-bottom:1rem; border-bottom:1px solid var(--border);
+    }
+    .modal-header h3 { font-size:1.1rem; font-weight:800; color:#fff; }
+    .modal-close {
+      width:32px; height:32px; border-radius:8px; border:none;
+      background:rgba(255,255,255,0.06); color:var(--text-muted);
+      font-size:1.1rem; cursor:pointer; transition:all 0.2s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .modal-close:hover { background:rgba(248,113,113,0.15); color:#f87171; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-group { display:flex; flex-direction:column; gap:0.4rem; }
+    .form-group.full { grid-column:1/-1; }
+    .form-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--bhagwa-light); }
+    .form-label .req { color:var(--bhagwa); }
+    .form-ctrl {
+      padding:0.75rem 0.9rem;
+      background:rgba(255,255,255,0.05);
+      border:1.5px solid rgba(255,107,0,0.18);
+      border-radius:var(--radius-sm);
+      color:var(--text-primary); font-family:inherit; font-size:0.88rem; outline:none;
+      transition:all 0.25s;
+    }
+    .form-ctrl:focus { border-color:var(--bhagwa); background:rgba(255,107,0,0.07); box-shadow:0 0 0 4px rgba(255,107,0,0.12); }
+    .form-ctrl::placeholder { color:var(--text-dim); }
+    .form-ctrl option { background:#1a0c05; }
+    textarea.form-ctrl { resize:vertical; min-height:90px; }
+    .modal-actions { display:flex; gap:0.75rem; margin-top:1.5rem; }
+    .btn-save {
+      flex:1; padding:0.85rem;
+      background:linear-gradient(135deg,var(--bhagwa-dark),var(--bhagwa));
+      color:#fff; border:none; border-radius:var(--radius-sm);
+      font-family:inherit; font-size:0.92rem; font-weight:700; cursor:pointer;
+      box-shadow:0 4px 20px rgba(255,107,0,0.35); transition:all 0.3s;
+    }
+    .btn-save:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(255,107,0,0.5); }
+    .btn-cancel {
+      padding:0.85rem 1.5rem; border-radius:var(--radius-sm);
+      border:1.5px solid rgba(255,255,255,0.12); background:transparent;
+      color:var(--text-muted); font-family:inherit; font-size:0.88rem; font-weight:600;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .btn-cancel:hover { border-color:rgba(248,113,113,0.4); color:#f87171; }
+
+    /* ── PENDING SECTION highlight ── */
+    .table-card.pending-card { border-color:rgba(251,191,36,0.3); }
+    .table-card.pending-card .table-toolbar { background:rgba(251,191,36,0.05); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align:center; padding:3rem 2rem; }
+    .empty-state .empty-icon { font-size:2.5rem; margin-bottom:0.75rem; opacity:0.35; }
+    .empty-state p { color:var(--text-muted); font-size:0.85rem; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px) {
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.open { transform:translateX(0); }
+      .sidebar-overlay.open { display:block; }
+      .dash-main { margin-left:0; }
+      .hamburger-btn { display:flex; }
+      .chart-row { grid-template-columns:1fr; }
+    }
+    @media(max-width:640px) {
+      .dash-body { padding:1.25rem; }
+      .stat-row { grid-template-columns:1fr 1fr; }
+      .form-grid { grid-template-columns:1fr; }
+      .form-group.full { grid-column:1; }
+      table thead { display:none; }
+      td { display:block; padding:0.4rem 1rem; }
+      td::before { content:attr(data-label); font-weight:700; color:var(--bhagwa); margin-right:0.5rem; font-size:0.7rem; }
+      .topbar-right .topbar-btn:not(:last-child) { display:none; }
+    }
   </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- ════════════════════════ LOGIN SCREEN ════════════════════════ -->
 <div class="login-screen" id="login-screen">
+  <div class="login-particles" id="login-particles"></div>
   <div class="login-box">
-    <div class="login-icon">🔐</div>
+    <div class="login-emblem">🔐</div>
     <h2>Admin Login</h2>
-    <p>RSS भाटापारा – Admin Dashboard</p>
-    <input class="login-input" type="text"     id="l-user" placeholder="Username" autocomplete="username"/>
-    <input class="login-input" type="password" id="l-pass" placeholder="Password" autocomplete="current-password"/>
+    <p class="login-sub">RSS भाटापारा — Secure Admin Portal</p>
+    <div class="lf-group">
+      <label for="l-user">Username</label>
+      <input class="lf-input" type="text" id="l-user" placeholder="admin" autocomplete="username"/>
+    </div>
+    <div class="lf-group">
+      <label for="l-pass">Password</label>
+      <input class="lf-input" type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
     <button class="login-btn" id="l-login-btn" onclick="doLogin()">🔓 लॉगिन करें</button>
     <p class="login-err" id="login-err">❌ गलत username या password</p>
-    <p style="margin-top:1.25rem;font-size:0.72rem;color:#bbb;">RSS भाटापारा Admin Portal</p>
+    <p class="login-footer">RSS भाटापारा Admin Portal · सर्वेभवन्तु सुखिनः</p>
   </div>
 </div>
 
-<!-- DASHBOARD -->
+<!-- ════════════════════════ DASHBOARD ════════════════════════ -->
 <div class="dash" id="dashboard">
 
-  <div class="dash-nav">
-    <h1><svg viewBox="0 0 36 44" width="20" height="24" style="vertical-align:middle;margin-right:6px" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="4" height="40" rx="2" fill="#FF9A4D"/><polygon points="7,2 34,10 7,20" fill="#FF9A4D"/><polygon points="7,10 30,16 7,24" fill="#FFCC80" opacity="0.6"/></svg>RSS भाटापारा – Admin Dashboard</h1>
-    <div class="dash-nav-right">
-      <a href="volunteers.html">👥 डायरेक्टरी</a>
-      <a href="join.html">+ सदस्य जोड़ें</a>
-      <button onclick="doLogout()">🚪 लॉगआउट</button>
-    </div>
-  </div>
-
-  <div class="dash-body">
-
-    <!-- STAT CARDS -->
-    <div class="stat-grid" id="stat-grid"></div>
-
-    <!-- CHARTS -->
-    <div class="chart-grid">
-      <div class="chart-card">
-        <h3>📊 शाखा-वार स्वयंसेवक</h3>
-        <div id="shakha-chart"></div>
-      </div>
-      <div class="chart-card">
-        <h3>🩸 रक्त समूह वितरण</h3>
-        <div id="blood-chart"></div>
+  <!-- SIDEBAR -->
+  <div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-emblem">🚩</div>
+      <div class="sb-brand-text">
+        <h1>RSS भाटापारा</h1>
+        <p>Admin Dashboard</p>
       </div>
     </div>
-
-    <!-- PENDING APPROVALS TABLE -->
-    <div class="table-card" id="pending-card" style="display:none; border-left:4px solid #ff9800; margin-bottom:2rem;">
-      <div class="table-toolbar" style="background:rgba(255,152,0,0.15);">
-        <h3 style="color:#ff9800;">⏳ लंबित पंजीकरण (Pending Approvals)</h3>
-        <span id="pending-count-badge" style="background:#ff9800; color:#fff; font-size:0.75rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:20px;">0</span>
-      </div>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr style="background:rgba(255,107,0,0.08);">
-              <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th>
-              <th>वार्ड</th><th>संपर्क</th><th>व्यवसाय</th><th>गणवेश</th><th>कार्रवाई</th>
-            </tr>
-          </thead>
-          <tbody id="pending-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- TABLE -->
-    <div class="table-card">
-      <div class="table-toolbar">
-        <h3>👥 सभी स्वयंसेवक</h3>
-        <div class="table-toolbar-right">
-          <input class="tb-search" type="search" id="admin-search" placeholder="खोजें…" oninput="adminFilter()"/>
-          <select class="tb-search" id="admin-shakha" onchange="adminFilter()">
-            <option value="">सभी शाखाएं</option>
-          </select>
-          <button class="tb-btn" onclick="exportCSV()">⬇ CSV Export</button>
-          <button class="tb-btn" onclick="printAllSheet()">🖨 सूची PDF</button>
+    <nav class="sb-nav">
+      <div class="sb-section-label">अवलोकन</div>
+      <a href="index.html" class="sb-link"><span class="sb-icon">🏠</span> होम पेज</a>
+      <div class="sb-section-label">प्रबंधन</div>
+      <button class="sb-link active" id="sb-volunteers"><span class="sb-icon">👥</span> स्वयंसेवक</button>
+      <button class="sb-link" id="sb-events" onclick="scrollToSection('events-section')"><span class="sb-icon">📅</span> कार्यक्रम</button>
+      <button class="sb-link" id="sb-varg" onclick="scrollToSection('varg-section')"><span class="sb-icon">🎓</span> प्रशिक्षण वर्ग</button>
+      <div class="sb-section-label">डेटा</div>
+      <a href="volunteers.html" class="sb-link"><span class="sb-icon">📋</span> डायरेक्टरी</a>
+      <a href="join.html" class="sb-link"><span class="sb-icon">➕</span> सदस्य जोड़ें</a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-user-avatar">A</div>
+        <div>
+          <div class="sb-user-name">Admin</div>
+          <div class="sb-user-role">नगर प्रशासक</div>
         </div>
       </div>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
+      <button class="sb-logout" onclick="doLogout()">🚪 लॉगआउट करें</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="dash-main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger-btn" onclick="openSidebar()">☰</button>
+        <div>
+          <div class="topbar-title">Admin Dashboard</div>
+          <div class="topbar-subtitle">RSS भाटापारा नगर प्रशासन</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <a href="volunteers.html" class="topbar-btn">👥 डायरेक्टरी</a>
+        <a href="join.html" class="topbar-btn">➕ सदस्य</a>
+        <button class="topbar-btn" onclick="doLogout()">🚪 लॉगआउट</button>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="dash-body">
+
+      <!-- STAT CARDS -->
+      <div class="stat-row" id="stat-grid"></div>
+
+      <!-- CHARTS -->
+      <div class="chart-row">
+        <div class="chart-card">
+          <h3>📊 शाखा-वार स्वयंसेवक</h3>
+          <div id="shakha-chart"></div>
+        </div>
+        <div class="chart-card">
+          <h3>🩸 रक्त समूह वितरण</h3>
+          <div id="blood-chart"></div>
+        </div>
+      </div>
+
+      <!-- PENDING APPROVALS -->
+      <div class="table-card pending-card" id="pending-card" style="display:none; margin-bottom:2rem;">
+        <div class="table-toolbar">
+          <div class="tt-left">
+            <h3 style="color:#fbbf24;">⏳ लंबित पंजीकरण</h3>
+            <span class="tt-badge tt-badge-red" id="pending-count-badge">0 pending</span>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
               <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th>
-              <th>वार्ड</th><th>रक्त समूह</th><th>व्यवसाय</th>
-              <th>वर्ष</th><th>संपर्क</th><th>कार्रवाई</th>
-            </tr>
-          </thead>
-          <tbody id="admin-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <!-- EVENTS MANAGEMENT SECTION -->
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div class="table-card" style="margin-bottom:2rem; border-left:4px solid var(--bhagwa);">
-      <div class="table-toolbar" style="background:rgba(255,107,0,0.15);">
-        <h3 style="color:var(--bhagwa);">📅 आगामी कार्यक्रम प्रबंधन</h3>
-        <button class="tb-btn" id="event-add-btn" onclick="openAddEventModal()" style="background:var(--bhagwa);color:#fff;border-color:var(--bhagwa);">+ नया कार्यक्रम जोड़ें</button>
-      </div>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>शीर्षक</th>
-              <th>दिनांक</th>
-              <th>समय</th>
-              <th>स्थान</th>
-              <th>श्रेणी</th>
-              <th>स्थिति</th>
-              <th>कार्रवाई</th>
-            </tr>
-          </thead>
-          <tbody id="events-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <!-- VARG MANAGEMENT SECTION -->
-    <!-- ═══════════════════════════════════════════════════════════════════ -->
-    <div class="table-card" style="margin-bottom:2rem; border-left:4px solid #5c6bc0;">
-      <div class="table-toolbar" style="background:rgba(92,107,192,0.15);">
-        <h3 style="color:#7986cb;">🎓 प्रशिक्षण वर्ग प्रबंधन</h3>
-        <button class="tb-btn" id="varg-add-btn" onclick="openAddVargModal()" style="background:#5c6bc0;color:#fff;border-color:#5c6bc0;">+ नया रिकॉर्ड जोड़ें</button>
+              <th>वार्ड</th><th>संपर्क</th><th>व्यवसाय</th><th>गणवेश</th><th>कार्रवाई</th>
+            </tr></thead>
+            <tbody id="pending-tbody"></tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- Tab buttons -->
-      <div class="varg-admin-tabs" id="varg-admin-tabs">
-        <button class="vatab active" data-vi="0">📗 प्रारम्भिक वर्ग</button>
-        <button class="vatab" data-vi="1">📘 प्राथमिक शिक्षा वर्ग</button>
-        <button class="vatab" data-vi="2">📙 संघ शिक्षा वर्ग</button>
-        <button class="vatab" data-vi="3">📕 कार्यकर्ता विकास वर्ग 1</button>
-        <button class="vatab" data-vi="4">📓 कार्यकर्ता विकास वर्ग 2</button>
+      <!-- VOLUNTEERS TABLE -->
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="tt-left">
+            <h3>👥 सभी स्वयंसेवक</h3>
+            <span class="tt-badge tt-badge-orange" id="vol-count-badge"></span>
+          </div>
+          <div class="tt-right">
+            <input class="tb-search" type="search" id="admin-search" placeholder="नाम खोजें…" oninput="adminFilter()"/>
+            <select class="tb-search" id="admin-shakha" onchange="adminFilter()">
+              <option value="">सभी शाखाएं</option>
+            </select>
+            <button class="tb-btn" onclick="exportCSV()">⬇ CSV</button>
+            <button class="tb-btn" onclick="printAllSheet()">🖨 PDF</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
+              <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th>
+              <th>वार्ड</th><th>रक्त</th><th>व्यवसाय</th><th>वर्ष</th><th>संपर्क</th><th>कार्रवाई</th>
+            </tr></thead>
+            <tbody id="admin-tbody"></tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- Panels (one per varg) -->
-      <div id="varg-panel-0" class="varg-panel active"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-0"></tbody></table></div></div>
-      <div id="varg-panel-1" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-1"></tbody></table></div></div>
-      <div id="varg-panel-2" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-2"></tbody></table></div></div>
-      <div id="varg-panel-3" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-3"></tbody></table></div></div>
-      <div id="varg-panel-4" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-4"></tbody></table></div></div>
-    </div>
+      <!-- EVENTS MANAGEMENT -->
+      <div class="section-label"><h2>कार्यक्रम प्रबंधन</h2></div>
+      <div class="table-card" id="events-section">
+        <div class="table-toolbar">
+          <div class="tt-left">
+            <h3>📅 आगामी कार्यक्रम प्रबंधन</h3>
+            <span class="tt-badge tt-badge-orange"></span>
+          </div>
+          <div class="tt-right">
+            <button class="tb-btn tb-btn-primary" id="event-add-btn" onclick="openAddEventModal()">+ नया कार्यक्रम जोड़ें</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>
+              <th>#</th><th>शीर्षक</th><th>दिनांक</th><th>समय</th>
+              <th>स्थान</th><th>श्रेणी</th><th>स्थिति</th><th>कार्रवाई</th>
+            </tr></thead>
+            <tbody id="events-tbody"></tbody>
+          </table>
+        </div>
+      </div>
 
-  </div><!-- /dash-body -->
+      <!-- VARG MANAGEMENT -->
+      <div class="section-label"><h2>प्रशिक्षण वर्ग प्रबंधन</h2></div>
+      <div class="table-card" id="varg-section">
+        <div class="table-toolbar">
+          <div class="tt-left">
+            <h3>🎓 प्रशिक्षण वर्ग प्रबंधन</h3>
+          </div>
+          <div class="tt-right">
+            <button class="tb-btn" onclick="openAddVargModal()" style="background:rgba(167,139,250,0.15);border-color:rgba(167,139,250,0.3);color:var(--purple);">+ नया रिकॉर्ड जोड़ें</button>
+          </div>
+        </div>
+        <div class="varg-tabs" id="varg-admin-tabs">
+          <button class="vtab active" data-vi="0">📗 प्रारम्भिक</button>
+          <button class="vtab" data-vi="1">📘 प्राथमिक</button>
+          <button class="vtab" data-vi="2">📙 संघ शिक्षा</button>
+          <button class="vtab" data-vi="3">📕 कार्यकर्ता 1</button>
+          <button class="vtab" data-vi="4">📓 कार्यकर्ता 2</button>
+        </div>
+        <div id="varg-panel-0" class="varg-panel active"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-0"></tbody></table></div></div>
+        <div id="varg-panel-1" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-1"></tbody></table></div></div>
+        <div id="varg-panel-2" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-2"></tbody></table></div></div>
+        <div id="varg-panel-3" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-3"></tbody></table></div></div>
+        <div id="varg-panel-4" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-4"></tbody></table></div></div>
+      </div>
+
+    </div><!-- /dash-body -->
+  </div><!-- /dash-main -->
 </div><!-- /dash -->
 
-<!-- VARG ADD / EDIT MODAL -->
-<div id="varg-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px);">
-  <div style="background:var(--white); color:var(--brown); border-radius:24px; width:100%; max-width:520px; padding:2rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); max-height:90vh; overflow-y:auto;">
-    <h3 style="color:var(--brown); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-      <span id="varg-modal-title">🎓 वर्ग रिकॉर्ड जोड़ें</span>
-      <button onclick="closeVargModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa;">✕</button>
-    </h3>
+<!-- ════════════════════════ MODALS ════════════════════════ -->
+
+<!-- EDIT VOLUNTEER MODAL -->
+<div class="modal-overlay" id="edit-modal-overlay">
+  <div class="modal-box" style="max-width:620px;">
+    <div class="modal-header">
+      <h3>✏️ स्वयंसेवक विवरण बदलें</h3>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <form id="edit-form" onsubmit="handleEditSubmit(event)">
+      <input type="hidden" id="edit-id"/>
+      <input type="hidden" id="edit-is-pending" value="false"/>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">नाम</label><input class="form-ctrl" type="text" id="edit-name" required placeholder="पूरा नाम"/></div>
+        <div class="form-group"><label class="form-label">मोबाइल</label><input class="form-ctrl" type="tel" id="edit-contact" required placeholder="10 अंक"/></div>
+        <div class="form-group"><label class="form-label">शाखा</label>
+          <select class="form-ctrl" id="edit-shakha">
+            <option>केशव प्रभात शाखा</option><option>यज्ञ शाला शाखा</option>
+            <option>लवकुश शाखा</option><option>माता देवाला शाखा</option>
+            <option>गायत्री मंदिर शाखा</option><option>पटपर शाखा</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">भूमिका</label>
+          <select class="form-ctrl" id="edit-role">
+            <option>कार्यकर्ता</option><option>शाखा प्रमुख</option>
+            <option>मुख्य शिक्षक</option><option>बाल शिक्षक</option>
+            <option>गणवेश प्रमुख</option><option>सेवा प्रमुख</option>
+            <option>नगर प्रमुख</option><option>गणनायक</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">बस्ती</label>
+          <select class="form-ctrl" id="edit-basti">
+            <option>श्यामा प्रसाद बस्ती</option><option>महाकाल बस्ती</option>
+            <option>परशुराम बस्ती</option><option>राम सप्ताह बस्ती</option>
+            <option>संत माता कर्मा बस्ती</option><option>शहीद वीर नारायण सिंह बस्ती</option>
+            <option>माता देवला बस्ती</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">वार्ड</label>
+          <select class="form-ctrl" id="edit-area">
+            <option>हाथनीपारा वार्ड</option><option>महावीर वार्ड</option><option>सुभाष वार्ड</option>
+            <option>शक्ति वार्ड</option><option>नया पारा वार्ड</option><option>परशुराम वार्ड</option>
+            <option>दाऊ कृष्णकुमार वार्ड</option><option>गांधी मंदिर वार्ड</option><option>शंकर वार्ड</option>
+            <option>सदर वार्ड</option><option>संजय वार्ड</option><option>नेहरू वार्ड</option>
+            <option>नयागंज वार्ड</option><option>भगत सिंह वार्ड</option><option>महासती वार्ड</option>
+            <option>संत माता कर्मा वार्ड</option><option>बलभद्र वार्ड</option><option>गुरु नानक वार्ड</option>
+            <option>संत रविदास वार्ड</option><option>रामसागर पारा वार्ड</option><option>मुंशी इस्माइल वार्ड</option>
+            <option>लाल बहादुर शास्त्री वार्ड</option><option>बजरंग वार्ड</option><option>स्टेशन वार्ड</option>
+            <option>पं. दीनदयाल उपाध्याय वार्ड</option><option>संत कँवरराम वार्ड</option><option>माता देवालय वार्ड</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">रक्त समूह</label>
+          <select class="form-ctrl" id="edit-blood">
+            <option value="">चुनें</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">व्यवसाय</label><input class="form-ctrl" type="text" id="edit-vyavsay" placeholder="जैसे: शिक्षक, किराना"/></div>
+        <div class="form-group"><label class="form-label">सम्मिलन वर्ष</label><input class="form-ctrl" type="number" id="edit-year" placeholder="2024"/></div>
+        <div class="form-group"><label class="form-label">गणवेशधारी</label>
+          <select class="form-ctrl" id="edit-ganvesh"><option>हाँ</option><option>नहीं</option></select>
+        </div>
+        <div class="form-group full"><label class="form-label">गणनायक</label>
+          <select class="form-ctrl" id="edit-gannayak">
+            <option>राजेश तिवारी</option><option>संजय अवस्थी</option><option>दीपक साहू</option>
+            <option>विजय वर्मा</option><option>मनीष यादव</option><option>राकेश शुक्ला</option>
+            <option>अमित चौबे</option><option>नवीन निषाद</option><option>राहुल देवांगन</option>
+            <option>संतोष साहू</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeEditModal()">रद्द करें</button>
+        <button type="submit" class="btn-save">💾 सहेजें</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EVENT ADD/EDIT MODAL -->
+<div class="modal-overlay" id="event-modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="event-modal-title">📅 कार्यक्रम जोड़ें</h3>
+      <button class="modal-close" onclick="closeEventModal()">✕</button>
+    </div>
+    <form id="event-form" onsubmit="handleEventSubmit(event)">
+      <input type="hidden" id="event-action" value="add"/>
+      <input type="hidden" id="event-id" value=""/>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">शीर्षक <span class="req">*</span></label>
+          <input class="form-ctrl" type="text" id="event-title" required placeholder="जैसे: गुरु पूर्णिमा उत्सव"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">दिनांक <span class="req">*</span></label>
+          <input class="form-ctrl" type="date" id="event-date" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">समय <span class="req">*</span></label>
+          <input class="form-ctrl" type="text" id="event-time" required placeholder="07:00 AM"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">श्रेणी <span class="req">*</span></label>
+          <select class="form-ctrl" id="event-type">
+            <option>उत्सव</option><option>सेवा</option><option>पथ संचलन</option><option>प्रशिक्षण</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">स्थिति <span class="req">*</span></label>
+          <select class="form-ctrl" id="event-status">
+            <option value="upcoming">आगामी (Upcoming)</option>
+            <option value="completed">संपन्न (Completed)</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">स्थान <span class="req">*</span></label>
+          <input class="form-ctrl" type="text" id="event-location" required placeholder="जैसे: RSS मैदान, भाटापारा"/>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">विवरण</label>
+          <textarea class="form-ctrl" id="event-description" placeholder="कार्यक्रम का विवरण…"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeEventModal()">रद्द करें</button>
+        <button type="submit" class="btn-save" id="event-submit-btn">💾 सहेजें</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- VARG ADD/EDIT MODAL -->
+<div class="modal-overlay" id="varg-modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="varg-modal-title">🎓 वर्ग रिकॉर्ड जोड़ें</h3>
+      <button class="modal-close" onclick="closeVargModal()">✕</button>
+    </div>
     <form id="varg-form" onsubmit="handleVargSubmit(event)">
       <input type="hidden" id="varg-action" value="add"/>
       <input type="hidden" id="varg-varg-idx" value="0"/>
       <input type="hidden" id="varg-entry-idx" value=""/>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">नाम <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="text" id="varg-name" required placeholder="पूरा नाम" style="margin-bottom:0; text-align:left;"/>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">नाम <span class="req">*</span></label>
+          <input class="form-ctrl" type="text" id="varg-name" required placeholder="पूरा नाम"/>
         </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">मोबाइल <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="tel" id="varg-mobile" required placeholder="10 अंकों का नंबर" style="margin-bottom:0; text-align:left;"/>
+        <div class="form-group">
+          <label class="form-label">मोबाइल <span class="req">*</span></label>
+          <input class="form-ctrl" type="tel" id="varg-mobile" required placeholder="10 अंकों का नंबर"/>
         </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">वर्ग <span style="color:var(--bhagwa)">*</span></label>
-          <select class="login-input" id="varg-select" style="margin-bottom:0; height:41px; padding:0.5rem 1rem;">
+        <div class="form-group">
+          <label class="form-label">वर्ग <span class="req">*</span></label>
+          <select class="form-ctrl" id="varg-select">
             <option value="0">📗 प्रारम्भिक वर्ग</option>
             <option value="1">📘 प्राथमिक शिक्षा वर्ग</option>
             <option value="2">📙 संघ शिक्षा वर्ग</option>
@@ -275,237 +829,229 @@
             <option value="4">📓 कार्यकर्ता विकास वर्ग 2</option>
           </select>
         </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">वर्ग सत्र (वर्ष) <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="number" id="varg-session" required min="2000" max="2035" placeholder="जैसे: 2024" style="margin-bottom:0; text-align:left;"/>
+        <div class="form-group">
+          <label class="form-label">वर्ग सत्र (वर्ष) <span class="req">*</span></label>
+          <input class="form-ctrl" type="number" id="varg-session" required min="2000" max="2035" placeholder="जैसे: 2024"/>
         </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
-          <label style="font-size:0.8rem; font-weight:700;">वर्ग स्थल <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="text" id="varg-sthal" required placeholder="जैसे: RSS कार्यालय, भाटापारा" style="margin-bottom:0; text-align:left;"/>
-        </div>
-      </div>
-      <button class="login-btn" type="submit" id="varg-submit-btn" style="margin-top:1.5rem; border-radius:12px; background:#5c6bc0;">💾 सहेजें</button>
-    </form>
-  </div>
-</div>
-
-<!-- EVENT ADD / EDIT MODAL -->
-<div id="event-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px);">
-  <div style="background:var(--white); color:var(--brown); border-radius:24px; width:100%; max-width:520px; padding:2rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); max-height:90vh; overflow-y:auto;">
-    <h3 style="color:var(--brown); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-      <span id="event-modal-title">📅 कार्यक्रम जोड़ें</span>
-      <button onclick="closeEventModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa;">✕</button>
-    </h3>
-    <form id="event-form" onsubmit="handleEventSubmit(event)">
-      <input type="hidden" id="event-action" value="add"/>
-      <input type="hidden" id="event-id" value=""/>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
-        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
-          <label style="font-size:0.8rem; font-weight:700;">शीर्षक <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="text" id="event-title" required placeholder="जैसे: गुरु पूर्णिमा उत्सव" style="margin-bottom:0; text-align:left;"/>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">दिनांक <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="date" id="event-date" required style="margin-bottom:0; text-align:left; height:41px; padding:0.5rem 1rem;"/>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">समय <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="text" id="event-time" required placeholder="जैसे: 07:00 AM" style="margin-bottom:0; text-align:left;"/>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">श्रेणी <span style="color:var(--bhagwa)">*</span></label>
-          <select class="login-input" id="event-type" style="margin-bottom:0; height:41px; padding:0.5rem 1rem;">
-            <option>उत्सव</option>
-            <option>सेवा</option>
-            <option>पथ संचलन</option>
-            <option>प्रशिक्षण</option>
-          </select>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">स्थिति <span style="color:var(--bhagwa)">*</span></label>
-          <select class="login-input" id="event-status" style="margin-bottom:0; height:41px; padding:0.5rem 1rem;">
-            <option value="upcoming">आगामी (Upcoming)</option>
-            <option value="completed">संपन्न (Completed)</option>
-          </select>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
-          <label style="font-size:0.8rem; font-weight:700;">स्थान <span style="color:var(--bhagwa)">*</span></label>
-          <input class="login-input" type="text" id="event-location" required placeholder="जैसे: RSS मैदान, भाटापारा" style="margin-bottom:0; text-align:left;"/>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.3rem; grid-column:1/-1;">
-          <label style="font-size:0.8rem; font-weight:700;">विवरण</label>
-          <textarea class="login-input" id="event-description" placeholder="कार्यक्रम का विवरण…" style="margin-bottom:0; text-align:left; height:80px; resize:vertical; padding:0.5rem 1rem; font-family:inherit;"></textarea>
+        <div class="form-group full">
+          <label class="form-label">वर्ग स्थल <span class="req">*</span></label>
+          <input class="form-ctrl" type="text" id="varg-sthal" required placeholder="जैसे: RSS कार्यालय, भाटापारा"/>
         </div>
       </div>
-      <button class="login-btn" type="submit" id="event-submit-btn" style="margin-top:1.5rem; border-radius:12px; background:var(--bhagwa);">💾 सहेजें</button>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeVargModal()">रद्द करें</button>
+        <button type="submit" class="btn-save" id="varg-submit-btn" style="background:linear-gradient(135deg,#4c1d95,#7c3aed);">💾 सहेजें</button>
+      </div>
     </form>
   </div>
 </div>
 
 <script src="js/shared.js"></script>
+<script src="js/data-loader.js"></script>
 <script src="js/varg-data.js"></script>
+<script src="js/id-card-generator.js"></script>
 <script>
+// ── Login particles ──────────────────────────────────────────────────────────
+(function spawnParticles(){
+  const c = document.getElementById('login-particles'); if(!c) return;
+  for(let i=0;i<18;i++){
+    const p=document.createElement('div'); p.className='lp';
+    const s=Math.random()*6+3;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*10}s;`;
+    c.appendChild(p);
+  }
+})();
+
+// ── Sidebar ──────────────────────────────────────────────────────────────────
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sb-overlay').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('open');
+}
+function scrollToSection(id){
+  const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  closeSidebar();
+}
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 async function doLogin(){
-  const u = document.getElementById('l-user').value.trim();
-  const p = document.getElementById('l-pass').value;
-  const btn = document.getElementById('l-login-btn');
-  const errEl = document.getElementById('login-err');
-  errEl.style.display = 'none';
-  btn.textContent = '⏳ जाँच रहे हैं…';
-  btn.disabled = true;
+  const u=document.getElementById('l-user').value.trim();
+  const p=document.getElementById('l-pass').value;
+  const btn=document.getElementById('l-login-btn');
+  const errEl=document.getElementById('login-err');
+  errEl.style.display='none';
+  btn.textContent='⏳ जाँच रहे हैं…'; btn.disabled=true;
   try {
-    const res = await fetch('/.netlify/functions/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: u, password: p })
-    });
-    const data = await res.json();
-    if (data.success) {
-      sessionStorage.setItem('rss_admin','1');
-      showDash();
-    } else {
-      errEl.style.display = 'block';
-    }
+    const res=await fetch('/.netlify/functions/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const data=await res.json();
+    if(data.success){ sessionStorage.setItem('rss_token',data.token); showDash(); }
+    else { errEl.style.display='block'; }
   } catch(e) {
-    errEl.textContent = '❌ सर्वर से कनेक्ट नहीं हो सका';
-    errEl.style.display = 'block';
-  } finally {
-    btn.textContent = '🔓 लॉगिन करें';
-    btn.disabled = false;
-  }
+    errEl.textContent='❌ सर्वर से कनेक्ट नहीं हो सका';
+    errEl.style.display='block';
+  } finally { btn.textContent='🔓 लॉगिन करें'; btn.disabled=false; }
 }
-document.getElementById('l-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
-function doLogout(){ sessionStorage.removeItem('rss_admin'); location.reload(); }
-
+document.getElementById('l-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+function doLogout(){ sessionStorage.removeItem('rss_token'); location.reload(); }
 function showDash(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('dashboard').classList.add('active');
-  buildDash();
+  loadSiteData().then(() => {
+    buildDash();
+  });
 }
 
-if(sessionStorage.getItem('rss_admin')==='1') showDash();
+// Check session storage for token on load
+if(sessionStorage.getItem('rss_token')) showDash();
+
+// Shared admin fetch helper to inject Authorization Bearer token and handle 401
+async function adminFetch(url, options = {}) {
+  const token = sessionStorage.getItem('rss_token') || '';
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token,
+    ...(options.headers || {})
+  };
+  const res = await fetch(url, { ...options, headers });
+  if (res.status === 401) {
+    alert('सत्र समाप्त हो गया है या अमान्य है। कृपया पुनः लॉगिन करें।');
+    doLogout();
+    throw new Error('Unauthorized');
+  }
+  return res;
+}
 
 // ── Dashboard Build ───────────────────────────────────────────────────────────
-let filtered = VOLUNTEERS_DATA;
-
+let filtered=[];
 function buildDash(){
-  // Stats
-  const total = VOLUNTEERS_DATA.length;
-  const shakhas = [...new Set(VOLUNTEERS_DATA.map(v=>v.shakha))].length;
-  const donors  = VOLUNTEERS_DATA.filter(v=>v.blood_group).length;
-  const newest  = Math.max(...VOLUNTEERS_DATA.map(v=>+v.joining_year));
-  document.getElementById('stat-grid').innerHTML = [
-    { num:total,   label:'कुल स्वयंसेवक',  color:'#FF6B00' },
-    { num:shakhas, label:'सक्रिय शाखाएं',   color:'#2e7d32' },
-    { num:donors,  label:'रक्तदान योग्य',   color:'#c62828' },
-    { num:newest,  label:'अंतिम सम्मिलन वर्ष', color:'#1565c0' },
-  ].map(s=>`<div class="stat-card" style="border-color:${s.color}">
-    <div class="sc-num" style="color:${s.color}">${s.num}</div>
-    <div class="sc-label">${s.label}</div>
+  const vols = window.VOLUNTEERS_DATA || [];
+  const pending = window.PENDING_VOLUNTEERS_DATA || [];
+  const events = window.EVENTS_DATA || [];
+  const varg = window.VARG_DATA || [];
+
+  filtered = vols;
+  const total = vols.length;
+  const shakhas = [...new Set(vols.map(v=>v.shakha))].length;
+  const donors = vols.filter(v=>v.blood_group).length;
+  const newest = vols.length ? Math.max(...vols.map(v=>+v.joining_year)) : 0;
+  
+  document.getElementById('stat-grid').innerHTML=[
+    {num:total,   label:'कुल स्वयंसेवक',     icon:'👥', c:'c-orange'},
+    {num:shakhas, label:'सक्रिय शाखाएं',      icon:'🚩', c:'c-green'},
+    {num:donors,  label:'रक्तदान योग्य',      icon:'🩸', c:'c-red'},
+    {num:newest,  label:'अंतिम सम्मिलन वर्ष', icon:'📅', c:'c-blue'},
+  ].map(s=>`<div class="stat-card ${s.c}">
+    <div class="stat-icon">${s.icon}</div>
+    <div class="stat-num">${s.num}</div>
+    <div class="stat-label">${s.label}</div>
   </div>`).join('');
 
-  // Shakha chart
-  const shMap = {};
-  VOLUNTEERS_DATA.forEach(v=>{ shMap[v.shakha]=(shMap[v.shakha]||0)+1; });
-  const shMax = Math.max(...Object.values(shMap));
-  document.getElementById('shakha-chart').innerHTML = Object.entries(shMap).map(([k,v])=>`
-    <div class="bar-chart-row">
-      <div class="bcr-label">${k}</div>
-      <div class="bcr-bar-wrap"><div class="bcr-bar" style="width:${(v/shMax*100).toFixed(0)}%"><span>${v}</span></div></div>
+  // Charts
+  const shMap={};
+  vols.forEach(v=>{ if (v.shakha) shMap[v.shakha]=(shMap[v.shakha]||0)+1; });
+  const shMax=Math.max(...Object.values(shMap), 1);
+  document.getElementById('shakha-chart').innerHTML=Object.entries(shMap).map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-label">${esc(k)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/shMax*100).toFixed(0)}%"><span>${v}</span></div></div>
     </div>`).join('');
 
-  // Blood chart
-  const blMap = {};
-  VOLUNTEERS_DATA.forEach(v=>{ blMap[v.blood_group]=(blMap[v.blood_group]||0)+1; });
-  const blMax = Math.max(...Object.values(blMap));
-  document.getElementById('blood-chart').innerHTML = Object.entries(blMap).sort().map(([k,v])=>`
-    <div class="bar-chart-row">
-      <div class="bcr-label">${k}</div>
-      <div class="bcr-bar-wrap"><div class="bcr-bar" style="width:${(v/blMax*100).toFixed(0)}%"><span>${v}</span></div></div>
+  const blMap={};
+  vols.forEach(v=>{ if (v.blood_group) blMap[v.blood_group]=(blMap[v.blood_group]||0)+1; });
+  const blMax=Math.max(...Object.values(blMap), 1);
+  document.getElementById('blood-chart').innerHTML=Object.entries(blMap).sort().map(([k,v])=>`
+    <div class="bar-row">
+      <div class="bar-label">${esc(k)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/blMax*100).toFixed(0)}%"><span>${v}</span></div></div>
     </div>`).join('');
 
-  // Shakha filter options
-  const sel = document.getElementById('admin-shakha');
-  [...new Set(VOLUNTEERS_DATA.map(v=>v.shakha))].sort().forEach(s=>sel.innerHTML+=`<option>${s}</option>`);
+  // Shakha select
+  const sel=document.getElementById('admin-shakha');
+  sel.innerHTML = '<option value="">सभी शाखाएं</option>';
+  [...new Set(vols.map(v=>v.shakha))].sort().forEach(s=>{ if (s) sel.innerHTML+=`<option>${esc(s)}</option>`; });
 
-  // Pending table population
-  const pendingTbody = document.getElementById('pending-tbody');
-  const pendingCard = document.getElementById('pending-card');
-  const pendingBadge = document.getElementById('pending-count-badge');
-  
-  const hasPending = typeof PENDING_VOLUNTEERS_DATA !== 'undefined' && PENDING_VOLUNTEERS_DATA.length > 0;
-  if (hasPending) {
-    pendingCard.style.display = 'block';
-    pendingBadge.textContent = PENDING_VOLUNTEERS_DATA.length;
-    pendingTbody.innerHTML = PENDING_VOLUNTEERS_DATA.map((v, i) => `
+  // Pending
+  const pendingTbody=document.getElementById('pending-tbody');
+  const pendingCard=document.getElementById('pending-card');
+  const pendingBadge=document.getElementById('pending-count-badge');
+  const hasPending=pending.length>0;
+  if(hasPending){
+    pendingCard.style.display='block';
+    pendingBadge.textContent=pending.length+' pending';
+    pendingTbody.innerHTML=pending.map((v,i)=>`
       <tr>
         <td data-label="#">${i+1}</td>
-        <td data-label="नाम"><strong>${v.name}</strong></td>
-        <td data-label="शाखा">${v.shakha}</td>
-        <td data-label="भूमिका">${v.role || '—'}</td>
-        <td data-label="वार्ड">${v.area}</td>
-        <td data-label="संपर्क">${v.contact}</td>
-        <td data-label="व्यवसाय">${v.vyavsay || '—'}</td>
-        <td data-label="गणवेश">${v.ganvesh}</td>
+        <td data-label="नाम"><strong>${esc(v.name)}</strong></td>
+        <td data-label="शाखा">${esc(v.shakha)}</td>
+        <td data-label="भूमिका">${esc(v.role||'—')}</td>
+        <td data-label="वार्ड">${esc(v.area)}</td>
+        <td data-label="संपर्क">${esc(v.contact)}</td>
+        <td data-label="व्यवसाय">${esc(v.vyavsay||'—')}</td>
+        <td data-label="गणवेश">${esc(v.ganvesh)}</td>
         <td data-label="कार्रवाई">
           <div class="row-actions">
-            <button class="ra-btn ra-call" onclick="approveVolunteer(${v.id})" style="background:#e8f5e9; color:#2e7d32; padding:0.35rem 0.6rem; font-weight:700;">✔️ स्वीकृत</button>
-            <button class="ra-btn ra-edit" onclick="openEditModal(${v.id}, true)" style="background:rgba(77,20,0,0.08); color:var(--brown); padding:0.35rem 0.6rem; font-weight:700;">✏️ बदलें</button>
-            <button class="ra-btn ra-edit" onclick="rejectVolunteer(${v.id})" style="background:#ffebee; color:#c62828; padding:0.35rem 0.6rem; font-weight:700;">❌ अस्वीकृत</button>
+            <button class="ra-btn ra-approve" onclick="approveVolunteer(${v.id})">✔ स्वीकृत</button>
+            <button class="ra-btn ra-edit"    onclick="openEditModal(${v.id},true)">✏️</button>
+            <button class="ra-btn ra-delete"  onclick="rejectVolunteer(${v.id})">✕</button>
           </div>
         </td>
-      </tr>
-    `).join('');
-  } else {
-    pendingCard.style.display = 'none';
-  }
+      </tr>`).join('');
+  } else { pendingCard.style.display='none'; }
 
-  renderTable(VOLUNTEERS_DATA);
+  // Vol count badge
+  document.getElementById('vol-count-badge').textContent=total+' स्वयंसेवक';
+
+  renderTable(vols);
   renderVargAdmin();
   renderEventsAdmin();
 }
 
-function bloodClass(bg){ return 'blood-'+(bg.replace(/[+-]/,'')); }
-function initials(n){ return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); }
+function bloodClass(bg){ return 'blood-'+((bg || '').replace(/[+-]/,'')); }
 
 function renderTable(list){
-  filtered = list;
-  document.getElementById('admin-tbody').innerHTML = list.map((v,i)=>`
-    <tr>
-      <td data-label="#">${i+1}</td>
-      <td data-label="नाम"><strong>${v.name}</strong></td>
-      <td data-label="शाखा">${v.shakha}</td>
-      <td data-label="भूमिका">${v.role}</td>
-      <td data-label="वार्ड">${v.area}</td>
-      <td data-label="रक्त"><span class="blood-badge ${bloodClass(v.blood_group)}">${v.blood_group}</span></td>
-      <td data-label="व्यवसाय">${v.vyavsay}</td>
-      <td data-label="वर्ष">${v.joining_year}</td>
-      <td data-label="संपर्क">${v.contact}</td>
-      <td data-label="कार्रवाई">
-        <div class="row-actions">
-          <a class="ra-btn ra-call" href="tel:${v.contact}">📞</a>
-          <a class="ra-btn ra-wa" href="https://wa.me/91${v.contact}" target="_blank">💬</a>
-          <button class="ra-btn ra-pdf" onclick="printRow(${v.id})">PDF</button>
-          <button class="ra-btn ra-edit" onclick="openEditModal(${v.id})">✏️</button>
-          <button class="ra-btn ra-edit" onclick="deleteVolunteer(${v.id})" style="background:#ffebee; color:#c62828;">🗑️</button>
-        </div>
-      </td>
-    </tr>`).join('');
+  filtered=list;
+  document.getElementById('admin-tbody').innerHTML=list.length
+    ? list.map((v,i)=>`
+      <tr>
+        <td data-label="#">${i+1}</td>
+        <td data-label="नाम"><strong>${esc(v.name)}</strong></td>
+        <td data-label="शाखा">${esc(v.shakha)}</td>
+        <td data-label="भूमिका">${esc(v.role)}</td>
+        <td data-label="वार्ड">${esc(v.area)}</td>
+        <td data-label="रक्त"><span class="blood-badge ${bloodClass(v.blood_group)}">${esc(v.blood_group)}</span></td>
+        <td data-label="व्यवसाय">${esc(v.vyavsay)}</td>
+        <td data-label="वर्ष">${esc(v.joining_year)}</td>
+        <td data-label="संपर्क">${esc(v.contact)}</td>
+        <td data-label="कार्रवाई">
+          <div class="row-actions">
+            <a class="ra-btn ra-call" href="tel:${esc(v.contact)}">📞</a>
+            <a class="ra-btn ra-wa"   href="https://wa.me/91${esc(v.contact)}" target="_blank">💬</a>
+            <button class="ra-btn ra-card"   onclick="showMemberIDCardById(${v.id})" title="ID कार्ड">🪪</button>
+            <button class="ra-btn ra-pdf"    onclick="printRow(${v.id})">PDF</button>
+            <button class="ra-btn ra-edit"   onclick="openEditModal(${v.id})">✏️</button>
+            <button class="ra-btn ra-delete" onclick="deleteVolunteer(${v.id})">🗑</button>
+          </div>
+        </td>
+      </tr>`).join('')
+    : `<tr><td colspan="10"><div class="empty-state"><div class="empty-icon">🔍</div><p>कोई स्वयंसेवक नहीं मिला</p></div></td></tr>`;
 }
 
 function adminFilter(){
-  const q  = document.getElementById('admin-search').value.toLowerCase();
-  const sh = document.getElementById('admin-shakha').value;
-  renderTable(VOLUNTEERS_DATA.filter(v=>
-    v.name.toLowerCase().includes(q) && (!sh||v.shakha===sh)
-  ));
+  const q=document.getElementById('admin-search').value.toLowerCase();
+  const sh=document.getElementById('admin-shakha').value;
+  const vols = window.VOLUNTEERS_DATA || [];
+  renderTable(vols.filter(v=>v.name.toLowerCase().includes(q)&&(!sh||v.shakha===sh)));
 }
 
+// ── Print / Export ────────────────────────────────────────────────────────────
 function printRow(id){
-  const v = VOLUNTEERS_DATA.find(x=>x.id===id); if(!v) return;
-  const w = window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>${v.name}</title>
+  const vols = window.VOLUNTEERS_DATA || [];
+  const v=vols.find(x=>x.id===id); if(!v) return;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>${esc(v.name)}</title>
   <style>@page{size:A5 portrait;margin:12mm}body{font-family:Arial,sans-serif;color:#3D1C00;font-size:11pt}
   .hdr{display:flex;align-items:center;gap:10px;border-bottom:3px solid #FF6B00;padding-bottom:8px;margin-bottom:10px}
   h2{color:#FF6B00;font-size:13pt;margin:0}.sub{font-size:8pt;color:#888}
@@ -513,15 +1059,13 @@ function printRow(id){
   td{padding:5px 8px;border:1px solid #e0c8a0}td:first-child{font-weight:700;color:#FF6B00;background:#fff8f0;width:40%}
   .ft{margin-top:10px;font-size:7.5pt;color:#bbb;text-align:right}</style>
   </head><body>
-  <div class="hdr">
-    <svg viewBox="0 0 44 44" width="34" height="34"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
-    <div><h2>${v.name}</h2><div class="sub">${v.role} · ${v.shakha} · RSS भाटापारा</div></div>
-  </div>
+  <div class="hdr"><svg viewBox="0 0 44 44" width="34" height="34"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
+  <div><h2>${esc(v.name)}</h2><div class="sub">${esc(v.role)} · ${esc(v.shakha)} · RSS भाटापारा</div></div></div>
   <table>
-    <tr><td>नाम</td><td>${v.name}</td></tr><tr><td>शाखा</td><td>${v.shakha}</td></tr>
-    <tr><td>भूमिका</td><td>${v.role}</td></tr><tr><td>वार्ड</td><td>${v.area}</td></tr>
-    <tr><td>मोबाइल</td><td>${v.contact}</td></tr><tr><td>रक्त समूह</td><td><strong>${v.blood_group}</strong></td></tr>
-    <tr><td>व्यवसाय</td><td>${v.vyavsay}</td></tr><tr><td>सम्मिलन वर्ष</td><td>${v.joining_year}</td></tr>
+    <tr><td>नाम</td><td>${esc(v.name)}</td></tr><tr><td>शाखा</td><td>${esc(v.shakha)}</td></tr>
+    <tr><td>भूमिका</td><td>${esc(v.role)}</td></tr><tr><td>वार्ड</td><td>${esc(v.area)}</td></tr>
+    <tr><td>मोबाइल</td><td>${esc(v.contact)}</td></tr><tr><td>रक्त समूह</td><td><strong>${esc(v.blood_group)}</strong></td></tr>
+    <tr><td>व्यवसाय</td><td>${esc(v.vyavsay)}</td></tr><tr><td>सम्मिलन वर्ष</td><td>${esc(v.joining_year)}</td></tr>
   </table>
   <div class="ft">मुद्रित: ${new Date().toLocaleDateString('hi-IN')} | RSS भाटापारा Admin | भारत माता की जय 🇮🇳</div>
   <script>window.onload=()=>window.print();<\/script></body></html>`);
@@ -529,16 +1073,17 @@ function printRow(id){
 }
 
 function printAllSheet(){
-  const list = filtered.length ? filtered : VOLUNTEERS_DATA;
-  const w = window.open('','_blank');
-  const rows = list.map((v,i)=>`<tr style="background:${i%2===0?'#fff8f0':'#fff'}">
-    <td>${i+1}</td><td><strong>${v.name}</strong></td><td>${v.shakha}</td><td>${v.role}</td>
-    <td>${v.area}</td><td>${v.contact}</td><td>${v.blood_group}</td><td>${v.vyavsay}</td><td>${v.joining_year}</td>
+  const vols = window.VOLUNTEERS_DATA || [];
+  const list=filtered.length?filtered:vols;
+  const w=window.open('','_blank');
+  const rows=list.map((v,i)=>`<tr style="background:${i%2===0?'#1a0c05':'#0d0804'}">
+    <td>${i+1}</td><td><strong>${esc(v.name)}</strong></td><td>${esc(v.shakha)}</td><td>${esc(v.role)}</td>
+    <td>${esc(v.area)}</td><td>${esc(v.contact)}</td><td>${esc(v.blood_group)}</td><td>${esc(v.vyavsay)}</td><td>${esc(v.joining_year)}</td>
   </tr>`).join('');
   w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक सूची</title>
   <style>@page{size:A4 landscape;margin:10mm}body{font-family:Arial,sans-serif;color:#3D1C00;font-size:8pt}
   h2{color:#FF6B00;font-size:12pt;margin:0}.sub{font-size:7.5pt;color:#888;margin-bottom:6px}
-  table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:5px 5px;text-align:left;font-size:7.5pt}
+  table{width:100%;border-collapse:collapse}th{background:#FF6B00;color:#fff;padding:5px;text-align:left;font-size:7.5pt}
   td{padding:4px 5px;border-bottom:1px solid #f0e0c8;font-size:7.5pt}
   .hdr{display:flex;align-items:center;gap:8px;border-bottom:3px solid #FF6B00;padding-bottom:5px;margin-bottom:6px}
   .ft{margin-top:6px;font-size:7pt;color:#bbb;text-align:right}</style>
@@ -553,574 +1098,302 @@ function printAllSheet(){
 }
 
 function exportCSV(){
-  const headers = ['नाम','शाखा','भूमिका','वार्ड','संपर्क','रक्त समूह','व्यवसाय','सम्मिलन वर्ष'];
-  const rows = filtered.map(v=>[v.name,v.shakha,v.role,v.area,v.contact,v.blood_group,v.vyavsay,v.joining_year].join(','));
-  const csv = '\uFEFF' + [headers.join(','),...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-  a.download = 'rss-bhatapara-swayamsevak.csv';
-  a.click();
+  const headers=['नाम','शाखा','भूमिका','वार्ड','संपर्क','रक्त समूह','व्यवसाय','सम्मिलन वर्ष'];
+  const rows=filtered.map(v=>[v.name,v.shakha,v.role,v.area,v.contact,v.blood_group,v.vyavsay,v.joining_year].join(','));
+  const csv='\uFEFF'+[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='rss-bhatapara-swayamsevak.csv'; a.click();
 }
 
-function openEditModal(id, isPending = false) {
-  const dataset = isPending ? PENDING_VOLUNTEERS_DATA : VOLUNTEERS_DATA;
-  const v = dataset.find(x => x.id === id);
-  if (!v) return;
-  document.getElementById('edit-id').value = v.id;
-  document.getElementById('edit-is-pending').value = isPending ? "true" : "false";
-  document.getElementById('edit-name').value = v.name || '';
-  document.getElementById('edit-contact').value = v.contact || '';
-  document.getElementById('edit-shakha').value = v.shakha || '';
-  document.getElementById('edit-role').value = v.role || '';
-  document.getElementById('edit-basti').value = v.basti || '';
-  document.getElementById('edit-area').value = v.area || '';
-  document.getElementById('edit-blood').value = v.blood_group || '';
-  document.getElementById('edit-vyavsay').value = v.vyavsay || '';
-  document.getElementById('edit-year').value = v.joining_year || '';
-  document.getElementById('edit-ganvesh').value = v.ganvesh || 'नहीं';
-  document.getElementById('edit-gannayak').value = v.gannayak || '';
-  
-  document.getElementById('edit-modal-overlay').style.display = 'flex';
+// ── Edit Volunteer ────────────────────────────────────────────────────────────
+function openEditModal(id,isPending=false){
+  const vols = window.VOLUNTEERS_DATA || [];
+  const pending = window.PENDING_VOLUNTEERS_DATA || [];
+  const dataset=isPending?pending:vols;
+  const v=dataset.find(x=>x.id===id); if(!v) return;
+  document.getElementById('edit-id').value=v.id;
+  document.getElementById('edit-is-pending').value=isPending?"true":"false";
+  document.getElementById('edit-name').value=v.name||'';
+  document.getElementById('edit-contact').value=v.contact||'';
+  document.getElementById('edit-shakha').value=v.shakha||'';
+  document.getElementById('edit-role').value=v.role||'';
+  document.getElementById('edit-basti').value=v.basti||'';
+  document.getElementById('edit-area').value=v.area||'';
+  document.getElementById('edit-blood').value=v.blood_group||'';
+  document.getElementById('edit-vyavsay').value=v.vyavsay||'';
+  document.getElementById('edit-year').value=v.joining_year||'';
+  document.getElementById('edit-ganvesh').value=v.ganvesh||'नहीं';
+  document.getElementById('edit-gannayak').value=v.gannayak||'';
+  document.getElementById('edit-modal-overlay').style.display='flex';
 }
+function closeEditModal(){ document.getElementById('edit-modal-overlay').style.display='none'; }
 
-function closeEditModal() {
-  document.getElementById('edit-modal-overlay').style.display = 'none';
-}
-
-async function handleEditSubmit(e) {
+async function handleEditSubmit(e){
   e.preventDefault();
-  const id = parseInt(document.getElementById('edit-id').value);
-  const isPending = document.getElementById('edit-is-pending').value === "true";
-  const data = {
-    id: id,
-    name: document.getElementById('edit-name').value,
-    contact: document.getElementById('edit-contact').value,
-    shakha: document.getElementById('edit-shakha').value,
-    role: document.getElementById('edit-role').value,
-    basti: document.getElementById('edit-basti').value,
-    area: document.getElementById('edit-area').value,
-    blood_group: document.getElementById('edit-blood').value,
-    vyavsay: document.getElementById('edit-vyavsay').value,
-    joining_year: document.getElementById('edit-year').value,
-    ganvesh: document.getElementById('edit-ganvesh').value,
-    gannayak: document.getElementById('edit-gannayak').value
+  const id=parseInt(document.getElementById('edit-id').value);
+  const isPending=document.getElementById('edit-is-pending').value==="true";
+  const data={
+    id,name:document.getElementById('edit-name').value,
+    contact:document.getElementById('edit-contact').value,
+    shakha:document.getElementById('edit-shakha').value,
+    role:document.getElementById('edit-role').value,
+    basti:document.getElementById('edit-basti').value,
+    area:document.getElementById('edit-area').value,
+    blood_group:document.getElementById('edit-blood').value,
+    vyavsay:document.getElementById('edit-vyavsay').value,
+    joining_year:document.getElementById('edit-year').value,
+    ganvesh:document.getElementById('edit-ganvesh').value,
+    gannayak:document.getElementById('edit-gannayak').value
   };
-  
-  const btn = document.querySelector('#edit-form button[type="submit"]');
-  btn.textContent = '⏳ सहेज रहे हैं…';
-  btn.disabled = true;
-  
+  const btn=document.querySelector('#edit-form button[type="submit"]');
+  btn.textContent='⏳ सहेज रहे हैं…'; btn.disabled=true;
   try {
-    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    let actionUrl;
-    if (isPending) {
-      actionUrl = isLocal ? '/api/edit-pending-volunteer' : '/.netlify/functions/edit-pending-volunteer';
-    } else {
-      actionUrl = isLocal ? '/api/edit-volunteer' : '/.netlify/functions/edit-volunteer';
-    }
-
-    const res = await fetch(actionUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert('सफलतापूर्वक अपडेट किया गया!');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + resData.message);
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट करने में विफल।');
-  } finally {
-    btn.textContent = '💾 सहेजें (Save Changes)';
-    btn.disabled = false;
-    closeEditModal();
-  }
+    const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+    let actionUrl=isPending?(isLocal?'/api/edit-pending-volunteer':'/.netlify/functions/edit-pending-volunteer'):(isLocal?'/api/edit-volunteer':'/.netlify/functions/edit-volunteer');
+    const res=await adminFetch(actionUrl,{method:'POST',body:JSON.stringify(data)});
+    const rd=await res.json();
+    if(rd.success){ alert('सफलतापूर्वक अपडेट!'); location.reload(); }
+    else alert('त्रुटि: '+rd.message);
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
+  finally { btn.textContent='💾 सहेजें'; btn.disabled=false; closeEditModal(); }
 }
 
-async function approveVolunteer(id) {
-  if (!confirm('क्या आप इस स्वयंसेवक पंजीकरण को स्वीकृत करना चाहते हैं?')) return;
-  
-  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  const actionUrl = isLocal ? '/api/approve-volunteer' : '/.netlify/functions/approve-volunteer';
-  
+// ── Approve / Reject / Delete ─────────────────────────────────────────────────
+async function approveVolunteer(id){
+  if(!confirm('क्या आप इस स्वयंसेवक पंजीकरण को स्वीकृत करना चाहते हैं?')) return;
+  const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  const url=isLocal?'/api/approve-volunteer':'/.netlify/functions/approve-volunteer';
   try {
-    const res = await fetch(actionUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: id })
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert('स्वयंसेवक स्वीकृत कर दिया गया है!');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + resData.message);
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट करने में विफल।');
-  }
+    const res=await adminFetch(url,{method:'POST',body:JSON.stringify({id})});
+    const rd=await res.json();
+    if(rd.success){ alert('स्वयंसेवक स्वीकृत!'); location.reload(); } else alert('त्रुटि: '+rd.message);
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
+}
+async function rejectVolunteer(id){
+  if(!confirm('क्या आप इस पंजीकरण को अस्वीकृत/हटाना चाहते हैं?')) return;
+  const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  const url=isLocal?'/api/reject-volunteer':'/.netlify/functions/reject-volunteer';
+  try {
+    const res=await adminFetch(url,{method:'POST',body:JSON.stringify({id})});
+    const rd=await res.json();
+    if(rd.success){ alert('अस्वीकृत।'); location.reload(); } else alert('त्रुटि: '+rd.message);
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
+}
+async function deleteVolunteer(id){
+  if(!confirm('क्या आप इस स्वयंसेवक को हमेशा के लिए हटाना चाहते हैं?')) return;
+  const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  const url=isLocal?'/api/delete-volunteer':'/.netlify/functions/delete-volunteer';
+  try {
+    const res=await adminFetch(url,{method:'POST',body:JSON.stringify({id})});
+    const rd=await res.json();
+    if(rd.success){ alert('हटा दिया गया!'); location.reload(); } else alert('त्रुटि: '+rd.message);
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
 }
 
-async function rejectVolunteer(id) {
-  if (!confirm('क्या आप इस स्वयंसेवक पंजीकरण को अस्वीकृत/हटाना चाहते हैं?')) return;
-  
-  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  const actionUrl = isLocal ? '/api/reject-volunteer' : '/.netlify/functions/reject-volunteer';
-  
-  try {
-    const res = await fetch(actionUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: id })
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert('पंजीकरण अस्वीकृत कर दिया गया है।');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + resData.message);
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट करने में विफल।');
-  }
-}
-
-async function deleteVolunteer(id) {
-  if (!confirm('क्या आप इस स्वयंसेवक को हमेशा के लिए हटाना चाहते हैं?')) return;
-  
-  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  const actionUrl = isLocal ? '/api/delete-volunteer' : '/.netlify/functions/delete-volunteer';
-  
-  try {
-    const res = await fetch(actionUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: id })
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert('स्वयंसेवक हटा दिया गया है!');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + resData.message);
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट करने में विफल।');
-  }
-}
-
-// ── EVENTS Admin ─────────────────────────────────────────────────────────────
-function renderEventsAdmin() {
-  const tbody = document.getElementById('events-tbody');
-  if (!tbody) return;
-  if (typeof EVENTS_DATA === 'undefined' || !EVENTS_DATA.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#bbb;padding:2rem;">कोई कार्यक्रम नहीं। ऊपर "+ नया कार्यक्रम जोड़ें" बटन दबाएं।</td></tr>`;
+// ── EVENTS Admin ──────────────────────────────────────────────────────────────
+function renderEventsAdmin(){
+  const events = window.EVENTS_DATA || [];
+  const tbody=document.getElementById('events-tbody'); if(!tbody) return;
+  if(!events.length){
+    tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📅</div><p>कोई कार्यक्रम नहीं। "+ नया कार्यक्रम जोड़ें" दबाएं।</p></div></td></tr>`;
     return;
   }
-  tbody.innerHTML = EVENTS_DATA.map((e, i) => `
+  tbody.innerHTML=events.map((e,i)=>`
     <tr>
       <td data-label="#">${i+1}</td>
-      <td data-label="शीर्षक"><strong>${e.title}</strong></td>
-      <td data-label="दिनांक">${e.date}</td>
-      <td data-label="समय">${e.time}</td>
-      <td data-label="स्थान">${e.location}</td>
-      <td data-label="श्रेणी"><span class="blood-badge" style="background:rgba(255,107,0,0.1); color:var(--bhagwa); font-weight:700;">${e.type}</span></td>
-      <td data-label="स्थिति">
-        <span class="status-badge ${e.status==='upcoming'?'badge-upcoming':'badge-completed'}">
-          ${e.status==='upcoming'?'आगामी':'संपन्न'}
-        </span>
-      </td>
+      <td data-label="शीर्षक"><strong>${esc(e.title)}</strong></td>
+      <td data-label="दिनांक">${esc(e.date)}</td>
+      <td data-label="समय">${esc(e.time)}</td>
+      <td data-label="स्थान">${esc(e.location)}</td>
+      <td data-label="श्रेणी"><span class="type-chip">${esc(e.type)}</span></td>
+      <td data-label="स्थिति"><span class="status-badge ${e.status==='upcoming'?'badge-upcoming':'badge-completed'}">${e.status==='upcoming'?'🟢 आगामी':'✅ संपन्न'}</span></td>
       <td data-label="कार्रवाई">
         <div class="row-actions">
-          <button class="ra-btn ra-edit" onclick="openEditEventModal(${e.id})">✏️ बदलें</button>
-          <button class="ra-btn ra-edit" onclick="deleteEvent(${e.id})" style="background:#ffebee;color:#c62828;">🗑️ हटाएं</button>
+          <button class="ra-btn ra-edit"   onclick="openEditEventModal(${e.id})">✏️</button>
+          <button class="ra-btn ra-delete" onclick="deleteEvent(${e.id})">🗑</button>
         </div>
       </td>
     </tr>`).join('');
 }
 
-function openAddEventModal() {
-  document.getElementById('event-modal-title').textContent = '📅 कार्यक्रम जोड़ें';
-  document.getElementById('event-action').value = 'add';
-  document.getElementById('event-id').value = '';
-  document.getElementById('event-title').value = '';
-  document.getElementById('event-date').value = '';
-  document.getElementById('event-time').value = '';
-  document.getElementById('event-type').selectedIndex = 0;
-  document.getElementById('event-status').selectedIndex = 0;
-  document.getElementById('event-location').value = '';
-  document.getElementById('event-description').value = '';
-  document.getElementById('event-modal-overlay').style.display = 'flex';
+function openAddEventModal(){
+  document.getElementById('event-modal-title').textContent='📅 नया कार्यक्रम जोड़ें';
+  document.getElementById('event-action').value='add';
+  document.getElementById('event-id').value='';
+  document.getElementById('event-form').reset();
+  document.getElementById('event-modal-overlay').style.display='flex';
 }
-
-function openEditEventModal(id) {
-  const e = EVENTS_DATA.find(x => x.id === id);
-  if (!e) return;
-  document.getElementById('event-modal-title').textContent = '✏️ कार्यक्रम बदलें';
-  document.getElementById('event-action').value = 'edit';
-  document.getElementById('event-id').value = String(e.id);
-  document.getElementById('event-title').value = e.title || '';
-  document.getElementById('event-date').value = e.date || '';
-  document.getElementById('event-time').value = e.time || '';
-  document.getElementById('event-type').value = e.type || 'उत्सव';
-  document.getElementById('event-status').value = e.status || 'upcoming';
-  document.getElementById('event-location').value = e.location || '';
-  document.getElementById('event-description').value = e.description || '';
-  document.getElementById('event-modal-overlay').style.display = 'flex';
+function openEditEventModal(id){
+  const events = window.EVENTS_DATA || [];
+  const e=events.find(x=>x.id===id); if(!e) return;
+  document.getElementById('event-modal-title').textContent='✏️ कार्यक्रम संपादन';
+  document.getElementById('event-action').value='edit';
+  document.getElementById('event-id').value=e.id;
+  document.getElementById('event-title').value=e.title||'';
+  document.getElementById('event-date').value=e.date||'';
+  document.getElementById('event-time').value=e.time||'';
+  document.getElementById('event-type').value=e.type||'उत्सव';
+  document.getElementById('event-status').value=e.status||'upcoming';
+  document.getElementById('event-location').value=e.location||'';
+  document.getElementById('event-description').value=e.description||'';
+  document.getElementById('event-modal-overlay').style.display='flex';
 }
+function closeEventModal(){ document.getElementById('event-modal-overlay').style.display='none'; }
 
-function closeEventModal() {
-  document.getElementById('event-modal-overlay').style.display = 'none';
-}
-
-async function handleEventSubmit(e) {
+async function handleEventSubmit(e){
   e.preventDefault();
-  const action = document.getElementById('event-action').value;
-  const idVal  = document.getElementById('event-id').value;
-  const payload = {
+  const action=document.getElementById('event-action').value;
+  const payload={
     action,
-    title:       document.getElementById('event-title').value.trim(),
-    date:        document.getElementById('event-date').value.trim(),
-    time:        document.getElementById('event-time').value.trim(),
-    type:        document.getElementById('event-type').value,
-    status:      document.getElementById('event-status').value,
-    location:    document.getElementById('event-location').value.trim(),
-    description: document.getElementById('event-description').value.trim(),
+    id:document.getElementById('event-id').value?parseInt(document.getElementById('event-id').value):undefined,
+    title:document.getElementById('event-title').value.trim(),
+    date:document.getElementById('event-date').value,
+    time:document.getElementById('event-time').value.trim(),
+    type:document.getElementById('event-type').value,
+    status:document.getElementById('event-status').value,
+    location:document.getElementById('event-location').value.trim(),
+    description:document.getElementById('event-description').value.trim(),
   };
-  if (action === 'edit') {
-    payload.id = parseInt(idVal);
-  }
-
-  const btn = document.getElementById('event-submit-btn');
-  btn.textContent = '⏳ सहेज रहे हैं…';
-  btn.disabled = true;
-
+  const btn=document.getElementById('event-submit-btn');
+  btn.textContent='⏳ सहेज रहे हैं…'; btn.disabled=true;
   try {
-    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    const apiUrl  = isLocal ? `/api/event-${action}` : '/.netlify/functions/events-manage';
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert(action === 'add' ? 'कार्यक्रम रिकॉर्ड सफलतापूर्वक जोड़ा गया!' : 'कार्यक्रम रिकॉर्ड सफलतापूर्वक अपडेट किया गया!');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + (resData.message || 'अजनक त्रुटि'));
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट नहीं हो सका।');
-  } finally {
-    btn.textContent = '💾 सहेजें';
-    btn.disabled = false;
-  }
+    const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+    const apiUrl=isLocal?`/api/event-${action}`:'/.netlify/functions/events-manage';
+    const res=await adminFetch(apiUrl,{method:'POST',body:JSON.stringify(payload)});
+    const rd=await res.json();
+    if(rd.success){ alert(action==='add'?'कार्यक्रम जोड़ा गया!':'अपडेट किया गया!'); location.reload(); }
+    else alert('त्रुटि: '+(rd.message||'अज्ञात त्रुटि'));
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
+  finally { btn.textContent='💾 सहेजें'; btn.disabled=false; }
 }
 
-async function deleteEvent(id) {
-  const e = EVENTS_DATA.find(x => x.id === id);
-  if (!confirm(`क्या आप कार्यक्रम "${e.title}" को सूची से हटाना चाहते हैं?`)) return;
-
-  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  const apiUrl  = isLocal ? '/api/event-delete' : '/.netlify/functions/events-manage';
-
+async function deleteEvent(id){
+  const events = window.EVENTS_DATA || [];
+  const e=events.find(x=>x.id===id);
+  if(!confirm(`क्या आप "${e.title}" को हटाना चाहते हैं?`)) return;
+  const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  const apiUrl=isLocal?'/api/event-delete':'/.netlify/functions/events-manage';
   try {
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', id: id })
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert('कार्यक्रम सफलतापूर्वक हटा दिया गया है।');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + resData.message);
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट नहीं हो सका।');
-  }
+    const res=await adminFetch(apiUrl,{method:'POST',body:JSON.stringify({action:'delete',id})});
+    const rd=await res.json();
+    if(rd.success){ alert('हटा दिया गया।'); location.reload(); } else alert('त्रुटि: '+rd.message);
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
 }
 
-// ── VARG Admin ───────────────────────────────────────────────────────────────
-const VADMIN_VARG_NAMES = ['प्रारम्भिक वर्ग','प्राथमिक शिक्षा वर्ग','संघ शिक्षा वर्ग','कार्यकर्ता विकास वर्ग 1','कार्यकर्ता विकास वर्ग 2'];
-let vargAdminCurrentTab = 0;
+// ── VARG Admin ────────────────────────────────────────────────────────────────
+const VADMIN_VARG_NAMES=['प्रारम्भिक वर्ग','प्राथमिक शिक्षा वर्ग','संघ शिक्षा वर्ग','कार्यकर्ता विकास वर्ग 1','कार्यकर्ता विकास वर्ग 2'];
+let vargAdminCurrentTab=0;
 
-function renderVargAdmin() {
-  for (let vi = 0; vi < 5; vi++) {
-    const tbody = document.getElementById('varg-tbody-' + vi);
-    if (!tbody) continue;
-    const list = VARG_DATA[vi];
-    if (!list || !list.length) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#bbb;padding:2rem;">कोई रिकॉर्ड नहीं। ऊपर "+ नया रिकॉर्ड जोड़ें" बटन दबाएं।</td></tr>`;
+function renderVargAdmin(){
+  const varg = window.VARG_DATA || [];
+  for(let vi=0;vi<5;vi++){
+    const tbody=document.getElementById('varg-tbody-'+vi); if(!tbody) continue;
+    const list=varg[vi];
+    if(!list||!list.length){
+      tbody.innerHTML=`<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🎓</div><p>कोई रिकॉर्ड नहीं।</p></div></td></tr>`;
       continue;
     }
-    tbody.innerHTML = list.map((v, i) => `
+    tbody.innerHTML=list.map((v,i)=>`
       <tr>
         <td data-label="#">${i+1}</td>
-        <td data-label="नाम"><strong>${v.name}</strong></td>
-        <td data-label="मोबाइल"><a href="tel:${v.mobile}" style="color:var(--bhagwa)">${v.mobile}</a></td>
-        <td data-label="वर्ग सत्र">${v.session}</td>
-        <td data-label="वर्ग स्थल">${v.sthal}</td>
+        <td data-label="नाम"><strong>${esc(v.name)}</strong></td>
+        <td data-label="मोबाइल"><a href="tel:${esc(v.mobile)}" style="color:var(--bhagwa)">${esc(v.mobile)}</a></td>
+        <td data-label="वर्ग सत्र">${esc(v.session)}</td>
+        <td data-label="वर्ग स्थल">${esc(v.sthal)}</td>
         <td data-label="कार्रवाई">
           <div class="row-actions">
-            <button class="ra-btn ra-edit" onclick="openEditVargModal(${vi}, ${i})">✏️ बदलें</button>
-            <button class="ra-btn ra-edit" onclick="deleteVargEntry(${vi}, ${i})" style="background:#ffebee;color:#c62828;">🗑️ हटाएं</button>
+            <button class="ra-btn ra-edit"   onclick="openEditVargModal(${vi},${i})">✏️</button>
+            <button class="ra-btn ra-delete" onclick="deleteVargEntry(${vi},${i})">🗑</button>
           </div>
         </td>
       </tr>`).join('');
   }
 }
 
-// Tab switching for varg admin
-document.addEventListener('DOMContentLoaded', () => {
-  const tabs = document.getElementById('varg-admin-tabs');
-  if (tabs) tabs.addEventListener('click', e => {
-    const btn = e.target.closest('.vatab'); if (!btn) return;
-    document.querySelectorAll('.vatab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.varg-panel').forEach(p => p.classList.remove('active'));
+document.addEventListener('DOMContentLoaded',()=>{
+  const tabs=document.getElementById('varg-admin-tabs');
+  if(tabs) tabs.addEventListener('click',e=>{
+    const btn=e.target.closest('.vtab'); if(!btn) return;
+    document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.varg-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
-    vargAdminCurrentTab = parseInt(btn.dataset.vi);
-    document.getElementById('varg-panel-' + vargAdminCurrentTab).classList.add('active');
+    vargAdminCurrentTab=parseInt(btn.dataset.vi);
+    document.getElementById('varg-panel-'+vargAdminCurrentTab).classList.add('active');
   });
 });
 
-function openAddVargModal() {
-  document.getElementById('varg-modal-title').textContent = '🎓 वर्ग रिकॉर्ड जोड़ें';
-  document.getElementById('varg-action').value = 'add';
-  document.getElementById('varg-entry-idx').value = '';
-  document.getElementById('varg-select').value = String(vargAdminCurrentTab);
-  document.getElementById('varg-varg-idx').value = String(vargAdminCurrentTab);
-  document.getElementById('varg-name').value = '';
-  document.getElementById('varg-mobile').value = '';
-  document.getElementById('varg-session').value = '';
-  document.getElementById('varg-sthal').value = '';
-  document.getElementById('varg-select').disabled = false;
-  document.getElementById('varg-modal-overlay').style.display = 'flex';
+function openAddVargModal(){
+  document.getElementById('varg-modal-title').textContent='🎓 वर्ग रिकॉर्ड जोड़ें';
+  document.getElementById('varg-action').value='add';
+  document.getElementById('varg-entry-idx').value='';
+  document.getElementById('varg-select').value=String(vargAdminCurrentTab);
+  document.getElementById('varg-varg-idx').value=String(vargAdminCurrentTab);
+  document.getElementById('varg-name').value='';
+  document.getElementById('varg-mobile').value='';
+  document.getElementById('varg-session').value='';
+  document.getElementById('varg-sthal').value='';
+  document.getElementById('varg-select').disabled=false;
+  document.getElementById('varg-modal-overlay').style.display='flex';
+}
+function openEditVargModal(vi,ei){
+  const varg = window.VARG_DATA || [];
+  const v=varg[vi][ei]; if(!v) return;
+  document.getElementById('varg-modal-title').textContent='✏️ वर्ग रिकॉर्ड बदलें';
+  document.getElementById('varg-action').value='edit';
+  document.getElementById('varg-varg-idx').value=String(vi);
+  document.getElementById('varg-entry-idx').value=String(ei);
+  document.getElementById('varg-select').value=String(vi);
+  document.getElementById('varg-select').disabled=true;
+  document.getElementById('varg-name').value=v.name||'';
+  document.getElementById('varg-mobile').value=v.mobile||'';
+  document.getElementById('varg-session').value=v.session||'';
+  document.getElementById('varg-sthal').value=v.sthal||'';
+  document.getElementById('varg-modal-overlay').style.display='flex';
+}
+function closeVargModal(){
+  document.getElementById('varg-modal-overlay').style.display='none';
+  document.getElementById('varg-select').disabled=false;
 }
 
-function openEditVargModal(vi, ei) {
-  const v = VARG_DATA[vi][ei];
-  if (!v) return;
-  document.getElementById('varg-modal-title').textContent = '✏️ वर्ग रिकॉर्ड बदलें';
-  document.getElementById('varg-action').value = 'edit';
-  document.getElementById('varg-varg-idx').value = String(vi);
-  document.getElementById('varg-entry-idx').value = String(ei);
-  document.getElementById('varg-select').value = String(vi);
-  document.getElementById('varg-select').disabled = true; // can't change varg on edit
-  document.getElementById('varg-name').value = v.name || '';
-  document.getElementById('varg-mobile').value = v.mobile || '';
-  document.getElementById('varg-session').value = v.session || '';
-  document.getElementById('varg-sthal').value = v.sthal || '';
-  document.getElementById('varg-modal-overlay').style.display = 'flex';
-}
-
-function closeVargModal() {
-  document.getElementById('varg-modal-overlay').style.display = 'none';
-  document.getElementById('varg-select').disabled = false;
-}
-
-async function handleVargSubmit(e) {
+async function handleVargSubmit(e){
   e.preventDefault();
-  const action   = document.getElementById('varg-action').value;
-  const vargIdx  = parseInt(document.getElementById('varg-select').value);
-  const entryIdx = document.getElementById('varg-entry-idx').value;
-  const payload  = {
-    action,
-    vargIdx,
-    name:    document.getElementById('varg-name').value.trim(),
-    mobile:  document.getElementById('varg-mobile').value.trim(),
-    session: document.getElementById('varg-session').value.trim(),
-    sthal:   document.getElementById('varg-sthal').value.trim(),
+  const action=document.getElementById('varg-action').value;
+  const vargIdx=parseInt(document.getElementById('varg-select').value);
+  const entryIdx=document.getElementById('varg-entry-idx').value;
+  const payload={
+    action,vargIdx,
+    name:document.getElementById('varg-name').value.trim(),
+    mobile:document.getElementById('varg-mobile').value.trim(),
+    session:document.getElementById('varg-session').value.trim(),
+    sthal:document.getElementById('varg-sthal').value.trim(),
   };
-  if (action === 'edit') payload.entryIdx = parseInt(entryIdx);
-
-  const btn = document.getElementById('varg-submit-btn');
-  btn.textContent = '⏳ सहेज रहे हैं…';
-  btn.disabled = true;
-
+  if(action==='edit') payload.entryIdx=parseInt(entryIdx);
+  const btn=document.getElementById('varg-submit-btn');
+  btn.textContent='⏳ सहेज रहे हैं…'; btn.disabled=true;
   try {
-    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    const apiUrl  = isLocal ? `/api/varg-${action}` : '/.netlify/functions/varg-manage';
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert(action === 'add' ? 'रिकॉर्ड सफलतापूर्वक जोड़ा गया!' : 'रिकॉर्ड सफलतापूर्वक अपडेट किया गया!');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + (resData.message || 'अज्ञात त्रुटि'));
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट नहीं हो सका।');
-  } finally {
-    btn.textContent = '💾 सहेजें';
-    btn.disabled = false;
-  }
+    const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+    const apiUrl=isLocal?`/api/varg-${action}`:'/.netlify/functions/varg-manage';
+    const res=await adminFetch(apiUrl,{method:'POST',body:JSON.stringify(payload)});
+    const rd=await res.json();
+    if(rd.success){ alert(action==='add'?'रिकॉर्ड जोड़ा गया!':'अपडेट किया गया!'); location.reload(); }
+    else alert('त्रुटि: '+(rd.message||'अज्ञात त्रुटि'));
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
+  finally { btn.textContent='💾 सहेजें'; btn.disabled=false; }
 }
 
-async function deleteVargEntry(vi, ei) {
-  const v = VARG_DATA[vi][ei];
-  if (!confirm(`क्या आप "${v.name}" को ${VADMIN_VARG_NAMES[vi]} से हटाना चाहते हैं?`)) return;
-
-  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  const apiUrl  = isLocal ? '/api/varg-delete' : '/.netlify/functions/varg-manage';
-
+async function deleteVargEntry(vi,ei){
+  const varg = window.VARG_DATA || [];
+  const v=varg[vi][ei];
+  if(!confirm(`क्या आप "${v.name}" को ${VADMIN_VARG_NAMES[vi]} से हटाना चाहते हैं?`)) return;
+  const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  const apiUrl=isLocal?'/api/varg-delete':'/.netlify/functions/varg-manage';
   try {
-    const res = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', vargIdx: vi, entryIdx: ei })
-    });
-    const resData = await res.json();
-    if (resData.success) {
-      alert('रिकॉर्ड हटा दिया गया।');
-      location.reload();
-    } else {
-      alert('त्रुटि: ' + (resData.message || 'अज्ञात त्रुटि'));
-    }
-  } catch (err) {
-    alert('सर्वर से कनेक्ट नहीं हो सका।');
-  }
+    const res=await adminFetch(apiUrl,{method:'POST',body:JSON.stringify({action:'delete',vargIdx:vi,entryIdx:ei})});
+    const rd=await res.json();
+    if(rd.success){ alert('हटा दिया गया।'); location.reload(); } else alert('त्रुटि: '+(rd.message||'अज्ञात त्रुटि'));
+  } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
 }
 </script>
-
-<!-- EDIT VOLUNTEER MODAL -->
-<div class="modal-overlay" id="edit-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:1rem; backdrop-filter:blur(4px);">
-  <div class="modal" style="background:var(--white); color:var(--brown); border-radius:24px; width:100%; max-width:600px; padding:2rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.15); max-height:90vh; overflow-y:auto;">
-    <h3 style="color:var(--brown); margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-      <span>✏️ स्वयंसेवक विवरण बदलें</span>
-      <button onclick="closeEditModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa;">✕</button>
-    </h3>
-    <form id="edit-form" onsubmit="handleEditSubmit(event)">
-      <input type="hidden" id="edit-id"/>
-      <input type="hidden" id="edit-is-pending" value="false"/>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:left;">
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">नाम</label>
-          <input class="login-input" type="text" id="edit-name" required style="margin-bottom:0; text-align:left;"/>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">मोबाइल</label>
-          <input class="login-input" type="tel" id="edit-contact" required style="margin-bottom:0; text-align:left;"/>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">शाखा</label>
-          <select class="login-input" id="edit-shakha" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
-            <option>केशव प्रभात शाखा</option>
-            <option>यज्ञ शाला शाखा</option>
-            <option>लवकुश शाखा</option>
-            <option>माता देवाला शाखा</option>
-            <option>गायत्री मंदिर शाखा</option>
-            <option>पटपर शाखा</option>
-          </select>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">दायित्व/भूमिका</label>
-          <select class="login-input" id="edit-role" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
-            <option>कार्यकर्ता</option>
-            <option>शाखा प्रमुख</option>
-            <option>मुख्य शिक्षक</option>
-            <option>बाल शिक्षक</option>
-            <option>गणवेश प्रमुख</option>
-            <option>सेवा प्रमुख</option>
-            <option>नगर प्रमुख</option>
-            <option>गणनायक</option>
-          </select>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">बस्ती</label>
-          <select class="login-input" id="edit-basti" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
-            <option>श्यामा प्रसाद बस्ती</option>
-            <option>महाकाल बस्ती</option>
-            <option>परशुराम बस्ती</option>
-            <option>राम सप्ताह बस्ती</option>
-            <option>संत माता कर्मा बस्ती</option>
-            <option>शहीद वीर नारायण सिंह बस्ती</option>
-            <option>माता देवला बस्ती</option>
-          </select>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">वार्ड</label>
-          <select class="login-input" id="edit-area" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
-            <option>हाथनीपारा वार्ड</option>
-            <option>महावीर वार्ड</option>
-            <option>सुभाष वार्ड</option>
-            <option>शक्ति वार्ड</option>
-            <option>नया पारा वार्ड</option>
-            <option>परशुराम वार्ड</option>
-            <option>दाऊ कृष्णकुमार वार्ड</option>
-            <option>गांधी मंदिर वार्ड</option>
-            <option>शंकर वार्ड</option>
-            <option>सदर वार्ड</option>
-            <option>संजय वार्ड</option>
-            <option>नेहरू वार्ड</option>
-            <option>नयागंज वार्ड</option>
-            <option>भगत सिंह वार्ड</option>
-            <option>महासती वार्ड</option>
-            <option>संत माता कर्मा वार्ड</option>
-            <option>बलभद्र वार्ड</option>
-            <option>गुरु नानक वार्ड</option>
-            <option>संत रविदास वार्ड</option>
-            <option>रामसागर पारा वार्ड</option>
-            <option>मुंशी इस्माइल वार्ड</option>
-            <option>लाल बहादुर शास्त्री वार्ड</option>
-            <option>बजरंग वार्ड</option>
-            <option>स्टेशन वार्ड</option>
-            <option>पं. दीनदयाल उपाध्याय वार्ड</option>
-            <option>संत कँवरराम वार्ड</option>
-            <option>माता देवालय वार्ड</option>
-          </select>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">रक्त समूह</label>
-          <select class="login-input" id="edit-blood" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
-            <option value="">रक्त समूह चुनें</option>
-            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-            <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
-          </select>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">व्यवसाय</label>
-          <input class="login-input" type="text" id="edit-vyavsay" style="margin-bottom:0; text-align:left;" placeholder="जैसे: शिक्षक, छात्र (12वीं), किराना दुकान"/>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">सम्मिलन वर्ष</label>
-          <input class="login-input" type="number" id="edit-year" style="margin-bottom:0; text-align:left;"/>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem;">
-          <label style="font-size:0.8rem; font-weight:700;">गणवेशधारी</label>
-          <select class="login-input" id="edit-ganvesh" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
-            <option>हाँ</option>
-            <option>नहीं</option>
-          </select>
-        </div>
-        <div class="form-group" style="display:flex; flex-direction:column; gap:0.3rem; grid-column: 1/-1;">
-          <label style="font-size:0.8rem; font-weight:700;">गणनायक</label>
-          <select class="login-input" id="edit-gannayak" style="margin-bottom:0; height:41px; padding: 0.5rem 1rem;">
-            <option>राजेश तिवारी</option>
-            <option>संजय अवस्थी</option>
-            <option>दीपक साहू</option>
-            <option>विजय वर्मा</option>
-            <option>मनीष यादव</option>
-            <option>राकेश शुक्ला</option>
-            <option>अमित चौबे</option>
-            <option>नवीन निषाद</option>
-            <option>राहुल देवांगन</option>
-            <option>संतोष साहू</option>
-          </select>
-        </div>
-      </div>
-      <button class="login-btn" type="submit" style="margin-top:1.5rem; border-radius:12px;">💾 सहेजें (Save Changes)</button>
-    </form>
-  </div>
-</div>
 </body>
 </html>

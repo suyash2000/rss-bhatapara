@@ -1,6 +1,9 @@
-const owner = 'suyash2000';
-const repo  = 'rss-bhatapara';
-const branch = 'main';
+// ── varg-manage.js ───────────────────────────────────────────────────────────
+// Handles add/edit/delete for data/varg.json (training records). Requires Bearer token.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const { verifyToken, unauthorized } = require('./_auth');
+const owner = 'suyash2000', repo = 'rss-bhatapara', branch = 'main';
 
 const VARG_NAMES = [
   'प्रारम्भिक वर्ग',
@@ -10,150 +13,78 @@ const VARG_NAMES = [
   'कार्यकर्ता विकास वर्ग 2',
 ];
 
-async function updateGitHubFile({ token, path, updateFn, commitMessage }) {
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  const headers = {
-    'Authorization': `token ${token}`,
-    'Accept': 'application/vnd.github+json',
-    'User-Agent': 'Netlify-Function'
-  };
-
-  const res = await fetch(url, { headers });
-  if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.statusText}`);
-  const fileData = await res.json();
-  const currentContent = Buffer.from(fileData.content, 'base64').toString('utf8');
-
-  const updatedContent = updateFn(currentContent);
-
-  const putRes = await fetch(url, {
-    method: 'PUT',
-    headers: { ...headers, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message: commitMessage,
-      content: Buffer.from(updatedContent, 'utf8').toString('base64'),
-      sha: fileData.sha,
-      branch
-    })
+async function githubReadJSON(token, path) {
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json', 'User-Agent': 'Netlify-Function' }
   });
-
-  if (!putRes.ok) {
-    const err = await putRes.text();
-    throw new Error(`Failed to commit ${path}: ${err}`);
-  }
-  return await putRes.json();
+  if (!res.ok) throw new Error(`Fetch ${path}: ${res.statusText}`);
+  const file = await res.json();
+  return { data: JSON.parse(Buffer.from(file.content, 'base64').toString('utf8')), sha: file.sha };
 }
 
-// ── Helpers to find the boundaries of VARG_DATA[idx] array in the file ──────
-function findVargArrayBounds(lines, vargIdx) {
-  // Look for the comment marker like "// ── 0:" or "// ── 1:" etc.
-  const markerRegex = new RegExp(`\\/\\/\\s*──\\s*${vargIdx}:`);
-  let markerLine = -1;
-  for (let i = 0; i < lines.length; i++) {
-    if (markerRegex.test(lines[i])) { markerLine = i; break; }
-  }
-  if (markerLine === -1) throw new Error(`Marker for VARG_DATA[${vargIdx}] not found`);
-
-  // Find opening '[' after the marker
-  let openBracket = -1;
-  for (let i = markerLine; i < lines.length; i++) {
-    if (lines[i].trim() === '[') { openBracket = i; break; }
-  }
-  if (openBracket === -1) throw new Error(`Opening bracket for VARG_DATA[${vargIdx}] not found`);
-
-  // Find the matching closing '],' or ']'
-  let closeBracket = -1;
-  for (let i = openBracket + 1; i < lines.length; i++) {
-    const t = lines[i].trim();
-    if (t === '],' || t === ']') { closeBracket = i; break; }
-  }
-  if (closeBracket === -1) throw new Error(`Closing bracket for VARG_DATA[${vargIdx}] not found`);
-
-  return { openBracket, closeBracket };
+async function githubWriteJSON(token, path, sha, data, message) {
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT',
+    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', 'User-Agent': 'Netlify-Function' },
+    body: JSON.stringify({ message, content: Buffer.from(JSON.stringify(data, null, 2)).toString('base64'), sha, branch })
+  });
+  if (!res.ok) throw new Error(`Write ${path}: ${await res.text()}`);
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: 'Method Not Allowed' }) };
-  }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+  const auth = verifyToken(event);
+  if (!auth.valid) return unauthorized(auth.reason);
 
   try {
-    const token = process.env.GITHUB_TOKEN;
-    if (!token) {
-      return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: 'Server not configured: GITHUB_TOKEN missing.' }) };
-    }
+    const githubToken = process.env.GITHUB_TOKEN;
+    if (!githubToken) return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: 'GITHUB_TOKEN missing' }) };
 
-    const data = JSON.parse(event.body);
-    const action   = data.action;   // 'add' | 'edit' | 'delete'
-    const vargIdx  = parseInt(data.vargIdx);  // 0–4
-    const entryIdx = data.entryIdx !== undefined ? parseInt(data.entryIdx) : -1;
+    const body = JSON.parse(event.body);
+    const action = body.action; // 'add' | 'edit' | 'delete'
+    const vargIdx = parseInt(body.vargIdx); // 0–4
+    const entryIdx = body.entryIdx !== undefined ? parseInt(body.entryIdx) : -1;
 
     if (isNaN(vargIdx) || vargIdx < 0 || vargIdx > 4) {
       return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: 'Invalid vargIdx' }) };
     }
 
+    const { data: vargData, sha } = await githubReadJSON(githubToken, 'data/varg.json');
+
     let commitMessage = '';
-    if (action === 'add')    commitMessage = `Add entry to ${VARG_NAMES[vargIdx]} (via admin)`;
-    if (action === 'edit')   commitMessage = `Edit entry in ${VARG_NAMES[vargIdx]} (via admin)`;
-    if (action === 'delete') commitMessage = `Delete entry from ${VARG_NAMES[vargIdx]} (via admin)`;
+    const name = body.name || '';
+    const mobile = body.mobile || '';
+    const session = body.session || '';
+    const sthal = body.sthal || '';
 
-    await updateGitHubFile({
-      token,
-      path: 'js/varg-data.js',
-      commitMessage,
-      updateFn: (content) => {
-        const lines = content.split('\n');
-        const { openBracket, closeBracket } = findVargArrayBounds(lines, vargIdx);
+    if (action === 'add') {
+      commitMessage = `Add entry to ${VARG_NAMES[vargIdx]} (via admin)`;
+      vargData[vargIdx].push({ name, mobile, session, sthal });
+      await githubWriteJSON(githubToken, 'data/varg.json', sha, vargData, commitMessage);
 
-        if (action === 'add') {
-          const { name, mobile, session, sthal } = data;
-          const newLine = `    { name:'${name}', mobile:'${mobile}', session:'${session}', sthal:'${sthal}' },`;
-          lines.splice(closeBracket, 0, newLine);
-
-        } else if (action === 'edit') {
-          // Find the entryIdx-th data line between openBracket and closeBracket
-          let count = 0;
-          for (let i = openBracket + 1; i < closeBracket; i++) {
-            if (lines[i].trim().startsWith('{')) {
-              if (count === entryIdx) {
-                const { name, mobile, session, sthal } = data;
-                lines[i] = `    { name:'${name}', mobile:'${mobile}', session:'${session}', sthal:'${sthal}' },`;
-                break;
-              }
-              count++;
-            }
-          }
-
-        } else if (action === 'delete') {
-          let count = 0;
-          for (let i = openBracket + 1; i < closeBracket; i++) {
-            if (lines[i].trim().startsWith('{')) {
-              if (count === entryIdx) {
-                lines.splice(i, 1);
-                break;
-              }
-              count++;
-            }
-          }
-
-        } else {
-          throw new Error(`Unknown action: ${action}`);
-        }
-
-        return lines.join('\n');
+    } else if (action === 'edit') {
+      if (entryIdx < 0 || entryIdx >= vargData[vargIdx].length) {
+        throw new Error(`Invalid entryIdx ${entryIdx}`);
       }
-    });
+      commitMessage = `Edit entry in ${VARG_NAMES[vargIdx]} (via admin)`;
+      vargData[vargIdx][entryIdx] = { name, mobile, session, sthal };
+      await githubWriteJSON(githubToken, 'data/varg.json', sha, vargData, commitMessage);
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ success: true })
-    };
+    } else if (action === 'delete') {
+      if (entryIdx < 0 || entryIdx >= vargData[vargIdx].length) {
+        throw new Error(`Invalid entryIdx ${entryIdx}`);
+      }
+      commitMessage = `Delete entry from ${VARG_NAMES[vargIdx]} (via admin)`;
+      vargData[vargIdx].splice(entryIdx, 1);
+      await githubWriteJSON(githubToken, 'data/varg.json', sha, vargData, commitMessage);
+
+    } else {
+      throw new Error(`Unknown action: ${action}`);
+    }
+
+    return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ success: true }) };
 
   } catch (err) {
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ success: false, message: err.message })
-    };
+    return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, message: err.message }) };
   }
 };

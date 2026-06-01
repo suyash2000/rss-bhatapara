@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>नया सदस्य जोड़ें – RSS भाटापारा</title>
   <meta name="description" content="RSS भाटापारा में नया स्वयंसेवक पंजीकरण फ़ॉर्म।"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="RSS भाटापारा"/>
+  <link rel="apple-touch-icon" href="images/icon-192.png"/>
+  <meta name="theme-color" content="#FF6B00"/>
   <link rel="stylesheet" href="css/style.css"/>
   <style>
     .form-card { background:var(--white); border-radius:24px; padding:2.5rem; box-shadow:var(--shadow-lg); border:1px solid rgba(255,107,0,0.12); max-width:700px; margin:0 auto; }
@@ -416,14 +422,18 @@ async function handleSubmit(e){
       const engKey = keyMap[key] || key;
       data[engKey] = val;
     });
-    data.isAdmin = sessionStorage.getItem('rss_admin') === '1';
+    data.isAdmin = !!sessionStorage.getItem('rss_token');
 
     const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     const actionUrl = isLocal ? '/api/join' : '/.netlify/functions/add-volunteer';
 
+    const token = sessionStorage.getItem('rss_token') || '';
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
     const res = await fetch(actionUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify(data)
     });
 
@@ -431,7 +441,7 @@ async function handleSubmit(e){
       // ── 1. Show success message ───────────────────────────────────────────
       form.style.display = 'none';
       const successBox = document.getElementById('success-box');
-      if (sessionStorage.getItem('rss_admin') === '1') {
+      if (sessionStorage.getItem('rss_token')) {
         successBox.querySelector('h3').textContent = 'स्वयंसेवक सीधे जोड़ दिया गया!';
         successBox.querySelector('p').innerHTML = 'स्वयंसेवक को सीधे स्वीकृत करके डेटाबेस में जोड़ दिया गया है।<br/>भारत माता की जय! 🇮🇳';
         const btnLink = successBox.querySelector('a');
