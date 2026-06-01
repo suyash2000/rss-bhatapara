@@ -1,0 +1,24 @@
+{
+  "name": "RSS भाटापारा पोर्टल",
+  "short_name": "RSS भाटापारा",
+  "description": "राष्ट्रीय स्वयंसेवक संघ भाटापारा का आधिकारिक पोर्टल",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0d0804",
+  "theme_color": "#FF6B00",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>स्वयंसेवक – RSS भाटापारा</title>
   <meta name="description" content="RSS भाटापारा के सभी स्वयंसेवकों की सूची और विवरण।" />
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="RSS भाटापारा"/>
+  <link rel="apple-touch-icon" href="images/icon-192.png"/>
+  <meta name="theme-color" content="#FF6B00"/>
   <link rel="stylesheet" href="css/style.css" />
   <style>
     /* ── MODAL ── */
@@ -26,7 +32,8 @@
     }
 
     .modal {
-      background: #fff;
+      background: var(--white);
+      color: var(--brown);
       border-radius: 24px;
       width: 100%;
       max-width: 560px;
@@ -34,6 +41,7 @@
       overflow-y: auto;
       box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
       animation: modal-in 0.3s ease;
+      border: 1px solid rgba(255, 107, 0, 0.15);
     }
 
     @keyframes modal-in {
@@ -49,7 +57,7 @@
     }
 
     .modal-header {
-      background: linear-gradient(135deg, var(--brown), var(--brown-light));
+      background: linear-gradient(135deg, #3D1C00, #6B3A1F);
       padding: 1.75rem 2rem 1.5rem;
       border-radius: 24px 24px 0 0;
       position: relative;
@@ -301,6 +309,24 @@
       border-color: var(--bhagwa);
     }
 
+    .ca-card {
+      background: #fff3e0;
+      color: #e65100;
+    }
+    .ca-card:hover {
+      background: #ff6b00;
+      color: #fff;
+    }
+    .btn-card {
+      background: rgba(255, 107, 0, 0.1);
+      color: var(--bhagwa);
+      border: 1px solid rgba(255, 107, 0, 0.25);
+    }
+    .btn-card:hover {
+      background: var(--bhagwa);
+      color: #fff;
+    }
+
     /* ── PRINT / PDF styles ── */
     @media print {
 
@@ -310,7 +336,7 @@
       .modal-overlay,
       .card-actions,
       .search-bar,
-      .filter-row-2,
+      .advanced-filters-drawer,
       footer,
       .page-hero,
       .page-section>.container>.section-header {
@@ -417,7 +443,7 @@
   </div>
 
   <!-- STATS STRIP -->
-  <div style="background:#fff;padding:1.75rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
+  <div style="background:var(--white);padding:1.75rem 1.5rem;border-bottom:1px solid rgba(255,107,0,0.1);">
     <div class="container" style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;text-align:center;">
       <div>
         <div style="font-size:1.8rem;font-weight:900;color:var(--bhagwa);" id="s-total">15</div>
@@ -457,44 +483,72 @@
             <option value="">सभी दयित्व</option>
           </select>
         </div>
+        <button id="toggle-advanced-btn" onclick="toggleAdvancedFilters()" class="filter-toggle-btn" type="button">
+          ⚙️ उन्नत फ़िल्टर
+        </button>
       </div>
 
-      <!-- Extra Filters Row 2 -->
-      <div class="filter-row-2">
-        <select id="f-basti">
-          <option value="">सभी बस्ती</option>
-        </select>
-        <select id="f-blood">
-          <option value="">सभी रक्त समूह</option>
-          <option>A+</option>
-          <option>A-</option>
-          <option>B+</option>
-          <option>B-</option>
-          <option>O+</option>
-          <option>O-</option>
-          <option>AB+</option>
-          <option>AB-</option>
-        </select>
-        <select id="f-vyavsay">
-          <option value="">सभी व्यवसाय</option>
-        </select>
-        <select id="f-year">
-          <option value="">सभी वर्ष</option>
-        </select>
-        <select id="f-area">
-          <option value="">सभी वार्ड</option>
-        </select>
-        <select id="f-gannayak">
-          <option value="">सभी गणनायक</option>
-        </select>
-        <select id="f-ganvesh">
-          <option value="">सभी गणवेशधारी</option>
-          <option>हाँ</option>
-          <option>नहीं</option>
-        </select>
-        <button onclick="resetFilters()"
-          style="padding:0.5rem 1rem;border-radius:20px;border:1.5px solid rgba(255,107,0,0.3);background:transparent;color:var(--bhagwa);font-family:inherit;font-size:0.82rem;font-weight:700;cursor:pointer;">✕
-          रीसेट</button>
+      <!-- Advanced Filters Drawer -->
+      <div class="advanced-filters-drawer" id="advanced-filters">
+        <div class="drawer-grid">
+          <div class="drawer-filter-wrap">
+            <label for="f-basti">बस्ती</label>
+            <select id="f-basti">
+              <option value="">सभी बस्ती</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-blood">रक्त समूह</label>
+            <select id="f-blood">
+              <option value="">सभी रक्त समूह</option>
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>O+</option>
+              <option>O-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-vyavsay">व्यवसाय</label>
+            <select id="f-vyavsay">
+              <option value="">सभी व्यवसाय</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-year">वर्ष</label>
+            <select id="f-year">
+              <option value="">सभी वर्ष</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-area">वार्ड / क्षेत्र</label>
+            <select id="f-area">
+              <option value="">सभी वार्ड</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-gannayak">गणनायक</label>
+            <select id="f-gannayak">
+              <option value="">सभी गणनायक</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap">
+            <label for="f-ganvesh">गणवेशधारी</label>
+            <select id="f-ganvesh">
+              <option value="">सभी गणवेशधारी</option>
+              <option>हाँ</option>
+              <option>नहीं</option>
+            </select>
+          </div>
+          <div class="drawer-filter-wrap" style="justify-content: flex-end;">
+            <button onclick="resetFilters()" class="filter-reset-btn" type="button">
+              ✕ रीसेट
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="grid-4" id="vol-grid">
@@ -517,6 +571,7 @@
           <a id="m-call" href="#" class="action-btn btn-call">📞 कॉल करें</a>
           <a id="m-wa" href="#" class="action-btn btn-wa" target="_blank">💬 WhatsApp</a>
           <button onclick="printMember()" class="action-btn btn-pdf">📄 PDF</button>
+          <button onclick="showMemberIDCard(currentMember)" class="action-btn btn-card">🪪 ID कार्ड</button>
         </div>
         <div class="detail-grid" id="m-details"></div>
       </div>
@@ -569,8 +624,10 @@
   </button>
 
   <script src="js/shared.js"></script>
+  <script src="js/data-loader.js"></script>
+  <script src="js/id-card-generator.js"></script>
   <script>
-    let all = VOLUNTEERS_DATA, filtered = VOLUNTEERS_DATA, currentMember = null;
+    let all = [], filtered = [], currentMember = null;
 
     function initials(n) { return n.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase(); }
 
@@ -582,19 +639,20 @@
       if (!list.length) { g.innerHTML = '<p style="color:#aaa;padding:2rem;grid-column:1/-1;text-align:center;">कोई स्वयंसेवक नहीं मिला।</p>'; return; }
       g.innerHTML = list.map(v => `
     <div class="vol-card reveal visible" onclick="openModal(${v.id})">
-      <div class="vol-year">${v.joining_year}</div>
-      <div class="vol-avatar">${initials(v.name)}</div>
-      <div class="vol-name">${v.name}</div>
-      <div class="vol-role">${v.role}</div>
+      <div class="vol-year">${esc(v.joining_year)}</div>
+      <div class="vol-avatar">${esc(initials(v.name))}</div>
+      <div class="vol-name">${esc(v.name)}</div>
+      <div class="vol-role">${esc(v.role)}</div>
       <div class="vol-meta">
-        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>${v.basti}</div>
-        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3"/></svg>${v.area}</div>
-        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>${v.shakha}</div>
+        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>${esc(v.basti)}</div>
+        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><circle cx="12" cy="11" r="3"/></svg>${esc(v.area)}</div>
+        <div class="meta-row"><svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>${esc(v.shakha)}</div>
       </div>
       <div class="card-actions" onclick="event.stopPropagation()">
-        <a class="card-action ca-call" href="tel:${v.contact}">📞 कॉल</a>
-        <a class="card-action ca-wa" href="https://wa.me/91${v.contact}" target="_blank">💬 WA</a>
+        <a class="card-action ca-call" href="tel:${esc(v.contact)}">📞 कॉल</a>
+        <a class="card-action ca-wa" href="https://wa.me/91${esc(v.contact)}" target="_blank">💬 WA</a>
         <button class="card-action ca-view" onclick="openModal(${v.id})">👁 देखें</button>
+        <button class="card-action ca-card" onclick="showMemberIDCardById(${v.id})">🪪 कार्ड</button>
       </div>
     </div>`).join('');
 
@@ -608,13 +666,13 @@
       const fA = document.getElementById('f-area');
       const fB = document.getElementById('f-basti');
       const fG = document.getElementById('f-gannayak');
-      [...new Set(all.map(v => v.shakha))].sort().forEach(s => fS.innerHTML += `<option>${s}</option>`);
-      [...new Set(all.map(v => v.role))].sort().forEach(r => fR.innerHTML += `<option>${r}</option>`);
-      [...new Set(all.map(v => v.vyavsay))].sort().forEach(v => fV.innerHTML += `<option>${v}</option>`);
-      [...new Set(all.map(v => v.joining_year))].sort().forEach(y => fY.innerHTML += `<option>${y}</option>`);
-      [...new Set(all.map(v => v.area))].sort().forEach(a => fA.innerHTML += `<option>${a}</option>`);
-      [...new Set(all.map(v => v.basti))].sort().forEach(b => fB.innerHTML += `<option>${b}</option>`);
-      [...new Set(all.map(v => v.gannayak).filter(Boolean))].sort().forEach(g => fG.innerHTML += `<option>${g}</option>`);
+      [...new Set(all.map(v => v.shakha))].sort().forEach(s => { if (s) fS.innerHTML += `<option>${esc(s)}</option>`; });
+      [...new Set(all.map(v => v.role))].sort().forEach(r => { if (r) fR.innerHTML += `<option>${esc(r)}</option>`; });
+      [...new Set(all.map(v => v.vyavsay))].sort().forEach(v => { if (v) fV.innerHTML += `<option>${esc(v)}</option>`; });
+      [...new Set(all.map(v => v.joining_year))].sort().forEach(y => { if (y) fY.innerHTML += `<option>${esc(y)}</option>`; });
+      [...new Set(all.map(v => v.area))].sort().forEach(a => { if (a) fA.innerHTML += `<option>${esc(a)}</option>`; });
+      [...new Set(all.map(v => v.basti))].sort().forEach(b => { if (b) fB.innerHTML += `<option>${esc(b)}</option>`; });
+      [...new Set(all.map(v => v.gannayak).filter(Boolean))].sort().forEach(g => { if (g) fG.innerHTML += `<option>${esc(g)}</option>`; });
     }
 
     function getFilters() {
@@ -635,7 +693,7 @@
     function filter() {
       const { q, sh, ro, bl, vy, yr, ar, bs, gn, gv } = getFilters();
       filtered = all.filter(v =>
-        v.name.toLowerCase().includes(q) &&
+        (v.name || '').toLowerCase().includes(q) &&
         (!sh || v.shakha === sh) && (!ro || v.role === ro) &&
         (!bl || v.blood_group === bl) && (!vy || v.vyavsay === vy) &&
         (!yr || v.joining_year === yr) && (!ar || v.area === ar) &&
@@ -643,6 +701,15 @@
         (!gn || v.gannayak === gn) && (!gv || v.ganvesh === gv)
       );
       render(filtered);
+    }
+
+    function toggleAdvancedFilters() {
+      const drawer = document.getElementById('advanced-filters');
+      const btn = document.getElementById('toggle-advanced-btn');
+      if (drawer && btn) {
+        drawer.classList.toggle('open');
+        btn.classList.toggle('active');
+      }
     }
 
     function resetFilters() {
@@ -664,17 +731,17 @@
       document.getElementById('m-call').href = 'tel:' + v.contact;
       document.getElementById('m-wa').href = 'https://wa.me/91' + v.contact + '?text=' + encodeURIComponent('नमस्ते ' + v.name + ' जी! RSS भाटापारा की ओर से आपसे संपर्क किया जा रहा है।');
       document.getElementById('m-details').innerHTML = `
-    <div class="detail-item"><div class="detail-label">पूरा नाम</div><div class="detail-value">${v.name}</div></div>
-    <div class="detail-item"><div class="detail-label">भूमिका</div><div class="detail-value">${v.role}</div></div>
-    <div class="detail-item"><div class="detail-label">गणनायक</div><div class="detail-value">${v.gannayak || '—'}</div></div>
-    <div class="detail-item"><div class="detail-label">गणवेशधारी</div><div class="detail-value">${v.ganvesh || 'नहीं'}</div></div>
-    <div class="detail-item"><div class="detail-label">बस्ती</div><div class="detail-value">${v.basti}</div></div>
-    <div class="detail-item"><div class="detail-label">वार्ड / क्षेत्र</div><div class="detail-value">${v.area}</div></div>
-    <div class="detail-item"><div class="detail-label">शाखा</div><div class="detail-value">${v.shakha}</div></div>
-    <div class="detail-item"><div class="detail-label">संपर्क</div><div class="detail-value">${v.contact}</div></div>
-    <div class="detail-item"><div class="detail-label">सम्मिलन वर्ष</div><div class="detail-value">${v.joining_year}</div></div>
-    <div class="detail-item"><div class="detail-label">रक्त समूह</div><div class="detail-value"><span class="blood-badge ${bloodClass(v.blood_group)}">${v.blood_group}</span></div></div>
-    <div class="detail-item"><div class="detail-label">व्यवसाय</div><div class="detail-value">${v.vyavsay}</div></div>
+    <div class="detail-item"><div class="detail-label">पूरा नाम</div><div class="detail-value">${esc(v.name)}</div></div>
+    <div class="detail-item"><div class="detail-label">भूमिका</div><div class="detail-value">${esc(v.role)}</div></div>
+    <div class="detail-item"><div class="detail-label">गणनायक</div><div class="detail-value">${esc(v.gannayak || '—')}</div></div>
+    <div class="detail-item"><div class="detail-label">गणवेशधारी</div><div class="detail-value">${esc(v.ganvesh || 'नहीं')}</div></div>
+    <div class="detail-item"><div class="detail-label">बस्ती</div><div class="detail-value">${esc(v.basti)}</div></div>
+    <div class="detail-item"><div class="detail-label">वार्ड / क्षेत्र</div><div class="detail-value">${esc(v.area)}</div></div>
+    <div class="detail-item"><div class="detail-label">शाखा</div><div class="detail-value">${esc(v.shakha)}</div></div>
+    <div class="detail-item"><div class="detail-label">संपर्क</div><div class="detail-value">${esc(v.contact)}</div></div>
+    <div class="detail-item"><div class="detail-label">सम्मिलन वर्ष</div><div class="detail-value">${esc(v.joining_year)}</div></div>
+    <div class="detail-item"><div class="detail-label">रक्त समूह</div><div class="detail-value"><span class="blood-badge ${bloodClass(v.blood_group)}">${esc(v.blood_group)}</span></div></div>
+    <div class="detail-item"><div class="detail-label">व्यवसाय</div><div class="detail-value">${esc(v.vyavsay)}</div></div>
   `;
       document.getElementById('modal-overlay').classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -687,7 +754,7 @@
       if (!currentMember) return;
       const v = currentMember;
       const w = window.open('', '_blank');
-      w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक – ${v.name}</title>
+      w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक – ${esc(v.name)}</title>
   <style>
     @page{size:A5 portrait;margin:12mm}
     body{font-family:Arial,sans-serif;color:#3D1C00;font-size:11pt}
@@ -703,20 +770,20 @@
   </style></head><body>
   <div class="header">
     <svg viewBox="0 0 44 44" width="36" height="36"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
-    <div style="flex:1"><h2>${v.name}</h2><div class="org">${v.role} &nbsp;·&nbsp; ${v.shakha} &nbsp;·&nbsp; RSS भाटापारा</div></div>
-    <div class="badge">${initials(v.name)}</div>
+    <div style="flex:1"><h2>${esc(v.name)}</h2><div class="org">${esc(v.role)} &nbsp;·&nbsp; ${esc(v.shakha)} &nbsp;·&nbsp; RSS भाटापारा</div></div>
+    <div class="badge">${esc(initials(v.name))}</div>
   </div>
   <table>
-    <tr><td>पूरा नाम</td><td>${v.name}</td></tr>
-    <tr><td>शाखा</td><td>${v.shakha}</td></tr>
-    <tr><td>भूमिका</td><td>${v.role}</td></tr>
-    <tr><td>गणनायक</td><td>${v.gannayak || '—'}</td></tr>
-    <tr><td>गणवेशधारी</td><td>${v.ganvesh || 'नहीं'}</td></tr>
-    <tr><td>वार्ड / क्षेत्र</td><td>${v.area}</td></tr>
-    <tr><td>मोबाइल</td><td>${v.contact}</td></tr>
-    <tr><td>रक्त समूह</td><td><strong>${v.blood_group}</strong></td></tr>
-    <tr><td>व्यवसाय</td><td>${v.vyavsay}</td></tr>
-    <tr><td>सम्मिलन वर्ष</td><td>${v.joining_year}</td></tr>
+    <tr><td>पूरा नाम</td><td>${esc(v.name)}</td></tr>
+    <tr><td>शाखा</td><td>${esc(v.shakha)}</td></tr>
+    <tr><td>भूमिका</td><td>${esc(v.role)}</td></tr>
+    <tr><td>गणनायक</td><td>${esc(v.gannayak || '—')}</td></tr>
+    <tr><td>गणवेशधारी</td><td>${esc(v.ganvesh || 'नहीं')}</td></tr>
+    <tr><td>वार्ड / क्षेत्र</td><td>${esc(v.area)}</td></tr>
+    <tr><td>मोबाइल</td><td>${esc(v.contact)}</td></tr>
+    <tr><td>रक्त समूह</td><td><strong>${esc(v.blood_group)}</strong></td></tr>
+    <tr><td>व्यवसाय</td><td>${esc(v.vyavsay)}</td></tr>
+    <tr><td>सम्मिलन वर्ष</td><td>${esc(v.joining_year)}</td></tr>
   </table>
   <div class="footer">मुद्रित: ${new Date().toLocaleDateString('hi-IN')} &nbsp;|&nbsp; RSS भाटापारा &nbsp;|&nbsp; भारत माता की जय 🇮🇳</div>
   <script>window.onload=()=>window.print();<\/script>
@@ -749,9 +816,9 @@
       const filterLine = fDesc.length ? 'फ़िल्टर: ' + fDesc.join(' | ') : 'संपूर्ण सूची';
       const w = window.open('', '_blank');
       const rows = list.map((v, i) => `<tr style="background:${i % 2 === 0 ? '#fff8f0' : '#fff'}">
-    <td>${i + 1}</td><td><strong>${v.name}</strong></td><td>${v.shakha}</td><td>${v.role}</td>
-    <td>${v.gannayak || '—'}</td><td>${v.ganvesh || 'नहीं'}</td><td>${v.area}</td><td>${v.contact}</td>
-    <td>${v.blood_group}</td><td>${v.vyavsay}</td><td>${v.joining_year}</td>
+    <td>${i + 1}</td><td><strong>${esc(v.name)}</strong></td><td>${esc(v.shakha)}</td><td>${esc(v.role)}</td>
+    <td>${esc(v.gannayak || '—')}</td><td>${esc(v.ganvesh || 'नहीं')}</td><td>${esc(v.area)}</td><td>${esc(v.contact)}</td>
+    <td>${esc(v.blood_group)}</td><td>${esc(v.vyavsay)}</td><td>${esc(v.joining_year)}</td>
   </tr>`).join('');
       w.document.write(`<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"/><title>स्वयंसेवक – RSS भाटापारा</title>
   <style>
@@ -770,7 +837,7 @@
     <svg viewBox="0 0 44 44" width="30" height="30"><rect x="4" y="4" width="4" height="36" rx="2" fill="#FF6B00"/><polygon points="8,4 38,13 8,22" fill="#FF6B00"/></svg>
     <div><h2>RSS भाटापारा – स्वयंसेवक सूची</h2>
     <div class="sub">कुल: ${list.length} स्वयंसेवक &nbsp;|&nbsp; मुद्रित: ${new Date().toLocaleDateString('hi-IN')}</div>
-    <span class="filter-tag">${filterLine}</span></div>
+    <span class="filter-tag">${esc(filterLine)}</span></div>
   </div>
   <table><thead><tr>
     <th>#</th><th>नाम</th><th>शाखा</th><th>भूमिका</th><th>गणनायक</th><th>गणवेशधारी</th><th>वार्ड</th><th>मोबाइल</th><th>रक्त समूह</th><th>व्यवसाय</th><th>वर्ष</th>
@@ -781,8 +848,25 @@
       w.document.close();
     }
 
-    populate();
-    render(all);
+    // Load dynamic data before doing anything
+    loadSiteData().then(() => {
+      all = window.VOLUNTEERS_DATA || [];
+      filtered = all;
+      document.getElementById('s-total').textContent = all.length;
+      document.getElementById('s-shown').textContent = all.length;
+      populate();
+      render(all);
+
+      // Deep link support to open a volunteer profile card directly
+      const urlParams = new URLSearchParams(window.location.search);
+      const memberId = parseInt(urlParams.get('id'));
+      if (memberId) {
+        const member = all.find(x => x.id === memberId);
+        if (member) {
+          openModal(memberId);
+        }
+      }
+    });
 
     ['vol-search', 'f-shakha', 'f-role', 'f-blood', 'f-vyavsay', 'f-year', 'f-area', 'f-basti', 'f-gannayak', 'f-ganvesh'].forEach(id => {
       const el = document.getElementById(id);

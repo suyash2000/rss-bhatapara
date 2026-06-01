@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>कार्यक्रम – RSS भाटापारा</title>
   <meta name="description" content="RSS भाटापारा के आगामी और पिछले सभी कार्यक्रमों का विवरण।"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="RSS भाटापारा"/>
+  <link rel="apple-touch-icon" href="images/icon-192.png"/>
+  <meta name="theme-color" content="#FF6B00"/>
   <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
@@ -61,7 +67,7 @@
 
     <div id="result-count" style="margin-bottom:1.25rem;font-size:0.82rem;color:var(--brown-muted);"></div>
 
-    <div style="display:flex;flex-direction:column;gap:1.25rem;" id="events-list"></div>
+    <div class="events-grid-container" id="events-list"></div>
   </div>
 </section>
 
@@ -90,6 +96,7 @@
 </button>
 
 <script src="js/shared.js"></script>
+<script src="js/data-loader.js"></script>
 <script>
   const MO = ['जन','फर','मार','अप्र','मई','जून','जुल','अग','सितं','अक्ट','नव','दिस'];
 
@@ -102,13 +109,13 @@
       return `<div class="event-card reveal">
         <div class="date-box"><div class="date-day">${d.getDate()}</div><div class="date-month">${MO[d.getMonth()]} ${d.getFullYear()}</div></div>
         <div class="event-info">
-          <h3>${e.title}</h3>
-          <p>${e.description}</p>
-          <div class="event-loc">📍 ${e.location}</div>
+          <h3>${esc(e.title)}</h3>
+          <p>${esc(e.description)}</p>
+          <div class="event-loc">📍 ${esc(e.location)}</div>
         </div>
         <div class="event-meta">
-          <span class="type-badge">${e.type}</span>
-          <span class="time-text">⏰ ${e.time}</span>
+          <span class="type-badge">${esc(e.type)}</span>
+          <span class="time-text">⏰ ${esc(e.time)}</span>
           <span class="status-badge ${e.status==='upcoming'?'badge-upcoming':'badge-completed'}">${e.status==='upcoming'?'✓ आगामी':'✓ संपन्न'}</span>
         </div>
       </div>`;
@@ -116,16 +123,20 @@
     observeReveal();
   }
 
-  render(EVENTS_DATA);
+  // Load site data dynamically before rendering
+  loadSiteData().then(() => {
+    render(window.EVENTS_DATA || []);
+  });
 
   document.getElementById('filter-tabs').addEventListener('click', e => {
     const btn = e.target.closest('.ftab'); if (!btn) return;
     document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     const f = btn.dataset.filter;
-    if (f==='all') render(EVENTS_DATA);
-    else if (f==='upcoming'||f==='completed') render(EVENTS_DATA.filter(ev=>ev.status===f));
-    else render(EVENTS_DATA.filter(ev=>ev.type===f));
+    const allEvents = window.EVENTS_DATA || [];
+    if (f==='all') render(allEvents);
+    else if (f==='upcoming'||f==='completed') render(allEvents.filter(ev=>ev.status===f));
+    else render(allEvents.filter(ev=>ev.type===f));
   });
 </script>
 </body>
