@@ -93,6 +93,17 @@
         <a href="volunteers.html" class="btn btn-primary btn-sm" style="display:inline-flex;margin-top:1rem;">स्वयंसेवक सूची देखें</a>
       </div>
 
+      <!-- HINDI TRANSLITERATION TOGGLE -->
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--cream); border:1px solid rgba(255,107,0,0.22); border-radius:14px; padding:0.75rem 1rem; margin-bottom:1.5rem; font-size:0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+        <div style="color:var(--brown); font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+          ✍️ <span style="color:var(--bhagwa);">अंग्रेजी से हिंदी टाइपिंग</span> (उदा. 'rahul sharma' &rarr; 'राहुल शर्मा')
+        </div>
+        <label style="display:inline-flex; align-items:center; cursor:pointer; gap:0.5rem; user-select:none; font-weight:700; color:var(--brown);">
+          <input type="checkbox" id="hindi-translit-toggle" checked style="accent-color: var(--bhagwa); cursor:pointer; width:16px; height:16px;" />
+          <span>सक्रिय</span>
+        </label>
+      </div>
+
       <form id="join-form"
             action="https://formspree.io/f/mzdonqdp"
             method="POST"
@@ -224,17 +235,7 @@
             <div class="form-group">
               <label class="form-label" for="f-gannayak">गणनायक <span>*</span></label>
               <select class="form-control" id="f-gannayak" name="गणनायक" required>
-                <option value="">गणनायक चुनें</option>
-                <option>राजेश तिवारी</option>
-                <option>संजय अवस्थी</option>
-                <option>दीपक साहू</option>
-                <option>विजय वर्मा</option>
-                <option>मनीष यादव</option>
-                <option>राकेश शुक्ला</option>
-                <option>अमित चौबे</option>
-                <option>नवीन निषाद</option>
-                <option>राहुल देवांगन</option>
-                <option>संतोष साहू</option>
+                <option value="">लोड हो रहा है...</option>
               </select>
             </div>
             <div class="form-group">
@@ -501,10 +502,93 @@ document.getElementById('f-vyavsay').addEventListener('change', function() {
   }
 });
 
-if (sessionStorage.getItem('rss_admin') === '1') {
-  const adminBox = document.getElementById('admin-notice-box');
-  if (adminBox) adminBox.style.display = 'block';
+// Fetch and populate Gan-nayak names dynamically
+function loadGannayaks() {
+  const t = Date.now();
+  fetch(`/data/gannayaks.json?t=${t}`)
+    .then(r => {
+      if (!r.ok) throw new Error('Failed to load gannayaks');
+      return r.json();
+    })
+    .then(list => {
+      const select = document.getElementById('f-gannayak');
+      if (select) {
+        select.innerHTML = '<option value="">गणनायक चुनें *</option>' +
+          list.map(name => `<option value="${esc(name)}">${esc(name)}</option>`).join('');
+      }
+    })
+    .catch(err => console.error('Error loading gannayaks:', err));
 }
+loadGannayaks();
+
+// ── Hindi Transliteration Integration ──────────────────────────────────────────
+function enableHindiTransliteration(elementId) {
+  const el = document.getElementById(elementId);
+  const toggle = document.getElementById('hindi-translit-toggle');
+  if (!el || !toggle) return;
+
+  el.addEventListener('keydown', async (e) => {
+    if (!toggle.checked) return;
+    
+    // When Spacebar or Enter is pressed, perform transliteration of the last typed word
+    if (e.key === ' ' || e.key === 'Enter') {
+      const val = el.value;
+      const selectionStart = el.selectionStart;
+      
+      const textBefore = val.substring(0, selectionStart);
+      const textAfter = val.substring(selectionStart);
+      
+      const match = textBefore.match(/([a-zA-Z'-]+)$/);
+      if (match) {
+        const lastWord = match[1];
+        e.preventDefault();
+        
+        try {
+          const res = await fetch(`https://inputtools.google.com/request?text=${encodeURIComponent(lastWord)}&itc=hi-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data[0] === 'SUCCESS' && data[1] && data[1][0] && data[1][0][1] && data[1][0][1][0]) {
+              const hindiWord = data[1][0][1][0];
+              const replacedText = textBefore.substring(0, textBefore.length - lastWord.length) + hindiWord + (e.key === ' ' ? ' ' : '\n');
+              el.value = replacedText + textAfter;
+              
+              const newCursorPos = replacedText.length;
+              el.setSelectionRange(newCursorPos, newCursorPos);
+              return;
+            }
+          }
+        } catch (err) {
+          console.error('Transliteration failed:', err);
+        }
+        
+        const fallbackText = textBefore + (e.key === ' ' ? ' ' : '\n');
+        el.value = fallbackText + textAfter;
+        el.setSelectionRange(fallbackText.length, fallbackText.length);
+      }
+    }
+  });
+
+  el.addEventListener('blur', async () => {
+    if (!toggle.checked) return;
+    const val = el.value.trim();
+    if (val && /[a-zA-Z]/.test(val)) {
+      try {
+        const res = await fetch(`https://inputtools.google.com/request?text=${encodeURIComponent(val)}&itc=hi-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data[0] === 'SUCCESS' && data[1] && data[1][0] && data[1][0][1] && data[1][0][1][0]) {
+            el.value = data[1][0][1][0];
+          }
+        }
+      } catch (err) {
+        console.error('Transliteration on blur failed:', err);
+      }
+    }
+  });
+}
+
+// Bind transliteration helper to the inputs
+['f-name', 'f-address', 'f-vyavsay-detail', 'f-msg'].forEach(id => enableHindiTransliteration(id));
 
 updateWizard();
 observeReveal();

@@ -516,6 +516,7 @@
       <button class="sb-link active" id="sb-volunteers"><span class="sb-icon">👥</span> स्वयंसेवक</button>
       <button class="sb-link" id="sb-events" onclick="scrollToSection('events-section')"><span class="sb-icon">📅</span> कार्यक्रम</button>
       <button class="sb-link" id="sb-varg" onclick="scrollToSection('varg-section')"><span class="sb-icon">🎓</span> प्रशिक्षण वर्ग</button>
+      <button class="sb-link" id="sb-gannayaks" onclick="scrollToSection('gannayak-section')"><span class="sb-icon">👥</span> गणनायक</button>
       <div class="sb-section-label">डेटा</div>
       <a href="volunteers.html" class="sb-link"><span class="sb-icon">📋</span> डायरेक्टरी</a>
       <a href="join.html" class="sb-link"><span class="sb-icon">➕</span> सदस्य जोड़ें</a>
@@ -544,6 +545,10 @@
         </div>
       </div>
       <div class="topbar-right">
+        <label style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.8rem; font-weight:700; color:var(--brown); background:var(--cream); border:1.5px solid rgba(255,107,0,0.22); border-radius:8px; padding:0.4rem 0.6rem; cursor:pointer; user-select:none; margin-right:0.5rem; outline:none;">
+          <input type="checkbox" id="hindi-translit-toggle" checked style="accent-color:var(--bhagwa); cursor:pointer; width:14px; height:14px;" />
+          <span>✍️ हिंदी टाइपिंग</span>
+        </label>
         <a href="volunteers.html" class="topbar-btn">👥 डायरेक्टरी</a>
         <a href="join.html" class="topbar-btn">➕ सदस्य</a>
         <button class="topbar-btn" onclick="doLogout()">🚪 लॉगआउट</button>
@@ -662,6 +667,31 @@
         <div id="varg-panel-4" class="varg-panel"><div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>नाम</th><th>मोबाइल</th><th>वर्ग सत्र</th><th>वर्ग स्थल</th><th>कार्रवाई</th></tr></thead><tbody id="varg-tbody-4"></tbody></table></div></div>
       </div>
 
+      <!-- GANNAYAK MANAGEMENT -->
+      <div class="section-label"><h2>गणनायक सूची प्रबंधन</h2></div>
+      <div class="table-card" id="gannayak-section">
+        <div class="table-toolbar">
+          <div class="tt-left">
+            <h3>👥 गणनायक प्रबंधन</h3>
+          </div>
+          <div class="tt-right">
+            <button class="tb-btn" onclick="openAddGannayakModal()" style="background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.3);color:var(--green);">+ नया गणनायक जोड़ें</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 80px;">#</th>
+                <th>नाम</th>
+                <th style="width: 150px;">कार्रवाई</th>
+              </tr>
+            </thead>
+            <tbody id="gannayak-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
     </div><!-- /dash-body -->
   </div><!-- /dash-main -->
 </div><!-- /dash -->
@@ -731,15 +761,33 @@
         </div>
         <div class="form-group full"><label class="form-label">गणनायक</label>
           <select class="form-ctrl" id="edit-gannayak">
-            <option>राजेश तिवारी</option><option>संजय अवस्थी</option><option>दीपक साहू</option>
-            <option>विजय वर्मा</option><option>मनीष यादव</option><option>राकेश शुक्ला</option>
-            <option>अमित चौबे</option><option>नवीन निषाद</option><option>राहुल देवांगन</option>
-            <option>संतोष साहू</option>
+            <option value="">लोड हो रहा है...</option>
           </select>
         </div>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn-cancel" onclick="closeEditModal()">रद्द करें</button>
+        <button type="submit" class="btn-save">💾 सहेजें</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ADD/EDIT GANNAYAK MODAL -->
+<div class="modal-overlay" id="gannayak-modal-overlay">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-header">
+      <h3 id="gannayak-modal-title">👥 गणनायक जोड़ें</h3>
+      <button class="modal-close" onclick="closeGannayakModal()">✕</button>
+    </div>
+    <form id="gannayak-form" onsubmit="handleGannayakSubmit(event)">
+      <input type="hidden" id="gannayak-index"/>
+      <div class="form-group full" style="margin-bottom: 1.5rem;">
+        <label class="form-label">गणनायक का नाम</label>
+        <input class="form-ctrl" type="text" id="gannayak-name" required placeholder="जैसे: अमित तिवारी"/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeGannayakModal()">रद्द करें</button>
         <button type="submit" class="btn-save">💾 सहेजें</button>
       </div>
     </form>
@@ -1007,6 +1055,7 @@ function buildDash(){
   renderTable(vols);
   renderVargAdmin();
   renderEventsAdmin();
+  renderGannayaksAdmin();
 }
 
 function bloodClass(bg){ return 'blood-'+((bg || '').replace(/[+-]/,'')); }
@@ -1394,6 +1443,188 @@ async function deleteVargEntry(vi,ei){
     if(rd.success){ alert('हटा दिया गया।'); location.reload(); } else alert('त्रुटि: '+(rd.message||'अज्ञात त्रुटि'));
   } catch { alert('सर्वर से कनेक्ट नहीं हो सका।'); }
 }
+
+// ── Gan-nayak Management UI & Event Handlers ─────────────────────────────────
+function renderGannayaksAdmin() {
+  const editSel = document.getElementById('edit-gannayak');
+  const gannayaks = window.GANNAYAKS_DATA || [];
+  if (editSel) {
+    editSel.innerHTML = gannayaks.map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+  }
+
+  const tbody = document.getElementById('gannayak-tbody');
+  if (tbody) {
+    tbody.innerHTML = gannayaks.length
+      ? gannayaks.map((name, i) => `
+        <tr>
+          <td>${i+1}</td>
+          <td><strong>${esc(name)}</strong></td>
+          <td>
+            <div class="row-actions">
+              <button class="ra-btn ra-edit" onclick="openEditGannayakModal(${i})">✏️</button>
+              <button class="ra-btn ra-delete" onclick="deleteGannayak(${i})">🗑</button>
+            </div>
+          </td>
+        </tr>`).join('')
+      : `<tr><td colspan="3"><div class="empty-state"><div class="empty-icon">👥</div><p>कोई गणनायक नहीं मिला।</p></div></td></tr>`;
+  }
+}
+
+function openAddGannayakModal() {
+  document.getElementById('gannayak-modal-title').textContent = '👥 नया गणनायक जोड़ें';
+  document.getElementById('gannayak-index').value = '';
+  document.getElementById('gannayak-name').value = '';
+  document.getElementById('gannayak-modal-overlay').style.display = 'flex';
+}
+
+function openEditGannayakModal(idx) {
+  const gannayaks = window.GANNAYAKS_DATA || [];
+  const name = gannayaks[idx];
+  document.getElementById('gannayak-modal-title').textContent = '👥 गणनायक का नाम बदलें';
+  document.getElementById('gannayak-index').value = idx;
+  document.getElementById('gannayak-name').value = name || '';
+  document.getElementById('gannayak-modal-overlay').style.display = 'flex';
+}
+
+function closeGannayakModal() {
+  document.getElementById('gannayak-modal-overlay').style.display = 'none';
+}
+
+async function handleGannayakSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('gannayak-name').value.trim();
+  const idxVal = document.getElementById('gannayak-index').value;
+  const action = idxVal === '' ? 'add' : 'edit';
+  const index = idxVal === '' ? -1 : parseInt(idxVal);
+
+  const btn = e.target.querySelector('.btn-save');
+  btn.disabled = true;
+  btn.textContent = '⏳ सहेज रहे हैं...';
+
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const apiUrl = isLocal ? `/api/gannayak-${action}` : '/.netlify/functions/gannayaks-manage';
+
+  try {
+    const res = await adminFetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({ action, name, index })
+    });
+    const rd = await res.json();
+    if (rd.success) {
+      closeGannayakModal();
+      if (action === 'add') {
+        if (!window.GANNAYAKS_DATA) window.GANNAYAKS_DATA = [];
+        window.GANNAYAKS_DATA.push(name);
+      } else {
+        window.GANNAYAKS_DATA[index] = name;
+      }
+      buildDash();
+      alert(action === 'add' ? 'नया गणनायक जोड़ा गया!' : 'अपडेट किया गया!');
+    } else {
+      alert('त्रुटि: ' + (rd.message || 'अज्ञात त्रुटि'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('सर्वर से कनेक्ट नहीं हो सका।');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '💾 सहेजें';
+  }
+}
+
+async function deleteGannayak(idx) {
+  const gannayaks = window.GANNAYAKS_DATA || [];
+  const name = gannayaks[idx];
+  if (!confirm(`क्या आप सचमुच गणनायक "${name}" को हटाना चाहते हैं?`)) return;
+
+  const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const apiUrl = isLocal ? '/api/gannayak-delete' : '/.netlify/functions/gannayaks-manage';
+
+  try {
+    const res = await adminFetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'delete', index: idx })
+    });
+    const rd = await res.json();
+    if (rd.success) {
+      window.GANNAYAKS_DATA.splice(idx, 1);
+      buildDash();
+      alert('हटा दिया गया।');
+    } else {
+      alert('त्रुटि: ' + (rd.message || 'अज्ञात त्रुटि'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('सर्वर से कनेक्ट नहीं हो सका।');
+  }
+// ── Hindi Transliteration Integration ──────────────────────────────────────────
+function enableHindiTransliteration(elementId) {
+  const el = document.getElementById(elementId);
+  const toggle = document.getElementById('hindi-translit-toggle');
+  if (!el || !toggle) return;
+
+  el.addEventListener('keydown', async (e) => {
+    if (!toggle.checked) return;
+    
+    // When Spacebar or Enter is pressed, perform transliteration of the last typed word
+    if (e.key === ' ' || e.key === 'Enter') {
+      const val = el.value;
+      const selectionStart = el.selectionStart;
+      
+      const textBefore = val.substring(0, selectionStart);
+      const textAfter = val.substring(selectionStart);
+      
+      const match = textBefore.match(/([a-zA-Z'-]+)$/);
+      if (match) {
+        const lastWord = match[1];
+        e.preventDefault();
+        
+        try {
+          const res = await fetch(`https://inputtools.google.com/request?text=${encodeURIComponent(lastWord)}&itc=hi-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data[0] === 'SUCCESS' && data[1] && data[1][0] && data[1][0][1] && data[1][0][1][0]) {
+              const hindiWord = data[1][0][1][0];
+              const replacedText = textBefore.substring(0, textBefore.length - lastWord.length) + hindiWord + (e.key === ' ' ? ' ' : '\n');
+              el.value = replacedText + textAfter;
+              
+              const newCursorPos = replacedText.length;
+              el.setSelectionRange(newCursorPos, newCursorPos);
+              return;
+            }
+          }
+        } catch (err) {
+          console.error('Transliteration failed:', err);
+        }
+        
+        const fallbackText = textBefore + (e.key === ' ' ? ' ' : '\n');
+        el.value = fallbackText + textAfter;
+        el.setSelectionRange(fallbackText.length, fallbackText.length);
+      }
+    }
+  });
+
+  el.addEventListener('blur', async () => {
+    if (!toggle.checked) return;
+    const val = el.value.trim();
+    if (val && /[a-zA-Z]/.test(val)) {
+      try {
+        const res = await fetch(`https://inputtools.google.com/request?text=${encodeURIComponent(val)}&itc=hi-t-i0-und&num=1&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data[0] === 'SUCCESS' && data[1] && data[1][0] && data[1][0][1] && data[1][0][1][0]) {
+            el.value = data[1][0][1][0];
+          }
+        }
+      } catch (err) {
+        console.error('Transliteration on blur failed:', err);
+      }
+    }
+  });
+}
+
+// Bind transliteration helper to the inputs
+['edit-name', 'edit-vyavsay', 'gannayak-name', 'event-title', 'event-location', 'event-description', 'varg-name', 'varg-sthal'].forEach(id => enableHindiTransliteration(id));
 </script>
 </body>
 </html>
