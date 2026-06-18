@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rss-bhatapara-cache-v1';
+const CACHE_NAME = 'rss-bhatapara-cache-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -18,7 +18,8 @@ const STATIC_ASSETS = [
   '/data/volunteers.json',
   '/data/events.json',
   '/data/varg.json',
-  '/data/pending.json'
+  '/data/pending.json',
+  '/data/gannayaks.json'
 ];
 
 // Install Event: Cache all critical static resources

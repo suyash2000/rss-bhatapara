@@ -1,4 +1,4 @@
-$port = 8085
+$port = 8086
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
 
@@ -332,6 +332,54 @@ try {
                 &$saveJson "varg" $varg
                 Write-Response $response 200 '{"success":true}'
                 Write-Host " -> varg-delete: success" -ForegroundColor Green
+                continue
+            }
+
+            # /api/gannayak-add
+            if ($localPath -eq "/api/gannayak-add") {
+                $gannayaks = &$getJson "gannayaks"
+                $nameStr = [string]$data.name
+                if ($gannayaks -notcontains $nameStr) {
+                    $gannayaks += $nameStr
+                }
+                &$saveJson "gannayaks" $gannayaks
+                Write-Response $response 200 '{"success":true}'
+                Write-Host " -> gannayak-add: success" -ForegroundColor Green
+                continue
+            }
+
+            # /api/gannayak-edit
+            if ($localPath -eq "/api/gannayak-edit") {
+                $gannayaks = &$getJson "gannayaks"
+                $idx = [int]$data.index
+                $nameStr = [string]$data.name
+                $newGannayaks = @()
+                for ($i = 0; $i -lt $gannayaks.Count; $i++) {
+                    if ($i -eq $idx) {
+                        $newGannayaks += $nameStr
+                    } else {
+                        $newGannayaks += $gannayaks[$i]
+                    }
+                }
+                &$saveJson "gannayaks" $newGannayaks
+                Write-Response $response 200 '{"success":true}'
+                Write-Host " -> gannayak-edit: success" -ForegroundColor Green
+                continue
+            }
+
+            # /api/gannayak-delete
+            if ($localPath -eq "/api/gannayak-delete") {
+                $gannayaks = &$getJson "gannayaks"
+                $idx = [int]$data.index
+                $newGannayaks = @()
+                for ($i = 0; $i -lt $gannayaks.Count; $i++) {
+                    if ($i -ne $idx) {
+                        $newGannayaks += $gannayaks[$i]
+                    }
+                }
+                &$saveJson "gannayaks" $newGannayaks
+                Write-Response $response 200 '{"success":true}'
+                Write-Host " -> gannayak-delete: success" -ForegroundColor Green
                 continue
             }
         }
